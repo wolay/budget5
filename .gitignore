@@ -115,5 +115,5 @@ $RECYCLE.BIN/
 
 
 /target/
-/output/
+src/output/
 DataHandler.java
