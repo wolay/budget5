@@ -113,7 +113,11 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
-
+# personal adds
 /target/
 src/output/
 DataHandler.java
+
+# hidden files
+.*
+!/.gitignore
