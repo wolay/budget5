@@ -210,7 +210,7 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
-					result.add(new Transaction(tokens[0],Util.convertStringToDateType0(tokens[2]),tokens[3],Double.valueOf(tokens[4]),tokens[4]));
+					result.add(new Transaction(tokens[0],Util.convertStringToDateType0(tokens[1]),tokens[2],Double.valueOf(tokens[3]),tokens[4]));
 				}
 			}
 		} catch (Exception e) {
@@ -331,7 +331,7 @@ public class Util implements Config {
 
 		try {
 			String today = convertDateToStringType1(new Date());
-			String fileName = dirOutputTotals + today + ".csv";
+			String fileName = dirOutputTransactions + today + ".csv";
 			fileWriter = new FileWriter(fileName);
 
 			// Write the CSV file header
@@ -342,13 +342,11 @@ public class Util implements Config {
 
 			// Write a new student object list to the CSV file
 			for (Transaction transaction : transactions) {
-				fileWriter.append(today);
-				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(transaction.getCode());
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(transaction.getDecription());				
+				fileWriter.append(transaction.getDecription().replace(",", " "));				
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(amountToString(transaction.getAmount()));
 				fileWriter.append(COMMA_DELIMITER);

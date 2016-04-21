@@ -42,7 +42,7 @@ public class Manager {
 				newTransactions= new ArrayList<Transaction>();
 				// Previous balances & transactions
 				Map<String, Double> prevTotals = Util.getPrevTotals();
-				List<Transaction> prevTransactions = Util.getPrevTransactions();
+				prevTransactions = Util.getPrevTransactions();
 						
 				// New balances & transactions
 				List<Account> accounts = dataHandler.getBankAccountsList();

@@ -22,6 +22,20 @@ public class AccountPageCiti extends AccountPage {
 	}
 
 	@Override
+	public void gotoHomePage() {
+		super.gotoHomePage();
+		// Store the current window handle
+		String winHandleBefore = webDriver.getWindowHandle();
+		// Switch to new window opened
+		for (String winHandle : webDriver.getWindowHandles()) {
+			if (!winHandle.equals(winHandleBefore)) {
+				webDriver.switchTo().window(winHandle);
+				break;
+			}
+		}
+	}
+
+	@Override
 	public Double getTotal() {
 		String code = account.getCode();
 		// Expedia
@@ -58,7 +72,7 @@ public class AccountPageCiti extends AccountPage {
 			details = webDriver.findElement(By.xpath("//div/div/div[4]/a"));
 		// Thank you
 		else if (code.equals("112"))
-			details = webDriver.findElement(By.xpath("//div[2]/div/div[4]/a"));
+			details = webDriver.findElement(By.xpath("//div[2]/div[2]/div/div[4]/a"));
 		// Hilton
 		else if (code.equals("113"))
 			details = webDriver.findElement(By.xpath("//div[3]/div[2]/div/div[4]/a"));
@@ -124,15 +138,19 @@ public class AccountPageCiti extends AccountPage {
 			diff = Util.roundDouble(diff - amount);
 			if (diff == 0.0) {
 				WebElement accounts = webDriver.findElement(By.linkText("Accounts"));
-				if (accounts != null)
+				if (accounts != null) {
 					accounts.click();
+					Util.sleep(3000);
+				}
 				return result;
 			}
 		}
 
 		WebElement accounts = webDriver.findElement(By.linkText("Accounts"));
-		if (accounts != null)
+		if (accounts != null) {
 			accounts.click();
+			Util.sleep(3000);
+		}
 		if (diff == 0.0)
 			return result;
 		else
