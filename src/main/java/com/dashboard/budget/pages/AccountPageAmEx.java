@@ -115,7 +115,7 @@ public class AccountPageAmEx extends AccountPage {
 			for (WebElement row : rows) {
 				if ("".equals(row.getText().trim()) || row.getText().trim().startsWith("There is no recent activity"))
 					continue;
-				amount = -Util.convertStringAmountToDouble(row.findElement(By.xpath("./td[7]/div")).getText());
+				amount = -Util.convertStringAmountToDouble(row.findElement(By.xpath("./td[6]/div")).getText());
 				Date date = Util.convertStringToDateType3(row.findElement(By.xpath("./td[3]/div")).getText());
 				result.add(new Transaction(code, date, row.findElement(By.xpath("./td[4]/div")).getText().trim(),
 						amount, ""));
@@ -201,7 +201,7 @@ public class AccountPageAmEx extends AccountPage {
 			for (WebElement row : rows) {
 				if ("".equals(row.getText().trim()))
 					continue;
-				amount = -Util.convertStringAmountToDouble(row.findElement(By.xpath("./td[7]/div")).getText());
+				amount = -Util.convertStringAmountToDouble(row.findElement(By.xpath("./td[6]/div")).getText());
 				Date date = Util.convertStringToDateType3(row.findElement(By.xpath("./td[3]/div")).getText());
 				result.add(new Transaction(code, date, row.findElement(By.xpath("./td[4]/div")).getText().trim(),
 						amount, ""));

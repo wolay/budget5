@@ -210,7 +210,7 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
-					result.add(new Transaction(tokens[0],Util.convertStringToDateType0(tokens[1]),tokens[2],Double.valueOf(tokens[3]),tokens[4]));
+					result.add(new Transaction(tokens[0],Util.convertStringToDateType0(tokens[1]),tokens[2],Double.valueOf(tokens[3]),""));
 				}
 			}
 		} catch (Exception e) {
