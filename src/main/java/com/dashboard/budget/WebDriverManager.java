@@ -19,21 +19,7 @@ import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
-import com.dashboard.budget.pages.AccountPage;
-import com.dashboard.budget.pages.AccountPageAmEx;
-import com.dashboard.budget.pages.AccountPageAmazon;
-import com.dashboard.budget.pages.AccountPageBestBuy;
-import com.dashboard.budget.pages.AccountPageCapOne;
-import com.dashboard.budget.pages.AccountPageChase;
-import com.dashboard.budget.pages.AccountPageCiti;
-import com.dashboard.budget.pages.AccountPageCreditKarma;
-import com.dashboard.budget.pages.AccountPageJCPenney;
-import com.dashboard.budget.pages.AccountPageKohls;
-import com.dashboard.budget.pages.AccountPageMacys;
-import com.dashboard.budget.pages.AccountPageNordstorm;
-import com.dashboard.budget.pages.AccountPageSaks;
-import com.dashboard.budget.pages.AccountPageTjMaxx;
-import com.dashboard.budget.pages.AccountPageWF;
+import com.dashboard.budget.pages.*;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
@@ -73,6 +59,8 @@ public class WebDriverManager implements Config {
 			return new AccountPageChase(account, dataHandler);
 		case "132":
 			return new AccountPageChase(account, dataHandler);
+		case "141":
+			return new AccountPageBoA(account, dataHandler);
 		case "191":
 			return new AccountPageCapOne(account, dataHandler);
 		case "201":
