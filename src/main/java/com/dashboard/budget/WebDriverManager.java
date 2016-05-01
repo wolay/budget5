@@ -104,7 +104,7 @@ public class WebDriverManager implements Config {
 		List<Transaction> newTransactions = accountPage.getTransactions(difference, prevTransactions);
 		if (newTransactions.isEmpty()) {
 			logger.error("No transactions found for difference");
-		}else{
+		} else {
 			for (Transaction newTransaction : newTransactions) {
 				logger.info("{}, transaction: {}, {}, {}", accountPage.getAccount().getName(), newTransaction.getDate(),
 						newTransaction.getDecription(), newTransaction.getAmount());
@@ -116,14 +116,14 @@ public class WebDriverManager implements Config {
 	public List<Total> getNewTotals(List<Account> accountsIn, List<Transaction> transactions,
 			Map<String, Double> prevTotals, List<Transaction> prevTransactions) {
 		List<Account> accounts;
-		
-		if(!isRunningBankAccounts){
+
+		if (!isRunningBankAccounts) {
 			logger.info("Running bank accounts skipped");
 			return new ArrayList<Total>();
 		}
-		if(bankAccountsFilter.equals(""))
+		if (bankAccountsFilter.equals(""))
 			accounts = accountsIn;
-		else 
+		else
 			accounts = Util.getAccountsByDriver(accountsIn, bankAccountsFilter);
 
 		List<Total> result = new ArrayList<Total>();
@@ -135,8 +135,8 @@ public class WebDriverManager implements Config {
 		List<List<String>> drivers = new ArrayList<List<String>>();
 
 		for (Account account : accounts) {
-			//if (account.getPriority() != 2)
-			//	continue;
+			// if (account.getPriority() != 2)
+			// continue;
 			List<String> driver = new ArrayList<String>();
 			driver.add(account.getBank());
 			driver.add(account.getOwner());
@@ -144,13 +144,15 @@ public class WebDriverManager implements Config {
 				drivers.add(driver);
 		}
 
-		executor = Executors.newFixedThreadPool(nubmberOfThreads, new ThreadFactoryBuilder().setNameFormat("Bank accounts (thread %d)").build());
+		executor = Executors.newFixedThreadPool(nubmberOfThreads,
+				new ThreadFactoryBuilder().setNameFormat("Bank accounts (thread %d)").build());
 
 		for (List<String> driver : drivers) {
 			executor.submit(() -> {
 				AccountPage accountPage = null;
 				for (Account account : Util.getAccountsByDriver(accounts, driver.get(0), driver.get(1))) {
-					Thread.currentThread().setName("Bank accounts: " + account.getName());
+					Thread.currentThread()
+							.setName("Bank accounts (" + Util.getThreadNumber(Thread.currentThread().getName())+ "): "+ account.getName());
 					int attempt = 0;
 					Double amount = null;
 					Double difference = null;
@@ -160,7 +162,7 @@ public class WebDriverManager implements Config {
 						if (accountPage == null) {
 							accountPage = getAccountPage(account);
 							accountPage.gotoHomePage();
-							if(!accountPage.login()){
+							if (!accountPage.login()) {
 								logger.error("Unsuccessful login to: {}", account.getName());
 								accountPage.quit();
 								accountPage = null;
@@ -170,9 +172,9 @@ public class WebDriverManager implements Config {
 							accountPage.setAccount(account);
 
 						amount = accountPage.getTotal();
-						if(amount!=null)
+						if (amount != null)
 							logger.info("{}, total: {}", account.getName(), amount);
-						else{
+						else {
 							logger.error("Error while getting total for: {}", account.getName());
 							accountPage.quit();
 							accountPage = null;
@@ -199,12 +201,12 @@ public class WebDriverManager implements Config {
 	}
 
 	public List<CreditScore> getCreditScores() {
-		
-		if(!isRunningCreditScores){
+
+		if (!isRunningCreditScores) {
 			logger.info("Running credit scores skipped");
 			return new ArrayList<CreditScore>();
-		}		
-		
+		}
+
 		Thread.currentThread().setName("Credit scores");
 
 		List<CreditScore> result = new ArrayList<CreditScore>();

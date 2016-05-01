@@ -583,4 +583,10 @@ public class Util implements Config {
 		}
 	}
 
+	public static String getThreadNumber(String string) {
+		// thread # within pool
+		int i = string.indexOf("thread");
+		return string.substring(i+7, i+8);
+	}
+
 }
