@@ -50,39 +50,27 @@ public class AccountPageBoA extends AccountPage {
 
 	@Override
 	public List<Transaction> getTransactions(Double diff, List<Transaction> prevTransactions) {
+		
+		WebElement all = webDriver.findElement(By.name("CCA_seeAllTransactions"));
+		if (all != null)
+			all.click();
+		else
+			return new ArrayList<Transaction>();
 
 		List<Transaction> result = new ArrayList<Transaction>();
-		/*
-		 * // Store the current window handle String winHandleBefore =
-		 * webDriver.getWindowHandle(); // Switch to new window opened for
-		 * (String winHandle : webDriver.getWindowHandles()) { if
-		 * (!winHandle.equals(winHandleBefore)) {
-		 * webDriver.switchTo().window(winHandle); break; } }
-		 * 
-		 * //webDriver.switchTo().defaultContent(); WebElement details =
-		 * webDriver.findElement(By.linkText("Transactions")); if (details !=
-		 * null) details.click(); else return result;
-		 */
-
-		webDriver.get("https://services1.capitalone.com/accounts/transactions");
-		webDriver.switchTo().defaultContent();
-
-		List<WebElement> rows = webDriver.findElements(By.xpath("//div[@id='postedTransactionTable']/div"));
+		List<WebElement> rows = webDriver.findElements(By.xpath("//table[@id='transactions']/tbody/tr"));
 		for (WebElement row : rows) {
-			WebElement amountStr = row.findElement(By.xpath("./div/span/span"));
-			if (amount == null)
+			WebElement amountStr = row.findElement(By.xpath("./td[4]"));
+			if (amountStr == null)
 				return new ArrayList<Transaction>();
 			Double amount = -convertStringAmountToDouble(amountStr.getText());
-			String description = row.findElement(By.xpath("./div[2]/div/span")).getText().trim();
-			Date date = Util.convertStringToDateType1(row.findElement(By.xpath("./div/span")).getText());
+			String description = row.findElement(By.xpath("./td[2]")).getText().trim();
+			Date date = Util.convertStringToDateType4(row.findElement(By.xpath("./td")).getText());
 			result.add(new Transaction(account.getCode(), date, description, amount, ""));
 			diff = Util.roundDouble(diff - amount);
 			if (diff == 0.0)
 				return result;
 		}
-
-		// Switch back to original browser (first window)
-		// webDriver.switchTo().window(winHandleBefore);
 
 		if (diff == 0.0)
 			return result;
