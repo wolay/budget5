@@ -44,8 +44,8 @@ public class AccountPageAmazon extends AccountPage {
 		for (WebElement row : rows) {
 			double amount = -Util.convertStringAmountToDouble(row.findElement(By.xpath("./div[4]/p/span")).getText());
 			Date date = Util.convertStringToDateType5(row.findElement(By.xpath("./div[2]/p")).getText());
-			result.add(
-					new Transaction(code, date, row.findElement(By.xpath("./div[3]/h3")).getText().trim(), amount, ""));
+			String description = row.findElement(By.xpath("./div[3]/h3")).getText().trim().replace("\n", "-");
+			result.add(new Transaction(code, date, description, amount, ""));
 			diff = Util.roundDouble(diff - amount);
 			if (diff == 0.0) {
 				return result;
