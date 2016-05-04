@@ -145,14 +145,14 @@ public class WebDriverManager implements Config {
 		}
 
 		executor = Executors.newFixedThreadPool(nubmberOfThreads,
-				new ThreadFactoryBuilder().setNameFormat("Bank accounts (thread %d)").build());
+				new ThreadFactoryBuilder().setNameFormat("%d").build());
 
 		for (List<String> driver : drivers) {
 			executor.submit(() -> {
 				AccountPage accountPage = null;
 				for (Account account : Util.getAccountsByDriver(accounts, driver.get(0), driver.get(1))) {
-					Thread.currentThread()
-							.setName("Bank accounts (" + Util.getThreadNumber(Thread.currentThread().getName())+ "): "+ account.getName());
+					Thread.currentThread().setPriority(account.getPriority());
+					Thread.currentThread().setName("Bank accounts (" + Util.getThreadNumber(Thread.currentThread().getName())+ "): "+ account.getName());
 					int attempt = 0;
 					Double amount = null;
 					Double difference = null;
