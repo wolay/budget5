@@ -11,7 +11,6 @@ import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -22,21 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.commons.io.FilenameUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.dashboard.budget.DAO.Account;
-import com.dashboard.budget.DAO.CreditScore;
-import com.dashboard.budget.DAO.DataRetrievalStatus;
-import com.dashboard.budget.DAO.Total;
-import com.dashboard.budget.DAO.Transaction;
-
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +34,16 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.CreditScore;
+import com.dashboard.budget.DAO.DataRetrievalStatus;
+import com.dashboard.budget.DAO.Total;
+import com.dashboard.budget.DAO.Transaction;
+
 /**
  *
  * @author aanpilogov
@@ -57,7 +51,7 @@ import javax.mail.internet.MimeMessage;
 public class Util implements Config {
 
 	private static Logger logger = LoggerFactory.getLogger(Util.class);
-	
+
 	public static Date convertStringToDateType0(String string) {
 		try {
 			return new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(string.trim());
@@ -75,7 +69,7 @@ public class Util implements Config {
 		}
 		return null;
 	}
-	
+
 	public static Date convertStringToDateType2(String string) {
 		try {
 			return new SimpleDateFormat("MMM. dd, yyyy", Locale.ENGLISH).parse(string.trim());
@@ -83,8 +77,8 @@ public class Util implements Config {
 			logger.error(ex.getMessage());
 		}
 		return null;
-	}	
-	
+	}
+
 	public static Date convertStringToDateType3(String string) {
 		try {
 			return new SimpleDateFormat("MMMdd", Locale.ENGLISH).parse(string.trim());
@@ -92,8 +86,8 @@ public class Util implements Config {
 			logger.error(ex.getMessage());
 		}
 		return null;
-	}	
-	
+	}
+
 	public static Date convertStringToDateType4(String string) {
 		try {
 			return new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).parse(string.trim());
@@ -101,8 +95,8 @@ public class Util implements Config {
 			logger.error(ex.getMessage());
 		}
 		return null;
-	}	
-	
+	}
+
 	public static Date convertStringToDateType5(String string) {
 		try {
 			return new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH).parse(string.trim());
@@ -115,7 +109,7 @@ public class Util implements Config {
 	public static String convertDateToStringType1(Date date) {
 		return new SimpleDateFormat("yyyy-MM-dd").format(date);
 	}
-	
+
 	public static String convertDateToStringType2(Date date) {
 		return new SimpleDateFormat("MM/dd").format(date);
 	}
@@ -186,7 +180,7 @@ public class Util implements Config {
 
 		return result;
 	}
-	
+
 	public static List<Transaction> getPrevTransactions() {
 		// open latest file to compare results
 		File filePrevSummary = getLastFileModified(dirOutputTransactions);
@@ -210,7 +204,8 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
-					result.add(new Transaction(tokens[0],Util.convertStringToDateType0(tokens[1]),tokens[2],Double.valueOf(tokens[3]),""));
+					result.add(new Transaction(tokens[0], Util.convertStringToDateType0(tokens[1]), tokens[2],
+							Double.valueOf(tokens[3]), ""));
 				}
 			}
 		} catch (Exception e) {
@@ -318,7 +313,7 @@ public class Util implements Config {
 			}
 		}
 	}
-	
+
 	public static void writeTransactionsToFile(List<Transaction> transactions) {
 
 		FileWriter fileWriter = null;
@@ -346,7 +341,7 @@ public class Util implements Config {
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(transaction.getDecription().replace(",", " "));				
+				fileWriter.append(transaction.getDecription().replace(",", " "));
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(amountToString(transaction.getAmount()));
 				fileWriter.append(COMMA_DELIMITER);
@@ -403,13 +398,16 @@ public class Util implements Config {
 					+ amountToString(DataHandler.getFullTotal(totals)) + "</b></td><td><b>"
 					+ amountToString(DataHandler.getFullDiff(totals)) + "</b></td></tr></tfoot><tbody>";
 			for (Total total : totals) {
-				content = content + "<tr style='background-color:"+Util.getStatusColor(total.getStatus())+"'><td><a href='"+total.getAccount().getUrl()+"'>"+ total.getAccount().getName()+"</a>";
+				content = content + "<tr style='background-color:" + Util.getStatusColor(total.getStatus())
+						+ "'><td><a href='" + total.getAccount().getUrl() + "'>" + total.getAccount().getName()
+						+ "</a>";
 				List<Transaction> transactionsByAccount = transactions.stream()
 						.filter(p -> p.getCode().equals(total.getAccount().getCode())).collect(Collectors.toList());
 				if (transactionsByAccount.size() > 0) {
 					content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:100%;'>";
 					for (Transaction transaction : transactionsByAccount) {
-						content = content + "<tr><td><font size='1'>" + Util.convertDateToStringType2(transaction.getDate())
+						content = content + "<tr><td><font size='1'>"
+								+ Util.convertDateToStringType2(transaction.getDate())
 								+ "</font></td><td><font size='1'>" + transaction.getDecription()
 								+ "</font></td><td><font size='1'>" + amountToString(transaction.getAmount())
 								+ "</font></td></tr>";
@@ -442,11 +440,11 @@ public class Util implements Config {
 	}
 
 	private static String getStatusColor(DataRetrievalStatus status) {
-		if(status==DataRetrievalStatus.OK)
+		if (status == DataRetrievalStatus.OK)
 			return "#BCE954";
-		else if(status==DataRetrievalStatus.FAILED)
+		else if (status == DataRetrievalStatus.FAILED)
 			return "#FF7F50";
-		else if(status==DataRetrievalStatus.SKIPPED)
+		else if (status == DataRetrievalStatus.SKIPPED)
 			return "#FFE87C";
 		else
 			return "white";
@@ -476,58 +474,11 @@ public class Util implements Config {
 		return Math.round(input * 100.0) / 100.0;
 	}
 
-	public static String rotateDate(String string, String mode) {
-		Date date = null;
-		try {
-			if (null != mode) {
-				switch (mode) {
-				case "MMMM dd":
-					date = new SimpleDateFormat("MMMM-dd-yyyy", Locale.ENGLISH)
-							.parse(string.replace(" ", "-") + (new SimpleDateFormat("yyyy").format(new Date())));
-					break;
-				case "MMMM\ndd":
-					date = new SimpleDateFormat("MMMM-dd-yyyy", Locale.ENGLISH)
-							.parse(string.replace("\n", "-") + "-" + (new SimpleDateFormat("yyyy").format(new Date())));
-					break;
-				default:
-					date = new SimpleDateFormat("MM/dd/yy", Locale.ENGLISH).parse(string);
-					break;
-				}
-			}
-			return new SimpleDateFormat("yyyy-MM-dd").format(date);
-		} catch (ParseException ex) {
-			logger.error(ex.getMessage());
-		}
-		return null;
-	}
-
 	public static String prepareTextForQuery(String inText) {
 		String outText = inText.replace("'", "");
 		outText = outText.replace("#", "");
 
 		return outText;
-	}
-
-	public static String getAccountName(Statement stmt, int code) {
-		ResultSet rsER;
-
-		if (code == 4)
-			return "CHECKING XXXXXX6763";
-		else if (code == 5)
-			return "WAY2SAVE® SAVINGS XXXXXX3119";
-		else if (code == 6)
-			return "PLATINUM CARD XXXX-XXXX-XXXX-4116";
-
-		try {
-			rsER = stmt.executeQuery("SELECT NAME FROM ACCOUNTS WHERE ID = " + code);
-			if (rsER.next()) {
-				return rsER.getString("Name");
-			}
-		} catch (SQLException ex) {
-		}
-		;
-
-		return "";
 	}
 
 	public static void addTotal(Statement stmt, java.sql.Timestamp timestamp, int account, Double amount) {
@@ -545,20 +496,6 @@ public class Util implements Config {
 		}
 	}
 
-	public static void waitForElement(WebDriverWait wait, By locator) {
-		try{
-			wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-		}
-		catch(Exception e){
-			logger.error("Unable to find locator: {}", locator);			
-		};
-	}
-
-	public static void waitAndClick(WebDriver driver, WebDriverWait wait, By locator) {
-		wait.until(ExpectedConditions.elementToBeClickable(locator));
-		driver.findElement(locator).click();
-	}
-
 	public static void sleep(int time) {
 		try {
 			Thread.sleep(time);
@@ -569,9 +506,9 @@ public class Util implements Config {
 
 	public static void executorShutdown(ExecutorService executor) {
 		try {
-			//logger.info("attempt to shutdown executor");
+			// logger.info("attempt to shutdown executor");
 			executor.shutdown();
-			executor.awaitTermination(10, TimeUnit.MINUTES);			
+			executor.awaitTermination(10, TimeUnit.MINUTES);
 		} catch (InterruptedException e) {
 			logger.error("tasks interrupted");
 		} finally {
@@ -585,8 +522,12 @@ public class Util implements Config {
 
 	public static String getThreadNumber(String string) {
 		// thread # within pool
-		int i = string.indexOf("thread");
-		return string.substring(i+7, i+8);
+		if (string.length() == 1)
+			return string;
+		else {
+			int i = string.indexOf("Bank accounts");
+			return string.substring(i + 15, i + 16);
+		}
 	}
 
 }
