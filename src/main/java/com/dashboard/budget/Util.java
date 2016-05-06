@@ -341,7 +341,11 @@ public class Util implements Config {
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(transaction.getDecription().replace(",", " "));
+				String description = transaction.getDecription().replace(",", " ");
+				if(description.length()>50)
+					fileWriter.append(description.substring(0, 50));
+				else
+					fileWriter.append(description);
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(amountToString(transaction.getAmount()));
 				fileWriter.append(COMMA_DELIMITER);
