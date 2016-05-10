@@ -35,9 +35,10 @@ public class AccountPageAmazon extends AccountPage {
 		String code = account.getCode();
 
 		WebElement activity = webDriver.findElement(By.linkText("View Activity"));
-		if (activity != null)
+		if (activity != null) {
 			activity.click();
-		else
+			activity.click();
+		} else
 			return result;
 
 		List<WebElement> rows = webDriver.findElements(By.xpath("//div[@id='completedBillingActivityDiv']/ul/li"));
