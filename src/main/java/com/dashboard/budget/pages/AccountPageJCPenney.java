@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
@@ -25,25 +26,32 @@ public class AccountPageJCPenney extends AccountPage {
 		
 		webDriver.findElement(fldUsername).sendKeys(accountDetails.getUsernameValue());
 		webDriver.findElement(By.name("button")).click();
+		
+		// secret question
+		WebElement securityLabel = webDriver.findElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
+		if (securityLabel != null) {
+			String question = webDriver.findElement(By.xpath("//tr[5]/td[2]")).getText().trim();
+			if (question.equals("In what city were you married? (Enter full name of city)")) {
+				webDriver.findElement(By.id("challengeAnswer1")).clear();
+				webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Moscow");
+			} else if (question.equals("What city were you in on New Year's Eve, 1999?")) {
+				webDriver.findElement(By.id("challengeAnswer1")).clear();
+				webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Saransk");
+			} else if (question.equals("What was the name of your first pet?")) {
+				webDriver.findElement(By.id("challengeAnswer1")).clear();
+				webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Murzik");
+			}
+			WebElement submit = webDriver.findElement(By.id("submitChallengeAnswers"));
+			if (submit != null)
+				submit.click();
+			else
+				return false;
+		}		
+		
 		webDriver.findElement(fldPassword).sendKeys(accountDetails.getPasswordValue());		
 		webDriver.findElement(btnLogin).click();
 		return true;
 		
-		/*waitForElement(wait, By.name(accountDetails.getUsernameLocator()));
-		fldUsername = webDriver.findElement(By.name(accountDetails.getUsernameLocator()));
-		username = accountDetails.getUsernameValue();
-		fldUsername.clear();
-		fldUsername.sendKeys(username);
-		
-		webDriver.findElement(By.name("button")).click();
-		
-		fldPassword = webDriver.findElement(By.name(accountDetails.getPasswordLocator()));
-		password = accountDetails.getPasswordValue();
-		fldPassword.clear();
-		fldPassword.sendKeys(password);
-		
-		btnLogin = webDriver.findElement(By.id(accountDetails.getLoginLocator()));
-		btnLogin.click();	*/	
 	}
 
 	@Override
