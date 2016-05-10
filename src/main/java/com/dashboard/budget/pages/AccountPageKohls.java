@@ -22,24 +22,48 @@ public class AccountPageKohls extends AccountPage {
 	@Override
 	public Double getTotal() {
 		// secret question
-		String question = webDriver.findElement(By.xpath("//form/table/tbody/tr/td[2]")).getText();
-		if (!question.contains("Welcome")) {
-			if (question
-					.equals("exact:What was the name of the organization where you conducted your first internship?")) {
+		WebElement securityLabel = webDriver.findElement(By.xpath("//*[contains(text(),'Security Verification')]"));
+		if (securityLabel != null) {
+			String question = webDriver.findElement(By.xpath("//form/table/tbody/tr/td[2]")).getText().trim();
+			if (question.equals("What was the name of the organization where you conducted your first internship?")) {
 				webDriver.findElement(By.id("singleanswer")).clear();
 				webDriver.findElement(By.id("singleanswer")).sendKeys("Proteus");
-			} else if (question.equals("exact:What city were you in on New Year's Eve, 1999?")) {
+			} else if (question.equals("What city were you in on New Year's Eve, 1999?")) {
 				webDriver.findElement(By.id("singleanswer")).clear();
-				webDriver.findElement(By.id("singleanswer")).sendKeys("Krasnodar");
-			} else if (question.equals("exact:What was the name of your first pet?")) {
+				webDriver.findElement(By.id("singleanswer")).sendKeys("Saransk");
+			} else if (question.equals("What was the name of your first pet?")) {
 				webDriver.findElement(By.id("singleanswer")).clear();
 				webDriver.findElement(By.id("singleanswer")).sendKeys("Murzik");
-			}		
+			}
 			WebElement submit = webDriver.findElement(By.id("submitChallengeAnswers"));
 			if (submit != null)
 				submit.click();
 			else
-				return null;			
+				return null;
+		}
+
+		// could be asked one more time
+		if (securityLabel != null) {
+			securityLabel = webDriver.findElement(By.xpath("//*[contains(text(),'Security Verification')]"));
+			if (securityLabel != null) {
+				String question = webDriver.findElement(By.xpath("//form/table/tbody/tr/td[2]")).getText().trim();
+				if (question
+						.equals("What was the name of the organization where you conducted your first internship?")) {
+					webDriver.findElement(By.id("singleanswer")).clear();
+					webDriver.findElement(By.id("singleanswer")).sendKeys("Proteus");
+				} else if (question.equals("What city were you in on New Year's Eve, 1999?")) {
+					webDriver.findElement(By.id("singleanswer")).clear();
+					webDriver.findElement(By.id("singleanswer")).sendKeys("Saransk");
+				} else if (question.equals("What was the name of your first pet?")) {
+					webDriver.findElement(By.id("singleanswer")).clear();
+					webDriver.findElement(By.id("singleanswer")).sendKeys("Murzik");
+				}
+				WebElement submit = webDriver.findElement(By.id("submitChallengeAnswers"));
+				if (submit != null)
+					submit.click();
+				else
+					return null;
+			}
 		}
 
 		// reading total
