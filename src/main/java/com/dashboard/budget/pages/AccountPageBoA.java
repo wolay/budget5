@@ -39,6 +39,10 @@ public class AccountPageBoA extends AccountPage {
 			WebElement submit = webDriver.findElement(By.id("yes-recognize"));
 			if (submit != null)
 				submit.click();
+			
+			WebElement cont = webDriver.findElement(By.cssSelector("#verify-cq-submit > span"));
+			if (cont != null)
+				cont.click();
 			else
 				return null;
 		}
