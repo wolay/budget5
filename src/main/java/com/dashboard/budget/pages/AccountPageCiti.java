@@ -54,8 +54,10 @@ public class AccountPageCiti extends AccountPage {
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hilton
 		} else if (code.equals("113")) {
-			//amount = webDriver.findElement(By.xpath("//div[3]/div[2]/div/div[2]/span")); - not working locator
-			amount = webDriver.findElement(By.xpath("//div[3]/div/div[2]/span"));
+			// weird but.. locator changes sometimes
+			amount = webDriver.findElement(By.xpath("//div[3]/div[2]/div/div[2]/span"));
+			if (amount == null)
+				amount = webDriver.findElement(By.xpath("//div[3]/div/div[2]/span"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 		}
 
