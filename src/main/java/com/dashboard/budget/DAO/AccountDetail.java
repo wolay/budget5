@@ -11,6 +11,18 @@ public class AccountDetail {
 	private String passwordValue;
 	private String loginLocator;
 	private By logoutLocator;
+	private By allAccountsLinkLocator;
+	private String transactionsPageUrl;
+	private By detailsLinkLocator;
+	private By periodSwitchLocator;
+	private String transTableLocator;
+	private String transTableSupLocator;
+	private String transDateLocator;
+	private Integer transDateFormat;
+	private String transDescriptionLocator;
+	private String transDescriptionSupLocator;
+	private String transAmountLocator;
+	private String transAmountSupLocator;
 
 	public AccountDetail(String code, String url, String usernameLocator, String usernameValue, String passwordLocator,
 			String passwordValue, String loginLocator, By logoutLocator) {
@@ -25,67 +37,112 @@ public class AccountDetail {
 		this.logoutLocator = logoutLocator;
 	}
 
-	public String getCode() {
-		return code;
+	public AccountDetail(String code, String url, String usernameLocator, String usernameValue, String passwordLocator,
+			String passwordValue, String loginLocator, By logoutLocator, By allAccountsLinkLocator,
+			String transactionsPageUrl, By detailsLinkLocator, By periodSwitchLocator, String transTableLocator,
+			String transTableSupLocator, String transDateLocator, Integer transDateFormat,
+			String transDescriptionLocator, String transDescriptionSupLocator, String transAmountLocator,
+			String transAmountSupLocator) {
+		super();
+		this.code = code;
+		this.url = url;
+		this.usernameLocator = usernameLocator;
+		this.usernameValue = usernameValue;
+		this.passwordLocator = passwordLocator;
+		this.passwordValue = passwordValue;
+		this.loginLocator = loginLocator;
+		this.logoutLocator = logoutLocator;
+		this.allAccountsLinkLocator = allAccountsLinkLocator;
+		this.transactionsPageUrl = transactionsPageUrl;
+		this.detailsLinkLocator = detailsLinkLocator;
+		this.periodSwitchLocator = periodSwitchLocator;
+		this.transTableLocator = transTableLocator;
+		this.transTableSupLocator = transTableSupLocator;
+		this.transDateLocator = transDateLocator;
+		this.transDateFormat = transDateFormat;
+		this.transDescriptionLocator = transDescriptionLocator;
+		this.transDescriptionSupLocator = transDescriptionSupLocator;
+		this.transAmountLocator = transAmountLocator;
+		this.transAmountSupLocator = transAmountSupLocator;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public String getCode() {
+		return code;
 	}
 
 	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
 	public String getUsernameLocator() {
 		return usernameLocator;
-	}
-
-	public void setUsernameLocator(String usernameLocator) {
-		this.usernameLocator = usernameLocator;
 	}
 
 	public String getUsernameValue() {
 		return usernameValue;
 	}
 
-	public void setUsernameValue(String usernameValue) {
-		this.usernameValue = usernameValue;
-	}
-
 	public String getPasswordLocator() {
 		return passwordLocator;
-	}
-
-	public void setPasswordLocator(String passwordLocator) {
-		this.passwordLocator = passwordLocator;
 	}
 
 	public String getPasswordValue() {
 		return passwordValue;
 	}
 
-	public void setPasswordValue(String passwordValue) {
-		this.passwordValue = passwordValue;
-	}
-
 	public String getLoginLocator() {
 		return loginLocator;
 	}
 
-	public void setLoginLocator(String loginLocator) {
-		this.loginLocator = loginLocator;
-	}
-	
 	public By getLogoutLocator() {
 		return logoutLocator;
 	}
 
-	public void setLogoutLocator(By logoutLocator) {
-		this.logoutLocator = logoutLocator;
+	public By getAllAccountsLinkLocator() {
+		return allAccountsLinkLocator;
+	}
+
+	public String getTransactionsPageUrl() {
+		return transactionsPageUrl;
+	}
+
+	public By getDetailsLinkLocator() {
+		return detailsLinkLocator;
+	}
+
+	public By getPeriodSwitchLocator() {
+		return periodSwitchLocator;
+	}
+
+	public String getTransTableLocator() {
+		return transTableLocator;
+	}
+
+	public String getTransTableSupLocator() {
+		return transTableSupLocator;
+	}
+
+	public String getTransDateLocator() {
+		return transDateLocator;
+	}
+
+	public Integer getTransDateFormat() {
+		return transDateFormat;
+	}
+
+	public String getTransDescriptionLocator() {
+		return transDescriptionLocator;
+	}
+
+	public String getTransDescriptionSupLocator() {
+		return transDescriptionSupLocator;
+	}
+
+	public String getTransAmountLocator() {
+		return transAmountLocator;
+	}
+
+	public String getTransAmountSupLocator() {
+		return transAmountSupLocator;
 	}
 }

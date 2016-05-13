@@ -2,18 +2,12 @@ package com.dashboard.budget.pages;
 
 import static com.dashboard.budget.Util.convertStringAmountToDouble;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
-import com.dashboard.budget.DAO.Transaction;
 
 public class AccountPageBoA extends AccountPage {
 
@@ -51,58 +45,6 @@ public class AccountPageBoA extends AccountPage {
 		String locator = "span.balanceValue.TL_NPI_L1";
 		amount = webDriver.findElement(By.cssSelector(locator));
 		return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
-	}
-
-	@Override
-	public List<Transaction> getTransactions(Double diff, List<Transaction> prevTransactions) {
-
-		WebElement all = webDriver.findElement(By.name("CCA_seeAllTransactions"));
-		if (all != null)
-			all.click();
-		else
-			return new ArrayList<Transaction>();
-
-		List<Transaction> result = new ArrayList<Transaction>();
-		List<WebElement> rows = new ArrayList<WebElement>();
-
-		if (webDriver.findElement(By.cssSelector("div.no-trans-to-display")) == null) {
-			rows = webDriver.findElements(By.xpath("//table[@id='transactions']/tbody/tr"));
-			for (WebElement row : rows) {
-				WebElement amountStr = row.findElement(By.xpath("./td[4]"));
-				if (amountStr == null)
-					return new ArrayList<Transaction>();
-				Double amount = -convertStringAmountToDouble(amountStr.getText());
-				String description = row.findElement(By.xpath("./td[2]")).getText().trim();
-				Date date = Util.convertStringToDateType4(row.findElement(By.xpath("./td")).getText());
-				result.add(new Transaction(account.getCode(), date, description, amount, ""));
-				diff = Util.roundDouble(diff - amount);
-				if (diff == 0.0)
-					return result;
-			}
-		}
-
-		// previous period
-		new Select(webDriver.findElement(By.id("goto_select_trans_top"))).selectByIndex(1);
-
-		rows = webDriver.findElements(By.xpath("//table[@id='transactions']/tbody/tr"));
-		for (WebElement row : rows) {
-			WebElement amountStr = row.findElement(By.xpath("./td[4]"));
-			if (amountStr == null)
-				return new ArrayList<Transaction>();
-			Double amount = -convertStringAmountToDouble(amountStr.getText());
-			String description = row.findElement(By.xpath("./td[2]")).getText().trim();
-			Date date = Util.convertStringToDateType4(row.findElement(By.xpath("./td")).getText());
-			result.add(new Transaction(account.getCode(), date, description, amount, ""));
-			diff = Util.roundDouble(diff - amount);
-			if (diff == 0.0)
-				return result;
-		}
-
-		if (diff == 0.0)
-			return result;
-		else
-			return new ArrayList<Transaction>();
-
 	}
 
 }

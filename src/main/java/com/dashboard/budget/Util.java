@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,54 +53,23 @@ public class Util implements Config {
 
 	private static Logger logger = LoggerFactory.getLogger(Util.class);
 
-	public static Date convertStringToDateType0(String string) {
+	public static Date convertStringToDateByType(String string, int type) {
 		try {
-			return new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(string.trim());
-		} catch (ParseException ex) {
-			logger.error(ex.getMessage());
-		}
-		return null;
-	}
-
-	public static Date convertStringToDateType1(String string) {
-		try {
-			return new SimpleDateFormat("MM/dd/yy", Locale.ENGLISH).parse(string.trim());
-		} catch (ParseException ex) {
-			logger.error(ex.getMessage());
-		}
-		return null;
-	}
-
-	public static Date convertStringToDateType2(String string) {
-		try {
-			return new SimpleDateFormat("MMM. dd, yyyy", Locale.ENGLISH).parse(string.trim());
-		} catch (ParseException ex) {
-			logger.error(ex.getMessage());
-		}
-		return null;
-	}
-
-	public static Date convertStringToDateType3(String string) {
-		try {
-			return new SimpleDateFormat("MMMdd", Locale.ENGLISH).parse(string.trim());
-		} catch (ParseException ex) {
-			logger.error(ex.getMessage());
-		}
-		return null;
-	}
-
-	public static Date convertStringToDateType4(String string) {
-		try {
-			return new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).parse(string.trim());
-		} catch (ParseException ex) {
-			logger.error(ex.getMessage());
-		}
-		return null;
-	}
-
-	public static Date convertStringToDateType5(String string) {
-		try {
-			return new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH).parse(string.trim());
+			switch (type) {
+			case 0:
+				return new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(string.trim());
+			case 1:
+				return new SimpleDateFormat("MM/dd/yy", Locale.ENGLISH).parse(string.trim());
+			case 2:
+				return new SimpleDateFormat("MMM. dd, yyyy", Locale.ENGLISH).parse(string.trim());
+			case 3:
+				return new SimpleDateFormat("MMMdd yyyy", Locale.ENGLISH)
+						.parse(string.trim() + " " + Calendar.getInstance().get(Calendar.YEAR));
+			case 4:
+				return new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).parse(string.trim());
+			case 5:
+				return new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH).parse(string.trim());
+			}
 		} catch (ParseException ex) {
 			logger.error(ex.getMessage());
 		}
@@ -126,6 +96,8 @@ public class Util implements Config {
 		out = out.replace(" dollars and", "");
 		out = out.replace(" Cents", "");
 		out = out.replace("(pending)", "");
+		out = out.replace("(", "");
+		out = out.replace(")", "");
 
 		return Double.parseDouble(out);
 	}
@@ -204,7 +176,7 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
-					result.add(new Transaction(tokens[0], Util.convertStringToDateType0(tokens[1]), tokens[2],
+					result.add(new Transaction(tokens[0], Util.convertStringToDateByType(tokens[1], 0), tokens[2],
 							Double.valueOf(tokens[3]), ""));
 				}
 			}
@@ -342,7 +314,7 @@ public class Util implements Config {
 				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
 				fileWriter.append(COMMA_DELIMITER);
 				String description = transaction.getDecription().replace(",", " ");
-				if(description.length()>50)
+				if (description.length() > 50)
 					fileWriter.append(description.substring(0, 50));
 				else
 					fileWriter.append(description);
@@ -490,6 +462,14 @@ public class Util implements Config {
 		// + account + ", " + amount + ")");
 		// trace("Total added: " + timestamp + "/" + getAccountName(stmt,
 		// account) + "/" + amount, ta);
+	}
+
+	public static boolean isValidTransactionRow(String row) {
+		if ("".equals(row.trim()) || row.contains("Pending Transactions") || row.contains("There is no recent activity")
+				|| row.contains("Posted Transactions"))
+			return false;
+		else
+			return true;
 	}
 
 	public static void clearBatch(Statement stmt) {

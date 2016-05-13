@@ -2,16 +2,12 @@ package com.dashboard.budget.pages;
 
 import static com.dashboard.budget.Util.convertStringAmountToDouble;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
-import com.dashboard.budget.DAO.Transaction;
 
 public class AccountPageMacys extends AccountPage {
 
@@ -59,11 +55,4 @@ public class AccountPageMacys extends AccountPage {
 			return Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 		}		
 	}
-
-	@Override
-	public List<Transaction> getTransactions(Double diff, List<Transaction> prevTransactions) {
-		// not implemented yet
-		return new ArrayList<Transaction>();
-	}
-
 }
