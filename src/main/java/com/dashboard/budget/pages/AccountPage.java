@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,9 +99,8 @@ public abstract class AccountPage implements Config {
 				return result;
 		} else if (accountDetails.getTransactionsPageUrl() != null) {
 			webDriver.get(accountDetails.getTransactionsPageUrl());
-	        webDriver.switchTo().defaultContent();
-		} else
-			return new ArrayList<Transaction>();
+			webDriver.switchTo().defaultContent();
+		}
 
 		By byDate = By.xpath(accountDetails.getTransDateLocator());
 		By byAmount = By.xpath(accountDetails.getTransAmountLocator());
@@ -158,8 +156,26 @@ public abstract class AccountPage implements Config {
 		// for some accounts previous period transactions are not considered
 		// (i.e. WF)
 		if (accountDetails.getPeriodSwitchLocator() != null) {
+			// AmEx case: before select prev period a button should be clicked
+			if (accountDetails.getPeriodSwitchSupLocator() != null) {
+				WebElement periods = webDriver.findElement(accountDetails.getPeriodSwitchSupLocator());
+				if (periods != null)
+					periods.click();
+				else
+					return result;
+			}
+
 			// previous period transactions
-			new Select(webDriver.findElement(accountDetails.getPeriodSwitchLocator())).selectByIndex(1);
+			// lets see how it will go... not many accounts reach that point
+			// new
+			// Select(webDriver.findElement(accountDetails.getPeriodSwitchLocator())).selectByIndex(1);
+			// this code enabled for AmEx
+			WebElement period = webDriver.findElement(accountDetails.getPeriodSwitchLocator());
+			if (period != null)
+				period.click();
+			else
+				return result;
+
 			rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
 			for (WebElement row : rows) {
 				if (!Util.isValidTransactionRow(row.getText()))
@@ -181,13 +197,16 @@ public abstract class AccountPage implements Config {
 			}
 		}
 
-		WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
-		if (accounts != null)
-			accounts.click();
+		if (accountDetails.getAllAccountsLinkLocator() != null) {
+			WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
+			if (accounts != null)
+				accounts.click();
+		}
 		if (difference == 0.0)
 			return result;
 		else
 			return new ArrayList<Transaction>();
+
 	}
 
 	public int getScore() {

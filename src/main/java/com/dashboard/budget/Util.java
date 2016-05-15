@@ -465,7 +465,7 @@ public class Util implements Config {
 	}
 
 	public static boolean isValidTransactionRow(String row) {
-		if ("".equals(row.trim()) || row.contains("Pending Transactions") || row.contains("There is no recent activity")
+		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions") || row.contains("There is no recent activity")
 				|| row.contains("Posted Transactions"))
 			return false;
 		else
