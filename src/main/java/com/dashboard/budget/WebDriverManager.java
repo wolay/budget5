@@ -61,6 +61,8 @@ public class WebDriverManager implements Config {
 			return new AccountPageChase(account, dataHandler);
 		case "141":
 			return new AccountPageBoA(account, dataHandler);
+		case "181":
+			return new AccountPagePayPal(account, dataHandler);			
 		case "191":
 			return new AccountPageCapOne(account, dataHandler);
 		case "201":
