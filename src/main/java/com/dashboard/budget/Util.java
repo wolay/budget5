@@ -464,12 +464,12 @@ public class Util implements Config {
 		// account) + "/" + amount, ta);
 	}
 
-	public static boolean isValidTransactionRow(String row) {
+	public static boolean isPending(String row) {
 		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions") || row.contains("There is no recent activity")
-				|| row.contains("Posted Transactions"))
-			return false;
-		else
+				|| row.contains("Posted Transactions") || row.equals("Pending")) 
 			return true;
+		else
+			return false;
 	}
 
 	public static void clearBatch(Statement stmt) {

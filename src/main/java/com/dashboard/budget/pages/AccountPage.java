@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,8 +123,11 @@ public abstract class AccountPage implements Config {
 		else
 			rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
 		for (WebElement row : rows) {
-			if (!Util.isValidTransactionRow(row.getText()))
+			if (Util.isPending(row.getText()))
 				continue;
+			if(Util.isPending(row.findElement(byDate).getText()))
+				continue;
+			Date date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);			
 			double amount;
 			if (byAmountSup == null)
 				amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
@@ -131,8 +135,6 @@ public abstract class AccountPage implements Config {
 				amount = (" ".equals(row.findElement(byAmount).getText()))
 						? -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText())
 						: Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
-
-			Date date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
 			String description = row.findElement(byDescription).getText().trim().replace("\n", "-");
 			if ("".equals(description))
 				description = row.findElement(byDescriptionSup).getText().trim().replace("\n", "-");
@@ -163,7 +165,8 @@ public abstract class AccountPage implements Config {
 					periods.click();
 				else
 					return result;
-			}
+			} else
+				new Select(webDriver.findElement(By.id("filterDropDown"))).selectByIndex(1);
 
 			// previous period transactions
 			// lets see how it will go... not many accounts reach that point
@@ -176,9 +179,12 @@ public abstract class AccountPage implements Config {
 			else
 				return result;
 
-			rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
+			if (webDriver.findElement(By.xpath(accountDetails.getTransTableLocator())) == null)
+				rows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
+			else
+				rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
 			for (WebElement row : rows) {
-				if (!Util.isValidTransactionRow(row.getText()))
+				if (Util.isPending(row.getText()))
 					continue;
 				double amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
 				Date date = Util.convertStringToDateByType(row.findElement(byDate).getText().trim(), dateFormat);
@@ -201,6 +207,7 @@ public abstract class AccountPage implements Config {
 			WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
 			if (accounts != null)
 				accounts.click();
+			Util.sleep(3000);
 		}
 		if (difference == 0.0)
 			return result;
