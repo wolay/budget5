@@ -9,7 +9,7 @@ public class Account {
 	private String bank;
 	private String browser;
 	private String owner;
-	private int priority; 
+	public Integer priority; 
 	
 	public Account(String code, String name, String bank, String browser, String owner, int priority) {
 		this.code    = code;

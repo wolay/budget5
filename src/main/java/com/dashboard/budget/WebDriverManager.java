@@ -136,16 +136,16 @@ public class WebDriverManager implements Config {
 		// Extract list of drivers
 		List<List<String>> drivers = new ArrayList<List<String>>();
 
+		// Sort accounts list by priority
+		Collections.sort(accounts, (a1, a2) -> a1.priority.compareTo(a2.priority));
 		for (Account account : accounts) {
-			// if (account.getPriority() != 2)
-			// continue;
 			List<String> driver = new ArrayList<String>();
 			driver.add(account.getBank());
 			driver.add(account.getOwner());
 			if (!drivers.contains(driver))
 				drivers.add(driver);
 		}
-
+		
 		executor = Executors.newFixedThreadPool(nubmberOfThreads,
 				new ThreadFactoryBuilder().setNameFormat("%d").build());
 
@@ -154,7 +154,8 @@ public class WebDriverManager implements Config {
 				AccountPage accountPage = null;
 				for (Account account : Util.getAccountsByDriver(accounts, driver.get(0), driver.get(1))) {
 					Thread.currentThread().setPriority(account.getPriority());
-					Thread.currentThread().setName("Bank accounts (" + Util.getThreadNumber(Thread.currentThread().getName())+ "): "+ account.getName());
+					Thread.currentThread().setName("Bank accounts ("
+							+ Util.getThreadNumber(Thread.currentThread().getName()) + "): " + account.getName());
 					int attempt = 0;
 					Double amount = null;
 					Double difference = null;
