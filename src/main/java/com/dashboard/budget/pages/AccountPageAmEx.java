@@ -45,7 +45,7 @@ public class AccountPageAmEx extends AccountPage {
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Gold
 		} else if (code.equals("124")) {
-			amount = webDriver.findElement(By.id("ah-outstanding-balance"));
+			amount = webDriver.findElement(By.id("ah-outstanding-balance-value"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 		}
 
