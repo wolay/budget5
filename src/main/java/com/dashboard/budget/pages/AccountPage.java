@@ -118,7 +118,7 @@ public abstract class AccountPage implements Config {
 		// and posted transaction populate in /table/tbody[2]
 		// but.. if there is no pending transactions then posted transactions
 		// populate in /table/tbody
-		if (webDriver.findElement(By.xpath(accountDetails.getTransTableLocator())) == null)
+		if (webDriver.lookupElement(By.xpath(accountDetails.getTransTableLocator())) == null)
 			rows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
 		else
 			rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
@@ -179,7 +179,7 @@ public abstract class AccountPage implements Config {
 			else
 				return result;
 
-			if (webDriver.findElement(By.xpath(accountDetails.getTransTableLocator())) == null)
+			if (webDriver.lookupElement(By.xpath(accountDetails.getTransTableLocator())) == null)
 				rows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
 			else
 				rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));

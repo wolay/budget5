@@ -24,7 +24,7 @@ public class AccountPageJCPenney extends AccountPage {
 		webDriver.findElement(By.name("button")).click();
 		
 		// secret question
-		WebElement securityLabel = webDriver.findElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
+		WebElement securityLabel = webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
 		if (securityLabel != null) {
 			String question = webDriver.findElement(By.xpath("//tr[4]/td[2]")).getText().trim();
 			if (question.equals("In what city were you married? (Enter full name of city)")) {

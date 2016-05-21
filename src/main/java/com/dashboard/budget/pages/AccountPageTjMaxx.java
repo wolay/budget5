@@ -27,7 +27,7 @@ public class AccountPageTjMaxx extends AccountPage {
 		webDriver.findElement(btnLogin).click();
 
 		// secret question
-		WebElement securityLabel = webDriver.findElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
+		WebElement securityLabel = webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
 		if (securityLabel != null) {
 			String question = webDriver.findElement(By.xpath("//tr[4]/td[2]")).getText().trim();
 			if ("Andrei".equals(account.getOwner())) {

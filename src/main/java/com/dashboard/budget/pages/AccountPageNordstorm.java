@@ -18,7 +18,7 @@ public class AccountPageNordstorm extends AccountPage {
 	@Override
 	public Double getTotal() {
 		// secret question
-		String question = webDriver.findElement(By.cssSelector("h4.ng-binding")).getText();
+		String question = webDriver.lookupElement(By.cssSelector("h4.ng-binding")).getText();
 		if (question.equals("What was the name of your first pet?")) {
 			webDriver.findElement(By.id("answer1")).clear();
 			webDriver.findElement(By.id("answer1")).sendKeys("Jessy");

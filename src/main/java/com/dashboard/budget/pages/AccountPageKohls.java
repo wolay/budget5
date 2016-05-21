@@ -18,7 +18,7 @@ public class AccountPageKohls extends AccountPage {
 	@Override
 	public Double getTotal() {
 		// secret question
-		WebElement securityLabel = webDriver.findElement(By.xpath("//*[contains(text(),'Security Verification')]"));
+		WebElement securityLabel = webDriver.lookupElement(By.xpath("//*[contains(text(),'Security Verification')]"));
 		if (securityLabel != null) {
 			String question = webDriver.findElement(By.xpath("//form/table/tbody/tr/td[2]")).getText().trim();
 			if (question.equals("What was the name of the organization where you conducted your first internship?")) {

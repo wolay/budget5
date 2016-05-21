@@ -18,7 +18,7 @@ public class AccountPageBoA extends AccountPage {
 	@Override
 	public Double getTotal() {
 		// secret question
-		WebElement question = webDriver.findElement(By.cssSelector("label"));
+		WebElement question = webDriver.lookupElement(By.cssSelector("label"));
 		if (question != null) {
 			if (question.getText().equals("What was the name of your first pet?")) {
 				webDriver.findElement(By.id("tlpvt-challenge-answer")).clear();

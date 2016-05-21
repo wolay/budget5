@@ -18,7 +18,7 @@ public class AccountPagePayPal extends AccountPage {
 	@Override
 	public Double getTotal() {
 		// skip advertisement
-		WebElement ad = webDriver.findElement(By.linkText("Proceed to Account Overview"));
+		WebElement ad = webDriver.lookupElement(By.linkText("Proceed to Account Overview"));
 		if (ad != null)
 			ad.click();
 
