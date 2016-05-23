@@ -54,6 +54,7 @@ public class Util implements Config {
 	private static Logger logger = LoggerFactory.getLogger(Util.class);
 
 	public static Date convertStringToDateByType(String string, int type) {
+		string = string.replace("\n", " ");
 		try {
 			switch (type) {
 			case 0:
@@ -69,6 +70,8 @@ public class Util implements Config {
 				return new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).parse(string.trim());
 			case 5:
 				return new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH).parse(string.trim());
+			case 6:
+				return new SimpleDateFormat("MMMMM dd yyyy", Locale.ENGLISH).parse(string.trim());
 			}
 		} catch (ParseException ex) {
 			logger.error(ex.getMessage());
@@ -109,14 +112,14 @@ public class Util implements Config {
 			return input;
 	}
 
-	public static Map<String, Double> getPrevTotals() {
+	public static Map<Integer, Double> getPrevTotals() {
 		// open latest file to compare results
 		File filePrevSummary = getLastFileModified(dirOutputTotals);
 
 		// Delimiter used in CSV file
 		final String COMMA_DELIMITER = ",";
 		BufferedReader fileReader = null;
-		Map<String, Double> result = new HashMap<String, Double>();
+		Map<Integer, Double> result = new HashMap<Integer, Double>();
 
 		try {
 			String line = "";
@@ -132,10 +135,12 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
+					if(tokens[1].trim().equals(""))
+						continue;
 					if (tokens[3].equals("N/A"))
-						result.put(tokens[1], null);
+						result.put(Integer.valueOf(tokens[1]), null);
 					else
-						result.put(tokens[1], Double.valueOf(tokens[3]));
+						result.put(Integer.valueOf(tokens[1]), Double.valueOf(tokens[3]));
 				}
 			}
 		} catch (Exception e) {

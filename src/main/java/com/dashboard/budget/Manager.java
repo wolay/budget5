@@ -41,7 +41,7 @@ public class Manager {
 				Thread.currentThread().setName("Bank accounts");
 				newTransactions= new ArrayList<Transaction>();
 				// Previous balances & transactions
-				Map<String, Double> prevTotals = Util.getPrevTotals();
+				Map<Integer, Double> prevTotals = Util.getPrevTotals();
 				prevTransactions = Util.getPrevTransactions();
 						
 				// New balances & transactions

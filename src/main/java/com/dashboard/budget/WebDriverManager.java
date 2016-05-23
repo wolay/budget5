@@ -89,7 +89,7 @@ public class WebDriverManager implements Config {
 		}
 	}
 
-	private Double getDifference(Account account, Double amount, Map<String, Double> prevTotals) {
+	private Double getDifference(Account account, Double amount, Map<Integer, Double> prevTotals) {
 		if (amount == null)
 			return 0.00;
 
@@ -116,7 +116,7 @@ public class WebDriverManager implements Config {
 	}
 
 	public List<Total> getNewTotals(List<Account> accountsIn, List<Transaction> transactions,
-			Map<String, Double> prevTotals, List<Transaction> prevTransactions) {
+			Map<Integer, Double> prevTotals, List<Transaction> prevTransactions) {
 		List<Account> accounts;
 
 		if (!isRunningBankAccounts) {
