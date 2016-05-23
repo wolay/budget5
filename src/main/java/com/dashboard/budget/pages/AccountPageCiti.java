@@ -30,9 +30,9 @@ public class AccountPageCiti extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		String code = account.getCode();
+		int code = account.getCode();
 		// Expedia
-		if (code.equals("111")) {
+		if (code==111) {
 			amount = webDriver
 					.findElement(By.cssSelector("div.cA-spf-firstBalanceElementValue.cA-spf-accPanlBalElmtPos > span"));
 			if (amount == null)
@@ -42,11 +42,11 @@ public class AccountPageCiti extends AccountPage {
 			else
 				return Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Thank you
-		} else if (code.equals("112")) {
+		} else if (code==112) {
 			amount = webDriver.findElement(By.xpath("//div[2]/div[2]/div/div[2]/span"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hilton
-		} else if (code.equals("113")) {
+		} else if (code==113) {
 			// weird but.. locator changes sometimes
 			amount = webDriver.findElement(By.xpath("//div[3]/div[2]/div/div[2]/span"));
 			if (amount == null)

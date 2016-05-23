@@ -3,13 +3,13 @@ package com.dashboard.budget.DAO;
 import java.util.Date;
 
 public class Transaction {
-	private String code;
+	private int code;
 	private Date date;
 	private String decription;
 	private double amount;
 	private String category;
 	
-	public Transaction(String code, Date date, String decription, double amount, String category) {
+	public Transaction(int code, Date date, String decription, double amount, String category) {
 		this.code = code;
 		this.date = date;
 		this.decription = decription;
@@ -17,11 +17,11 @@ public class Transaction {
 		this.category = category;
 	}
 
-	public String getCode() {
+	public int getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(int code) {
 		this.code = code;
 	}
 

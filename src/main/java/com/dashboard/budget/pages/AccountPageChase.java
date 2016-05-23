@@ -16,14 +16,14 @@ public class AccountPageChase extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		String code = account.getCode();
+		int code = account.getCode();
 		// IHG
-		if (code.equals("131")) {
+		if (code==131) {
 			String locator = "//form[@id='FORM1']/table[2]/tbody/tr/td/table[4]/tbody/tr/td[3]";
 			amount = webDriver.findElement(By.xpath(locator));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hyatt
-		} else if (code.equals("132")) {
+		} else if (code==132) {
 			String locator = "//form[@id='FORM1']/table[2]/tbody/tr/td/table[2]/tbody/tr/td[3]";
 			amount = webDriver.findElement(By.xpath(locator));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));

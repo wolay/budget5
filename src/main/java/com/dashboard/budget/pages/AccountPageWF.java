@@ -18,11 +18,11 @@ public class AccountPageWF extends AccountPage {
 
 	// @Override
 	public synchronized Double getTotal() {
-		String code = account.getCode();
+		int code = account.getCode();
 		Double result = null;
 		WebElement details = null;
 		// Checking
-		if (code.equals("101")) {
+		if (code==101) {
 			details = webDriver.findElement(By.xpath("//th[@id='cashAccount1']/a"));
 			if (details != null)
 				details.click();
@@ -32,7 +32,7 @@ public class AccountPageWF extends AccountPage {
 			amount = webDriver.findElement(By.className("availableBalanceTotalAmount"));
 			return amount == null ? null : Util.wrapAmount(convertStringAmountToDouble(amount.getText()));
 			// Saving
-		} else if (code.equals("102")) {
+		} else if (code==102) {
 			new Select(webDriver.findElement(By.id("accountDropdown"))).selectByIndex(1);
 			details = webDriver.findElement(By.name("accountselection"));
 			if (details != null)
@@ -43,7 +43,7 @@ public class AccountPageWF extends AccountPage {
 			amount = webDriver.findElement(By.className("availableBalanceTotalAmount"));
 			return amount == null ? null : Util.wrapAmount(convertStringAmountToDouble(amount.getText()));
 			// Credit card
-		} else if (code.equals("103")) {
+		} else if (code==103) {
 			new Select(webDriver.findElement(By.id("accountDropdown"))).selectByIndex(2);
 			details = webDriver.findElement(By.name("accountselection"));
 			if (details != null)

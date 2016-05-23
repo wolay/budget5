@@ -176,8 +176,8 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
-					result.add(new Transaction(tokens[0], Util.convertStringToDateByType(tokens[1], 0), tokens[2],
-							Double.valueOf(tokens[3]), ""));
+					result.add(new Transaction(Integer.valueOf(tokens[0]), Util.convertStringToDateByType(tokens[1], 0),
+							tokens[2], Double.valueOf(tokens[3]), ""));
 				}
 			}
 		} catch (Exception e) {
@@ -246,7 +246,7 @@ public class Util implements Config {
 			for (Total total : totals) {
 				fileWriter.append(today);
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(total.getAccount().getCode());
+				fileWriter.append(String.valueOf(total.getAccount().getCode()));
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(total.getAccount().getName());
 				fileWriter.append(COMMA_DELIMITER);
@@ -309,7 +309,7 @@ public class Util implements Config {
 
 			// Write a new student object list to the CSV file
 			for (Transaction transaction : transactions) {
-				fileWriter.append(transaction.getCode());
+				fileWriter.append(String.valueOf(transaction.getCode()));
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
 				fileWriter.append(COMMA_DELIMITER);
@@ -378,7 +378,7 @@ public class Util implements Config {
 						+ "'><td><a href='" + total.getAccount().getUrl() + "'>" + total.getAccount().getName()
 						+ "</a>";
 				List<Transaction> transactionsByAccount = transactions.stream()
-						.filter(p -> p.getCode().equals(total.getAccount().getCode())).collect(Collectors.toList());
+						.filter(p -> p.getCode() == total.getAccount().getCode()).collect(Collectors.toList());
 				if (transactionsByAccount.size() > 0) {
 					content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:100%;'>";
 					for (Transaction transaction : transactionsByAccount) {
@@ -465,8 +465,9 @@ public class Util implements Config {
 	}
 
 	public static boolean isPending(String row) {
-		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions") || row.contains("There is no recent activity")
-				|| row.contains("Posted Transactions") || row.equals("Pending")) 
+		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions")
+				|| row.contains("There is no recent activity") || row.contains("Posted Transactions")
+				|| row.equals("Pending"))
 			return true;
 		else
 			return false;

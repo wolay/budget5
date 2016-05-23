@@ -61,13 +61,13 @@ public class AccountPageTjMaxx extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		String code = account.getCode();
+		int code = account.getCode();
 		// Andrei
-		if (code.equals("207")) {
+		if (code==207) {
 			amount = webDriver.findElement(By.id("currentBalance"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Irina
-		} else if (code.equals("208")) {
+		} else if (code==208) {
 			WebElement next = webDriver.findElement(By.cssSelector("a.RegisterNextBtnleft.wal_dualno > span"));
 			if (next != null)
 				next.click();

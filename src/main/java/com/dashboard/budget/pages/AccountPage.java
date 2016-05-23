@@ -85,7 +85,7 @@ public abstract class AccountPage implements Config {
 		if (accountDetails.getTransTableLocator() == null)
 			return new ArrayList<Transaction>();
 
-		String code = account.getCode();
+		int code = account.getCode();
 		List<Transaction> result = new ArrayList<Transaction>();
 
 		// details link does not exist in WF case

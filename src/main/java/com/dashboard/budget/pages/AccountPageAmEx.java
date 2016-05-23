@@ -17,14 +17,14 @@ public class AccountPageAmEx extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		String code = account.getCode();
+		int code = account.getCode();
 		WebElement nav = null;
 		// Blue Cash
-		if (code.equals("121")) {
+		if (code == 121) {
 			amount = webDriver.findElement(By.id("ah-outstanding-balance"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Costco
-		} else if (code.equals("122")) {
+		} else if (code==122) {
 			Util.sleep(5000);
 			nav = webDriver.findElement(By.id("iNavCSImg1"));
 			if (nav != null)
@@ -34,7 +34,7 @@ public class AccountPageAmEx extends AccountPage {
 			amount = webDriver.findElement(By.id("ah-outstanding-balance"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hilton
-		} else if (code.equals("123")) {
+		} else if (code==123) {
 			Util.sleep(5000);
 			nav = webDriver.findElement(By.id("iNavCSImg2"));
 			if (nav != null)
@@ -44,7 +44,7 @@ public class AccountPageAmEx extends AccountPage {
 			amount = webDriver.findElement(By.id("ah-outstanding-balance"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Gold
-		} else if (code.equals("124")) {
+		} else if (code==124) {
 			amount = webDriver.findElement(By.id("ah-outstanding-balance-value"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 		}

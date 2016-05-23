@@ -37,51 +37,51 @@ public class WebDriverManager implements Config {
 
 	private AccountPage getAccountPage(Account account) {
 		switch (account.getCode()) {
-		case "101":
+		case 101:
 			return new AccountPageWF(account, dataHandler);
-		case "102":
+		case 102:
 			return new AccountPageWF(account, dataHandler);
-		case "103":
+		case 103:
 			return new AccountPageWF(account, dataHandler);
-		case "111":
+		case 111:
 			return new AccountPageCiti(account, dataHandler);
-		case "112":
+		case 112:
 			return new AccountPageCiti(account, dataHandler);
-		case "113":
+		case 113:
 			return new AccountPageCiti(account, dataHandler);
-		case "121":
+		case 121:
 			return new AccountPageAmEx(account, dataHandler);
-		case "122":
+		case 122:
 			return new AccountPageAmEx(account, dataHandler);
-		case "124":
+		case 124:
 			return new AccountPageAmEx(account, dataHandler);
-		case "131":
+		case 131:
 			return new AccountPageChase(account, dataHandler);
-		case "132":
+		case 132:
 			return new AccountPageChase(account, dataHandler);
-		case "141":
+		case 141:
 			return new AccountPageBoA(account, dataHandler);
-		case "181":
+		case 181:
 			return new AccountPagePayPal(account, dataHandler);			
-		case "191":
+		case 191:
 			return new AccountPageCapOne(account, dataHandler);
-		case "201":
+		case 201:
 			return new AccountPageAmazon(account, dataHandler);
-		case "203":
+		case 203:
 			return new AccountPageNordstorm(account, dataHandler);
-		case "205":
+		case 205:
 			return new AccountPageSaks(account, dataHandler);
-		case "207":
+		case 207:
 			return new AccountPageTjMaxx(account, dataHandler);
-		case "208":
+		case 208:
 			return new AccountPageTjMaxx(account, dataHandler);
-		case "209":
+		case 209:
 			return new AccountPageMacys(account, dataHandler);
-		case "211":
+		case 211:
 			return new AccountPageBestBuy(account, dataHandler);
-		case "213":
+		case 213:
 			return new AccountPageKohls(account, dataHandler);
-		case "215":
+		case 215:
 			return new AccountPageJCPenney(account, dataHandler);
 
 		default:
