@@ -21,7 +21,7 @@ public class AccountPageAmEx extends AccountPage {
 		WebElement nav = null;
 		// Blue Cash
 		if (code == 121) {
-			amount = webDriver.findElement(By.id("ah-outstanding-balance"));
+			amount = webDriver.findElement(By.id("ah-outstanding-balance-value"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Costco
 		} else if (code==122) {
@@ -31,7 +31,7 @@ public class AccountPageAmEx extends AccountPage {
 				nav.click();
 			else
 				return null;
-			amount = webDriver.findElement(By.id("ah-outstanding-balance"));
+			amount = webDriver.findElement(By.id("ah-outstanding-balance-value"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hilton
 		} else if (code==123) {
@@ -41,7 +41,7 @@ public class AccountPageAmEx extends AccountPage {
 				nav.click();
 			else
 				return null;
-			amount = webDriver.findElement(By.id("ah-outstanding-balance"));
+			amount = webDriver.findElement(By.id("ah-outstanding-balance-value"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Gold
 		} else if (code==124) {
