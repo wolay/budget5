@@ -57,14 +57,18 @@ public class UberWebDriver implements Config {
 	public String getPageSource() {
 		return webDriver.getPageSource();
 	}
-	
+
 	public WebElement lookupElement(By by) {
-		try {
-			return webDriver.findElement(by);
-		} catch (Exception e) {
-			return null;
+		int i = 0;
+		while (webDriver.findElements(by).size() == 0 && i < 20) {
+			Util.sleep(500);
 		}
-	}	
+		List<WebElement> elements = webDriver.findElements(by);
+		if (elements.size() > 0)
+			return elements.get(0);
+		else
+			return null;
+	}
 
 	public WebElement findElement(By by) {
 		try {
