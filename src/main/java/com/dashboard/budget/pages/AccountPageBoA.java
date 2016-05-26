@@ -18,33 +18,42 @@ public class AccountPageBoA extends AccountPage {
 	@Override
 	public Double getTotal() {
 		// secret question
-		WebElement question = webDriver.lookupElement(By.cssSelector("label"));
-		if (question != null) {
-			if (question.getText().equals("What was the name of your first pet?")) {
-				webDriver.findElement(By.id("tlpvt-challenge-answer")).clear();
-				webDriver.findElement(By.id("tlpvt-challenge-answer")).sendKeys("Jessy");
-			} else if (question.getText().equals("What is your mother's middle name?")) {
-				webDriver.findElement(By.id("tlpvt-challenge-answer")).clear();
-				webDriver.findElement(By.id("tlpvt-challenge-answer")).sendKeys("Nikolaevna");
-			} else if (question.getText().equals("What city were you in on New Year's Eve, 1999?")) {
-				webDriver.findElement(By.id("tlpvt-challenge-answer")).clear();
-				webDriver.findElement(By.id("tlpvt-challenge-answer")).sendKeys("Krasnodar");
+		WebElement securityLabel = webDriver.lookupElement(By.xpath("//*[contains(text(),'Secret')]"));
+		if (securityLabel != null) {
+			WebElement question = webDriver.lookupElement(By.cssSelector("label"));
+			if (question != null) {
+				if (question.getText().equals("What was the name of your first pet?")) {
+					webDriver.findElement(By.id("tlpvt-challenge-answer")).clear();
+					webDriver.findElement(By.id("tlpvt-challenge-answer")).sendKeys("Jessy");
+				} else if (question.getText().equals("What is your mother's middle name?")) {
+					webDriver.findElement(By.id("tlpvt-challenge-answer")).clear();
+					webDriver.findElement(By.id("tlpvt-challenge-answer")).sendKeys("Nikolaevna");
+				} else if (question.getText().equals("What city were you in on New Year's Eve, 1999?")) {
+					webDriver.findElement(By.id("tlpvt-challenge-answer")).clear();
+					webDriver.findElement(By.id("tlpvt-challenge-answer")).sendKeys("Krasnodar");
+				} else {
+					logger.error(question.getText());
+					logger.error("Unable to recognize secret question");
+					return null;
+				}
+				WebElement submit = webDriver.findElement(By.id("yes-recognize"));
+				if (submit != null)
+					submit.click();
+
+				WebElement cont = webDriver.findElement(By.cssSelector("#verify-cq-submit > span"));
+				if (cont != null)
+					cont.click();
+				else
+					return null;
 			}
-			WebElement submit = webDriver.findElement(By.id("yes-recognize"));
-			if (submit != null)
-				submit.click();
-			
-			WebElement cont = webDriver.findElement(By.cssSelector("#verify-cq-submit > span"));
-			if (cont != null)
-				cont.click();
-			else
-				return null;
 		}
 
 		// reading balance
 		String locator = "span.balanceValue.TL_NPI_L1";
 		amount = webDriver.findElement(By.cssSelector(locator));
-		return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
+		return amount == null ? null : Util.wrapAmount(-
+
+		convertStringAmountToDouble(amount.getText()));
 	}
 
 }
