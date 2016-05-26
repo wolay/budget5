@@ -62,6 +62,7 @@ public class UberWebDriver implements Config {
 		int i = 0;
 		while (webDriver.findElements(by).size() == 0 && i < 20) {
 			Util.sleep(500);
+			i++;
 		}
 		List<WebElement> elements = webDriver.findElements(by);
 		if (elements.size() > 0)
