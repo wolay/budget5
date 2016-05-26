@@ -90,11 +90,9 @@ public abstract class AccountPage implements Config {
 
 		// details link does not exist in WF case
 		if (accountDetails.getDetailsLinkLocator() != null) {
-			WebElement weDetails = webDriver.findElement(accountDetails.getDetailsLinkLocator());
+			WebElement weDetails = webDriver.lookupElement(accountDetails.getDetailsLinkLocator());
 			if (weDetails != null) {
-				// wait for Amazon (without wait button visible but not
-				// clickable)
-				Util.sleep(1000);
+				webDriver.waitToBeClickable(accountDetails.getDetailsLinkLocator());
 				weDetails.click();
 			} else
 				return result;
@@ -125,16 +123,27 @@ public abstract class AccountPage implements Config {
 		for (WebElement row : rows) {
 			if (Util.isPending(row.getText()))
 				continue;
-			if(Util.isPending(row.findElement(byDate).getText()))
+			if (Util.isPending(row.findElement(byDate).getText()))
 				continue;
-			Date date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);			
+			Date date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
 			double amount;
+			// Amount consideration got complecated due PayPal
 			if (byAmountSup == null)
 				amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
-			else
-				amount = (" ".equals(row.findElement(byAmount).getText()))
-						? -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText())
-						: Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+			else {
+				if ("negative".equals(row.findElement(byAmountSup).getText()))
+					amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+				else {
+					if (row.findElements(byAmount).isEmpty())
+						amount = -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText());
+					else
+						amount = (" ".equals(row.findElement(byAmount).getText()))
+								? -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText())
+								: Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+				}
+
+			}
+
 			String description = row.findElement(byDescription).getText().trim().replace("\n", "-");
 			if ("".equals(description))
 				description = row.findElement(byDescriptionSup).getText().trim().replace("\n", "-");
