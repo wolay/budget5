@@ -318,7 +318,7 @@ public class Util implements Config {
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
 				fileWriter.append(COMMA_DELIMITER);
-				String description = transaction.getDecription().replace(",", " ");
+				String description = transaction.getDecription().replace(",", " ").replace("http://", "");
 				if (description.length() > 50)
 					fileWriter.append(description.substring(0, 50));
 				else
@@ -387,10 +387,10 @@ public class Util implements Config {
 				if (transactionsByAccount.size() > 0) {
 					content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:100%;'>";
 					for (Transaction transaction : transactionsByAccount) {
-						content = content + "<tr><td><font size='1'>"
+						content = content + "<tr><td width='10'><font size='1'>"
 								+ Util.convertDateToStringType2(transaction.getDate())
 								+ "</font></td><td><font size='1'>" + transaction.getDecription()
-								+ "</font></td><td><font size='1'>" + amountToString(transaction.getAmount())
+								+ "</font></td><td width='11'><font size='1'>" + amountToString(transaction.getAmount())
 								+ "</font></td></tr>";
 					}
 					content = content + "</table>";
