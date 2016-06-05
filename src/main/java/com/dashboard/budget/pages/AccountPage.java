@@ -198,16 +198,20 @@ public abstract class AccountPage implements Config {
 				double amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
 				Date date = Util.convertStringToDateByType(row.findElement(byDate).getText().trim(), dateFormat);
 				String description = row.findElement(byDescription).getText().trim().replace("\n", "-");
-				result.add(new Transaction(code, date, description, amount, ""));
-				difference = Util.roundDouble(difference - amount);
-				if (difference == 0.0) {
-					if (accountDetails.getAllAccountsLinkLocator() != null) {
-						WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
-						if (accounts != null)
-							accounts.click();
-						Util.sleep(3000);
+				List<Transaction> matchTransactions = prevTransactions.stream()
+						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
+				if (matchTransactions.isEmpty()) {
+					result.add(new Transaction(code, date, description, amount, ""));
+					difference = Util.roundDouble(difference - amount);
+					if (difference == 0.0) {
+						if (accountDetails.getAllAccountsLinkLocator() != null) {
+							WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
+							if (accounts != null)
+								accounts.click();
+							Util.sleep(3000);
+						}
+						return result;
 					}
-					return result;
 				}
 			}
 		}
