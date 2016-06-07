@@ -3,7 +3,7 @@ package com.dashboard.budget.DAO;
 import org.openqa.selenium.By;
 
 public class AccountDetail {
-	private String code;
+	private int code;
 	private String url;
 	private String usernameLocator;
 	private String usernameValue;
@@ -11,6 +11,8 @@ public class AccountDetail {
 	private String passwordValue;
 	private String loginLocator;
 	private By logoutLocator;
+	private By dueDateLocator;
+	private By dueAmountLocator;
 	private By allAccountsLinkLocator;
 	private String transactionsPageUrl;
 	private By detailsLinkLocator;
@@ -25,7 +27,7 @@ public class AccountDetail {
 	private String transAmountLocator;
 	private String transAmountSupLocator;
 
-	public AccountDetail(String code, String url, String usernameLocator, String usernameValue, String passwordLocator,
+	public AccountDetail(int code, String url, String usernameLocator, String usernameValue, String passwordLocator,
 			String passwordValue, String loginLocator, By logoutLocator) {
 		super();
 		this.code = code;
@@ -38,8 +40,8 @@ public class AccountDetail {
 		this.logoutLocator = logoutLocator;
 	}
 
-	public AccountDetail(String code, String url, String usernameLocator, String usernameValue, String passwordLocator,
-			String passwordValue, String loginLocator, By logoutLocator, By allAccountsLinkLocator,
+	public AccountDetail(int code, String url, String usernameLocator, String usernameValue, String passwordLocator,
+			String passwordValue, String loginLocator, By logoutLocator, By dueDateLocator, By dueAmountLocator, By allAccountsLinkLocator,
 			String transactionsPageUrl, By detailsLinkLocator, By periodSwitchLocator, By periodSwitchSupLocator,
 			String transTableLocator, String transTableSupLocator, String transDateLocator, Integer transDateFormat,
 			String transDescriptionLocator, String transDescriptionSupLocator, String transAmountLocator,
@@ -53,6 +55,8 @@ public class AccountDetail {
 		this.passwordValue = passwordValue;
 		this.loginLocator = loginLocator;
 		this.logoutLocator = logoutLocator;
+		this.dueDateLocator = dueDateLocator;
+		this.dueAmountLocator = dueAmountLocator;
 		this.allAccountsLinkLocator = allAccountsLinkLocator;
 		this.transactionsPageUrl = transactionsPageUrl;
 		this.detailsLinkLocator = detailsLinkLocator;
@@ -68,7 +72,7 @@ public class AccountDetail {
 		this.transAmountSupLocator = transAmountSupLocator;
 	}
 
-	public String getCode() {
+	public int getCode() {
 		return code;
 	}
 
@@ -98,6 +102,15 @@ public class AccountDetail {
 
 	public By getLogoutLocator() {
 		return logoutLocator;
+	}
+	
+	public By getDueDateLocator() {
+		return dueDateLocator;
+	}
+	
+
+	public By getDueAmountLocator() {
+		return dueAmountLocator;
 	}
 
 	public By getAllAccountsLinkLocator() {
