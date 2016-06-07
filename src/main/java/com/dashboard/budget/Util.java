@@ -72,6 +72,8 @@ public class Util implements Config {
 				return new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH).parse(string.trim());
 			case 6:
 				return new SimpleDateFormat("MMMMM dd yyyy", Locale.ENGLISH).parse(string.trim());
+			case 7:
+				return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).parse(string.trim());				
 			}
 		} catch (ParseException ex) {
 			logger.error(ex.getMessage());
