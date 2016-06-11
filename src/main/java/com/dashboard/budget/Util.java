@@ -95,6 +95,7 @@ public class Util implements Config {
 
 	public static double convertStringAmountToDouble(String stringAmount) {
 		String out = stringAmount.replace("+", "");
+		out = out.replace("–", "-");
 		out = out.replace("$", "");
 		out = out.replace(" ", "");
 		out = out.replace(",", "");
@@ -474,7 +475,7 @@ public class Util implements Config {
 	public static boolean isPending(String row) {
 		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions")
 				|| row.contains("There is no recent activity") || row.contains("Posted Transactions")
-				|| row.equals("Pending"))
+				|| row.equals("Pending") || row.contains("end of your statement"))
 			return true;
 		else
 			return false;

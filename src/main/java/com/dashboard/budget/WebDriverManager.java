@@ -62,7 +62,7 @@ public class WebDriverManager implements Config {
 		case 141:
 			return new AccountPageBoA(account, dataHandler);
 		case 181:
-			return new AccountPagePayPal(account, dataHandler);			
+			return new AccountPagePayPal(account, dataHandler);
 		case 191:
 			return new AccountPageCapOne(account, dataHandler);
 		case 201:
@@ -145,7 +145,7 @@ public class WebDriverManager implements Config {
 			if (!drivers.contains(driver))
 				drivers.add(driver);
 		}
-		
+
 		executor = Executors.newFixedThreadPool(nubmberOfThreads,
 				new ThreadFactoryBuilder().setNameFormat("%d").build());
 

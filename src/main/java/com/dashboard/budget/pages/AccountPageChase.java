@@ -19,20 +19,19 @@ public class AccountPageChase extends AccountPage {
 	public Double getTotal() {
 		int code = account.getCode();
 		// IHG
-		if (code==131) {
-			//Util.sleep(5000);
-			WebElement nav = webDriver.findElement(By.xpath("//div[@id='creditcardGroupaccounts']/div[2]/div[2]"));
-			if (nav != null)
+		if (code == 131) {
+			Util.sleep(5000);
+			WebElement nav = webDriver.lookupElement(By.xpath("//div[@id='creditcardGroupaccounts']/div[2]/div[2]/div"));
+			if (nav != null) {
 				nav.click();
-			else
-				return null;			
-			String locator = "td.dataValue.HEADERNUMSTR > span";
-			amount = webDriver.findElement(By.cssSelector(locator));
+				Util.sleep(5000);
+			} else
+				return null;
+			amount = webDriver.lookupElement(By.cssSelector("td.dataValue.HEADERNUMSTR > span"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hyatt
-		} else if (code==132) {
-			String locator = "td.dataValue.HEADERNUMSTR > span";
-			amount = webDriver.findElement(By.cssSelector(locator));
+		} else if (code == 132) {
+			amount = webDriver.lookupElement(By.cssSelector("td.dataValue.HEADERNUMSTR > span"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 		}
 
