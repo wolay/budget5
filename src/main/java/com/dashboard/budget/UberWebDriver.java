@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -23,14 +23,8 @@ public class UberWebDriver implements Config {
 	private WebDriverWait wait;
 
 	public UberWebDriver() {
-		/*
-		 * if (account.getBrowser().equals("html1")) { this.webDriver = new
-		 * HtmlUnitDriver(BrowserVersion.FIREFOX_38); ((HtmlUnitDriver)
-		 * webDriver).setJavascriptEnabled(true); //((HtmlUnitDriver)
-		 * webDriver).setCssEnabled(false); } else this.webDriver = new
-		 * FirefoxDriver();
-		 */
-		this.webDriver = new FirefoxDriver();
+		System.setProperty("webdriver.chrome.driver", "chromedriver");
+		this.webDriver = new ChromeDriver();
 		this.wait = new WebDriverWait(this.webDriver, timeout);
 	}
 
@@ -97,5 +91,9 @@ public class UberWebDriver implements Config {
 		} catch (Exception e) {
 			logger.error("Unable to find locator: {}", by);
 		}
+	}
+
+	public void waitToBeClickable(By by) {
+		wait.until(ExpectedConditions.elementToBeClickable(by));
 	}
 }
