@@ -110,7 +110,7 @@ public abstract class AccountPage implements Config {
 				: By.xpath(accountDetails.getTransDescriptionSupLocator());
 		Integer dateFormat = accountDetails.getTransDateFormat();
 
-		// current period transactions
+		// CURRENT PERIOD TRANSACTIONS
 		List<WebElement> rows;
 		// Little trick for Citi - pending transactions populate in /table/tboby
 		// and posted transaction populate in /table/tbody[2]
@@ -144,9 +144,14 @@ public abstract class AccountPage implements Config {
 
 			}
 
-			String description = row.findElement(byDescription).getText().trim().replace("\n", "-");
-			if ("".equals(description))
+			String description = "";
+			if(byDescriptionSup==null)
+				description = row.findElement(byDescription).getText().trim().replace("\n", "-");
+			else{
 				description = row.findElement(byDescriptionSup).getText().trim().replace("\n", "-");
+				if ("".equals(description))
+					description = row.findElement(byDescription).getText().trim().replace("\n", "-");}				
+
 			List<Transaction> matchTransactions = prevTransactions.stream()
 					.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 			if (matchTransactions.isEmpty()) {
@@ -177,7 +182,7 @@ public abstract class AccountPage implements Config {
 			} else
 				new Select(webDriver.findElement(By.id("filterDropDown"))).selectByIndex(1);
 
-			// previous period transactions
+			// PREVIOUS PERIOD TRANSACTIONS
 			// lets see how it will go... not many accounts reach that point
 			// new
 			// Select(webDriver.findElement(accountDetails.getPeriodSwitchLocator())).selectByIndex(1);
