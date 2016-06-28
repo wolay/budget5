@@ -23,20 +23,10 @@ public class AccountPageAmEx extends AccountPage {
 		if (code == 121) {
 			amount = webDriver.findElement(By.id("ah-outstanding-balance-value"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
-			// Costco
-		} else if (code==122) {
-			Util.sleep(5000);
-			nav = webDriver.findElement(By.id("iNavCSImg1"));
-			if (nav != null)
-				nav.click();
-			else
-				return null;
-			amount = webDriver.findElement(By.id("ah-outstanding-balance-value"));
-			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hilton
 		} else if (code==123) {
 			Util.sleep(5000);
-			nav = webDriver.findElement(By.id("iNavCSImg2"));
+			nav = webDriver.findElement(By.id("iNavCSImg1"));
 			if (nav != null)
 				nav.click();
 			else
