@@ -145,7 +145,7 @@ public abstract class AccountPage implements Config {
 			}
 
 			String description = "";
-			if(byDescriptionSup==null)
+			if(byDescriptionSup==null || row.findElements(byDescriptionSup).size()==0)
 				description = row.findElement(byDescription).getText().trim().replace("\n", "-");
 			else{
 				description = row.findElement(byDescriptionSup).getText().trim().replace("\n", "-");
