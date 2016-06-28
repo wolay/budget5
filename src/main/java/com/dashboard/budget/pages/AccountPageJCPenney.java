@@ -28,14 +28,14 @@ public class AccountPageJCPenney extends AccountPage {
 		if (securityLabel != null) {
 			String question = webDriver.findElement(By.xpath("//tr[4]/td[2]")).getText().trim();
 			if (question.equals("In what city were you married? (Enter full name of city)")) {
-				webDriver.findElement(By.id("challengeAnswer1")).clear();
-				webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Moscow");
+				webDriver.findElement(By.name("challengeAnswer1")).clear();
+				webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Moscow");
 			} else if (question.equals("What city were you in on New Year's Eve, 1999?")) {
-				webDriver.findElement(By.id("challengeAnswer1")).clear();
-				webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Saransk");
+				webDriver.findElement(By.name("challengeAnswer1")).clear();
+				webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Saransk");
 			} else if (question.equals("What was the name of your first pet?")) {
-				webDriver.findElement(By.id("challengeAnswer1")).clear();
-				webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Murzik");
+				webDriver.findElement(By.name("challengeAnswer1")).clear();
+				webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Murzik");
 			}
 			WebElement submit = webDriver.findElement(By.id("submitChallengeAnswers"));
 			if (submit != null)

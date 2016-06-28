@@ -21,7 +21,7 @@ public class AccountPageTjMaxx extends AccountPage {
 	public boolean login() {
 		fldUsername = By.name(accountDetails.getUsernameLocator());
 		fldPassword = By.name(accountDetails.getPasswordLocator());
-		btnLogin = By.cssSelector(accountDetails.getLoginLocator());
+		btnLogin = accountDetails.getLoginLocator();
 
 		webDriver.findElement(fldUsername).sendKeys(accountDetails.getUsernameValue());
 		webDriver.findElement(btnLogin).click();
@@ -32,19 +32,19 @@ public class AccountPageTjMaxx extends AccountPage {
 			String question = webDriver.findElement(By.xpath("//tr[4]/td[2]")).getText().trim();
 			if ("Andrei".equals(account.getOwner())) {
 				if (question.equals("In what city were you married? (Enter full name of city)")) {
-					webDriver.findElement(By.id("challengeAnswer1")).clear();
-					webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Moscow");
+					webDriver.findElement(By.name("challengeAnswer1")).clear();
+					webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Moscow");
 				} else if (question.equals("What was the name of your first pet?")) {
-					webDriver.findElement(By.id("challengeAnswer1")).clear();
+					webDriver.findElement(By.name("challengeAnswer1")).clear();
 					webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Murzik");
 				}
 			} else {
 				if (question.equals("In what city were you married? (Enter full name of city)")) {
-					webDriver.findElement(By.id("challengeAnswer1")).clear();
-					webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Moscow");
+					webDriver.findElement(By.name("challengeAnswer1")).clear();
+					webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Moscow");
 				} else if (question.equals("What was the name of your first pet?")) {
-					webDriver.findElement(By.id("challengeAnswer1")).clear();
-					webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Jessy");
+					webDriver.findElement(By.name("challengeAnswer1")).clear();
+					webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Jessy");
 				}
 			}
 			WebElement submit = webDriver.findElement(By.id("submitChallengeAnswers"));
