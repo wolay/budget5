@@ -475,7 +475,7 @@ public class Util implements Config {
 	public static boolean isPending(String row) {
 		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions")
 				|| row.contains("There is no recent activity") || row.contains("Posted Transactions")
-				|| row.equals("Pending") || row.contains("end of your statement"))
+				|| row.equals("Pending") || row.contains("end of your statement") || row.startsWith("No activity posted"))
 			return true;
 		else
 			return false;
