@@ -16,13 +16,6 @@ public class AccountPageBestBuy extends AccountPage {
 	}
 
 	@Override
-	public boolean login() {
-		btnLogin = By.cssSelector(accountDetails.getLoginLocator());
-		super.login();
-		return true;
-	}
-
-	@Override
 	public Double getTotal() {
 		amount = webDriver.findElement(By.xpath("//div[@id='skip_target']/section[2]/section/article/div/dl[2]/dd"));
 		WebElement signoff = webDriver.findElement(By.linkText("Sign Off"));

@@ -41,7 +41,7 @@ public abstract class AccountPage implements Config {
 		this.accountDetails = DataHandler.getAccountsDetailsByAccount(account);
 		fldUsername = By.id(accountDetails.getUsernameLocator());
 		fldPassword = By.id(accountDetails.getPasswordLocator());
-		btnLogin = By.id(accountDetails.getLoginLocator());
+		btnLogin = accountDetails.getLoginLocator();
 		btnLogout = accountDetails.getLogoutLocator();
 
 		this.webDriver = new UberWebDriver();
@@ -59,6 +59,7 @@ public abstract class AccountPage implements Config {
 	}
 
 	public synchronized boolean login() {
+		Util.sleep(3000); //for Best Buy card
 		WebElement username = webDriver.findElement(fldUsername);
 		if (username == null)
 			return false;
@@ -67,10 +68,8 @@ public abstract class AccountPage implements Config {
 		if (password == null)
 			return false;
 		password.sendKeys(accountDetails.getPasswordValue());
-		WebElement login = webDriver.findElement(btnLogin);
-		if (login == null)
-			return false;
-		login.click();
+
+		webDriver.findElement(btnLogin).click();
 		return true;
 	}
 
@@ -111,64 +110,76 @@ public abstract class AccountPage implements Config {
 		Integer dateFormat = accountDetails.getTransDateFormat();
 
 		// CURRENT PERIOD TRANSACTIONS
-		List<WebElement> rows;
+		List<WebElement> currentPeriodRows;
 		// Little trick for Citi - pending transactions populate in /table/tboby
 		// and posted transaction populate in /table/tbody[2]
 		// but.. if there is no pending transactions then posted transactions
 		// populate in /table/tbody
 		if (webDriver.lookupElement(By.xpath(accountDetails.getTransTableLocator())) == null)
-			rows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
+			currentPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
 		else
-			rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
-		for (WebElement row : rows) {
-			if (Util.isPending(row.getText()))
-				continue;
-			if (Util.isPending(row.findElement(byDate).getText()))
-				continue;
-			Date date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
-			double amount;
-			// Amount consideration got complecated due PayPal
-			if (byAmountSup == null)
-				amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
-			else {
-				if ("negative".equals(row.findElement(byAmountSup).getText()))
+			currentPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
+		if (currentPeriodRows == null)
+			logger.info("No rows found in the current period table");
+		else {
+			logger.info("Rows in the current period table: {}", currentPeriodRows.size());
+			for (WebElement row : currentPeriodRows) {
+				// logger.info("Row in the current period table: {}",
+				// row.getText());
+				if (Util.isPending(row.getText()))
+					continue;
+				if (Util.isPending(row.findElement(byDate).getText()))
+					continue;
+				Date date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
+				double amount;
+				// Amount consideration got complicated due PayPal
+				if (byAmountSup == null)
 					amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
 				else {
-					if (row.findElements(byAmount).isEmpty())
-						amount = -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText());
-					else
-						amount = (" ".equals(row.findElement(byAmount).getText()))
-								? -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText())
-								: Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+					if ("negative".equals(row.findElement(byAmountSup).getText()))
+						amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+					else {
+						if (row.findElements(byAmount).isEmpty())
+							amount = -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText());
+						else
+							amount = (" ".equals(row.findElement(byAmount).getText()))
+									? -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText())
+									: Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+					}
+
 				}
 
-			}
+				String description = "";
+				if (byDescriptionSup == null || row.findElements(byDescriptionSup).size() == 0)
+					description = row.findElement(byDescription).getText().trim().replace("\n", "-");
+				else {
+					description = row.findElement(byDescriptionSup).getText().trim().replace("\n", "-");
+					if ("".equals(description))
+						description = row.findElement(byDescription).getText().trim().replace("\n", "-");
+				}
 
-			String description = "";
-			if(byDescriptionSup==null || row.findElements(byDescriptionSup).size()==0)
-				description = row.findElement(byDescription).getText().trim().replace("\n", "-");
-			else{
-				description = row.findElement(byDescriptionSup).getText().trim().replace("\n", "-");
-				if ("".equals(description))
-					description = row.findElement(byDescription).getText().trim().replace("\n", "-");}				
-
-			List<Transaction> matchTransactions = prevTransactions.stream()
-					.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
-			if (matchTransactions.isEmpty()) {
-				result.add(new Transaction(code, date, description, amount, ""));
-				difference = Util.roundDouble(difference - amount);
-				if (difference == 0.0) {
-					if (accountDetails.getAllAccountsLinkLocator() != null) {
-						WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
-						if (accounts != null)
-							accounts.click();
-						Util.sleep(3000);
+				List<Transaction> matchTransactions = prevTransactions.stream()
+						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
+				if (matchTransactions.isEmpty()) {
+					result.add(new Transaction(code, date, description, amount, ""));
+					difference = Util.roundDouble(difference - amount);
+					logger.info("Amount: {}, diff: {}", amount, difference);
+					if (difference == 0.0) {
+						if (accountDetails.getAllAccountsLinkLocator() != null) {
+							WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
+							if (accounts != null)
+								accounts.click();
+							Util.sleep(3000);
+						}
+						return result;
 					}
-					return result;
 				}
 			}
 		}
 
+		// PREVIOUS PERIOD TRANSACTIONS
+		List<WebElement> previousPeriodRows;
+		// lets see how it will go... not many accounts reach that point
 		// for some accounts previous period transactions are not considered
 		// (i.e. WF)
 		if (accountDetails.getPeriodSwitchLocator() != null) {
@@ -179,25 +190,26 @@ public abstract class AccountPage implements Config {
 					periods.click();
 				else
 					return result;
-			} else
-				new Select(webDriver.findElement(By.id("filterDropDown"))).selectByIndex(1);
+			}
 
-			// PREVIOUS PERIOD TRANSACTIONS
-			// lets see how it will go... not many accounts reach that point
-			// new
-			// Select(webDriver.findElement(accountDetails.getPeriodSwitchLocator())).selectByIndex(1);
-			// this code enabled for AmEx
 			WebElement period = webDriver.findElement(accountDetails.getPeriodSwitchLocator());
-			if (period != null)
-				period.click();
-			else
+			if (period != null) {
+				if ("click".equals(accountDetails.getActionToSwitchPeriod()))
+					period.click();
+				else
+					new Select(period).selectByIndex(1);
+			} else
 				return result;
 
+			// Wait for previous transactions table to be loaded
+			Util.sleep(3000);
 			if (webDriver.lookupElement(By.xpath(accountDetails.getTransTableLocator())) == null)
-				rows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
+				previousPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
 			else
-				rows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
-			for (WebElement row : rows) {
+				previousPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
+			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
+			for (WebElement row : previousPeriodRows) {
+				//logger.info("Row in the previous period table: {}", row.getText());
 				if (Util.isPending(row.getText()))
 					continue;
 				double amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
@@ -208,6 +220,7 @@ public abstract class AccountPage implements Config {
 				if (matchTransactions.isEmpty()) {
 					result.add(new Transaction(code, date, description, amount, ""));
 					difference = Util.roundDouble(difference - amount);
+					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
 						if (accountDetails.getAllAccountsLinkLocator() != null) {
 							WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());

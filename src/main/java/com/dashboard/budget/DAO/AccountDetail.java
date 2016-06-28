@@ -9,13 +9,14 @@ public class AccountDetail {
 	private String usernameValue;
 	private String passwordLocator;
 	private String passwordValue;
-	private String loginLocator;
+	private By loginLocator;
 	private By logoutLocator;
 	private By dueDateLocator;
 	private By dueAmountLocator;
 	private By allAccountsLinkLocator;
 	private String transactionsPageUrl;
 	private By detailsLinkLocator;
+	private String actionToSwitchPeriod;
 	private By periodSwitchLocator;
 	private By periodSwitchSupLocator;
 	private String transTableLocator;
@@ -28,7 +29,7 @@ public class AccountDetail {
 	private String transAmountSupLocator;
 
 	public AccountDetail(int code, String url, String usernameLocator, String usernameValue, String passwordLocator,
-			String passwordValue, String loginLocator, By logoutLocator) {
+			String passwordValue, By loginLocator, By logoutLocator) {
 		super();
 		this.code = code;
 		this.url = url;
@@ -41,8 +42,8 @@ public class AccountDetail {
 	}
 
 	public AccountDetail(int code, String url, String usernameLocator, String usernameValue, String passwordLocator,
-			String passwordValue, String loginLocator, By logoutLocator, By dueDateLocator, By dueAmountLocator, By allAccountsLinkLocator,
-			String transactionsPageUrl, By detailsLinkLocator, By periodSwitchLocator, By periodSwitchSupLocator,
+			String passwordValue, By loginLocator, By logoutLocator, By dueDateLocator, By dueAmountLocator, By allAccountsLinkLocator,
+			String transactionsPageUrl, By detailsLinkLocator, String actionToSwitchPeriod, By periodSwitchLocator, By periodSwitchSupLocator,
 			String transTableLocator, String transTableSupLocator, String transDateLocator, Integer transDateFormat,
 			String transDescriptionLocator, String transDescriptionSupLocator, String transAmountLocator,
 			String transAmountSupLocator) {
@@ -60,6 +61,7 @@ public class AccountDetail {
 		this.allAccountsLinkLocator = allAccountsLinkLocator;
 		this.transactionsPageUrl = transactionsPageUrl;
 		this.detailsLinkLocator = detailsLinkLocator;
+		this.actionToSwitchPeriod = actionToSwitchPeriod;
 		this.periodSwitchLocator = periodSwitchLocator;
 		this.periodSwitchSupLocator = periodSwitchSupLocator;
 		this.transTableLocator = transTableLocator;
@@ -96,7 +98,7 @@ public class AccountDetail {
 		return passwordValue;
 	}
 
-	public String getLoginLocator() {
+	public By getLoginLocator() {
 		return loginLocator;
 	}
 
@@ -127,6 +129,10 @@ public class AccountDetail {
 
 	public By getPeriodSwitchLocator() {
 		return periodSwitchLocator;
+	}
+	
+	public String getActionToSwitchPeriod(){
+		return actionToSwitchPeriod;
 	}
 
 	public By getPeriodSwitchSupLocator() {
