@@ -20,8 +20,14 @@ public class AccountPageTjMaxx extends AccountPage {
 	@Override
 	public boolean login() {
 		fldUsername = By.name(accountDetails.getUsernameLocator());
+		if(fldUsername==null)
+			return false;
 		fldPassword = By.name(accountDetails.getPasswordLocator());
+		if(fldPassword==null)
+			return false;		
 		btnLogin = accountDetails.getLoginLocator();
+		if(btnLogin==null)
+			return false;
 
 		webDriver.findElement(fldUsername).sendKeys(accountDetails.getUsernameValue());
 		webDriver.findElement(btnLogin).click();
