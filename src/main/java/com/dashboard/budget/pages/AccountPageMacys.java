@@ -25,8 +25,6 @@ public class AccountPageMacys extends AccountPage {
 		WebElement cont = webDriver.findElement(By.id("speedBumpContinueBtn"));
 		if (cont != null)
 			cont.click();
-		else
-			return null;
 		// Store the current window handle
 		String winHandleBefore = webDriver.getWindowHandle();
 		// Switch to new window opened

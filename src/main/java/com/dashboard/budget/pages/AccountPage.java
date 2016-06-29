@@ -124,8 +124,7 @@ public abstract class AccountPage implements Config {
 		else {
 			logger.info("Rows in the current period table: {}", currentPeriodRows.size());
 			for (WebElement row : currentPeriodRows) {
-				// logger.info("Row in the current period table: {}",
-				// row.getText());
+				 logger.info("Row in the current period table: {}",row.getText());
 				if (Util.isPending(row.getText()))
 					continue;
 				if (Util.isPending(row.findElement(byDate).getText()))
