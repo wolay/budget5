@@ -54,7 +54,7 @@ public class AccountPageCiti extends AccountPage {
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Costco
 		} else if (code==114) {
-			amount = webDriver.findElement(By.xpath("//div[4]/div[2]/div/div[2]/span"));
+			amount = webDriver.findElement(By.xpath("//div[3]/div/div[2]/span"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));			
 		}
 
