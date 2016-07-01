@@ -18,7 +18,7 @@ public class AccountPageWF extends AccountPage {
 
 	// @Override
 	public synchronized Double getTotal() {
-		int code = account.getCode();
+		int code = account.getId();
 		Double result = null;
 		WebElement details = null;
 		// Checking

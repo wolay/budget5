@@ -67,7 +67,7 @@ public class AccountPageTjMaxx extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		int code = account.getCode();
+		int code = account.getId();
 		// Andrei
 		if (code==207) {
 			amount = webDriver.findElement(By.id("currentBalance"));

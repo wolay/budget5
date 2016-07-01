@@ -1,34 +1,35 @@
 package com.dashboard.budget.DAO;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.dashboard.budget.DataHandler;
 
+@Entity
+@Table(name = "accounts")
 public class Account{
 	
-	private int code;
+	@Id
+	private int id;
 	private String name;
 	private String bank;
 	private String browser;
 	private String owner;
 	public Integer priority; 
 	
-	public Account(int code, String name, String bank, String browser, String owner, int priority) {
-		this.code    = code;
+	public Account(){}
+	public Account(int id, String name, String bank, String browser, String owner, int priority) {
+		this.id    = id;
 		this.name    = name;
 		this.bank    = bank;
 		this.browser = browser;
 		this.owner   = owner;
 		this.priority = priority;
 	}
-	
-	public Account(String name, String bank, String owner, int priority) {
-		this.name    = name;
-		this.bank    = bank;
-		this.owner   = owner;
-		this.priority = priority;
-	}
 
-	public int getCode() {
-		return code;
+	public int getId() {
+		return id;
 	}
 
 	public String getName() {
@@ -57,7 +58,7 @@ public class Account{
 
 	@Override
 	public String toString() {
-		return "Account [code=" + code + ", name=" + name + ", bank=" + bank + ", browser=" + browser + ", owner="
+		return "Account [id=" + id + ", name=" + name + ", bank=" + bank + ", browser=" + browser + ", owner="
 				+ owner + ", priority=" + priority + "]";
 	}
 

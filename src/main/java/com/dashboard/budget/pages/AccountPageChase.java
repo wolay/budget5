@@ -17,7 +17,7 @@ public class AccountPageChase extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		int code = account.getCode();
+		int code = account.getId();
 		// IHG
 		if (code == 131) {
 			Util.sleep(5000);

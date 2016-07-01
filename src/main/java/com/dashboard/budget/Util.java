@@ -254,7 +254,7 @@ public class Util implements Config {
 			for (Total total : totals) {
 				fileWriter.append(today);
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(total.getAccount().getCode()));
+				fileWriter.append(String.valueOf(total.getAccount().getId()));
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(total.getAccount().getName());
 				fileWriter.append(COMMA_DELIMITER);
@@ -262,6 +262,9 @@ public class Util implements Config {
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(amountToString(total.getDifference()));
 				fileWriter.append(NEW_LINE_SEPARATOR);
+				
+				//saving to DB
+				
 			}
 
 			// Adding total
@@ -386,7 +389,7 @@ public class Util implements Config {
 						+ "'><td><a href='" + total.getAccount().getUrl() + "'>" + total.getAccount().getName()
 						+ "</a>";
 				List<Transaction> transactionsByAccount = transactions.stream()
-						.filter(p -> p.getCode() == total.getAccount().getCode()).collect(Collectors.toList());
+						.filter(p -> p.getCode() == total.getAccount().getId()).collect(Collectors.toList());
 				if (transactionsByAccount.size() > 0) {
 					content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:100%;'>";
 					for (Transaction transaction : transactionsByAccount) {

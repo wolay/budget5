@@ -36,7 +36,7 @@ public class WebDriverManager implements Config {
 	}
 
 	private AccountPage getAccountPage(Account account) {
-		switch (account.getCode()) {
+		switch (account.getId()) {
 		case 101:
 			return new AccountPageWF(account, dataHandler);
 		case 102:
@@ -93,7 +93,7 @@ public class WebDriverManager implements Config {
 		if (amount == null)
 			return 0.00;
 
-		Double prevTotal = prevTotals.get(account.getCode());
+		Double prevTotal = prevTotals.get(account.getId());
 		if (prevTotal == null)
 			return null;
 		else

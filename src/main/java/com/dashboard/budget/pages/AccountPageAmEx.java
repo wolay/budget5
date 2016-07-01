@@ -17,7 +17,7 @@ public class AccountPageAmEx extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		int code = account.getCode();
+		int code = account.getId();
 		WebElement nav = null;
 		// Blue Cash
 		if (code == 121) {

@@ -2,14 +2,30 @@ package com.dashboard.budget.DAO;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "totals")
 public class Total implements Comparable<Object>{
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private int id;
 	private Date date;
+	@ManyToOne
+	@JoinColumn(name="account_id")
 	private Account account;
 	private Double amount;
 	private Double difference;
 	private DataRetrievalStatus status;
 	
+	public Total(){}
 	public Total(Date date, Account account, Double amount, Double difference) {
 		this.date = date;
 		this.account = account;
@@ -74,9 +90,9 @@ public class Total implements Comparable<Object>{
 
 	@Override
 	public int compareTo(Object o) {
-		int compareQuantity = Integer.valueOf(((Total) o).getAccount().getCode()); 
+		int compareQuantity = Integer.valueOf(((Total) o).getAccount().getId()); 
 		
 		//ascending order
-		return Integer.valueOf(this.getAccount().getCode()) - compareQuantity;
+		return Integer.valueOf(this.getAccount().getId()) - compareQuantity;
 	}
 }
