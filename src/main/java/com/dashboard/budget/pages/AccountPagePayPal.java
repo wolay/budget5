@@ -22,7 +22,22 @@ public class AccountPagePayPal extends AccountPage {
 		if (ad != null)
 			ad.click();
 
-		String balanceStr = webDriver.findElement(By.cssSelector("span.vx_h2.enforceLtr  ")).getText();
+		WebElement balPage = webDriver.lookupElement(By.id("js_balanceModule"));
+		if (balPage != null)
+			balPage.click();
+
+		String balanceStr = null;
+		WebElement bal = webDriver.lookupElement(By.cssSelector("dd.total.vx_h2   > span.enforceLtr"));
+		if (bal != null)
+			balanceStr = bal.getText();
+
+		WebElement exit = webDriver
+				.lookupElement(By.cssSelector("div.col-xs-12 > a[name='close'] > span.icon.icon-close-small"));
+		if (exit != null) {
+			webDriver.waitToBeClickable(By.cssSelector("div.col-xs-12 > a[name='close'] > span.icon.icon-close-small"));
+			exit.click();
+		}
+
 		return Util.wrapAmount(convertStringAmountToDouble(balanceStr));
 	}
 
