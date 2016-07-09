@@ -59,7 +59,7 @@ public abstract class AccountPage implements Config {
 	}
 
 	public synchronized boolean login() {
-		Util.sleep(3000); //for Best Buy card
+		Util.sleep(3000); // for Best Buy card
 		WebElement username = webDriver.findElement(fldUsername);
 		if (username == null)
 			return false;
@@ -116,7 +116,10 @@ public abstract class AccountPage implements Config {
 		// but.. if there is no pending transactions then posted transactions
 		// populate in /table/tbody
 		if (webDriver.lookupElement(By.xpath(accountDetails.getTransTableLocator())) == null)
-			currentPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
+			if (accountDetails.getTransTableSupLocator() == null)
+				currentPeriodRows = null;
+			else
+				currentPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
 		else
 			currentPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
 		if (currentPeriodRows == null)
@@ -124,7 +127,7 @@ public abstract class AccountPage implements Config {
 		else {
 			logger.info("Rows in the current period table: {}", currentPeriodRows.size());
 			for (WebElement row : currentPeriodRows) {
-				 logger.info("Row in the current period table: {}",row.getText());
+				logger.info("Row in the current period table: {}", row.getText());
 				if (Util.isPending(row.getText()))
 					continue;
 				if (Util.isPending(row.findElement(byDate).getText()))
@@ -208,7 +211,8 @@ public abstract class AccountPage implements Config {
 				previousPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
 			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
 			for (WebElement row : previousPeriodRows) {
-				//logger.info("Row in the previous period table: {}", row.getText());
+				// logger.info("Row in the previous period table: {}",
+				// row.getText());
 				if (Util.isPending(row.getText()))
 					continue;
 				double amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
