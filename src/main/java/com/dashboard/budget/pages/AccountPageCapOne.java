@@ -11,7 +11,7 @@ import com.dashboard.budget.DAO.Account;
 public class AccountPageCapOne extends AccountPage {
 
 	public AccountPageCapOne(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 
 	@Override

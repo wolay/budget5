@@ -12,15 +12,15 @@ import com.dashboard.budget.DAO.Account;
 public class AccountPageJCPenney extends AccountPage {
 
 	public AccountPageJCPenney(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 	
 	@Override
 	public boolean login() {
-		fldUsername = By.name(accountDetails.getUsernameLocator());
-		fldPassword = By.name(accountDetails.getPasswordLocator());
+		fldUsername = accountLoginDetails.getUsernameLocator();
+		fldPassword = accountLoginDetails.getPasswordLocator();
 		
-		webDriver.findElement(fldUsername).sendKeys(accountDetails.getUsernameValue());
+		webDriver.findElement(fldUsername).sendKeys(accountLoginDetails.getUsernameValue());
 		webDriver.findElement(By.name("button")).click();
 		
 		// secret question
@@ -44,7 +44,7 @@ public class AccountPageJCPenney extends AccountPage {
 				return false;
 		}		
 		
-		webDriver.findElement(fldPassword).sendKeys(accountDetails.getPasswordValue());		
+		webDriver.findElement(fldPassword).sendKeys(accountLoginDetails.getPasswordValue());		
 		webDriver.findElement(btnLogin).click();
 		return true;
 		

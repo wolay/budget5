@@ -17,7 +17,10 @@ import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.UberWebDriver;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
-import com.dashboard.budget.DAO.AccountDetail;
+import com.dashboard.budget.DAO.AccountDetailsLogin;
+import com.dashboard.budget.DAO.AccountDetailsNavigation;
+import com.dashboard.budget.DAO.AccountDetailsTotal;
+import com.dashboard.budget.DAO.AccountDetailsTransaction;
 import com.dashboard.budget.DAO.Transaction;
 
 public abstract class AccountPage implements Config {
@@ -25,7 +28,11 @@ public abstract class AccountPage implements Config {
 	protected static Logger logger = LoggerFactory.getLogger(AccountPage.class);
 
 	protected Account account;
-	protected AccountDetail accountDetails;
+	protected AccountDetailsLogin accountLoginDetails;
+	protected AccountDetailsNavigation accountNavigationDetails;
+	protected AccountDetailsTotal accountTotalDetails;
+	protected AccountDetailsTransaction accountTransactionDetails;
+	protected DataHandler dataHandler;
 
 	protected UberWebDriver webDriver;
 	protected WebDriverWait wait;
@@ -36,13 +43,17 @@ public abstract class AccountPage implements Config {
 	protected By btnLogout;
 	protected WebElement amount;
 
-	public AccountPage(Account account) {
+	public AccountPage(Account account, DataHandler dataHandler) {
 		this.account = account;
-		this.accountDetails = DataHandler.getAccountsDetailsByAccount(account);
-		fldUsername = By.id(accountDetails.getUsernameLocator());
-		fldPassword = By.id(accountDetails.getPasswordLocator());
-		btnLogin = accountDetails.getLoginLocator();
-		btnLogout = accountDetails.getLogoutLocator();
+		this.dataHandler = dataHandler;
+		this.accountLoginDetails = dataHandler.getAccountsLoginDetailsByAccount(account);
+		this.accountNavigationDetails = dataHandler.getAccountsNavigationDetailsByAccount(account);
+		this.accountTotalDetails = dataHandler.getAccountsTotalDetailsByAccount(account);
+		this.accountTransactionDetails = dataHandler.getAccountsTransactionDetailsByAccount(account);
+		fldUsername = accountLoginDetails.getUsernameLocator();
+		fldPassword = accountLoginDetails.getPasswordLocator();
+		btnLogin = accountLoginDetails.getLoginLocator();
+		btnLogout = accountLoginDetails.getLogoutLocator();
 
 		this.webDriver = new UberWebDriver();
 		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
@@ -55,7 +66,10 @@ public abstract class AccountPage implements Config {
 
 	public void setAccount(Account account) {
 		this.account = account;
-		this.accountDetails = DataHandler.getAccountsDetailsByAccount(account);
+		this.accountLoginDetails = dataHandler.getAccountsLoginDetailsByAccount(account);
+		this.accountNavigationDetails = dataHandler.getAccountsNavigationDetailsByAccount(account);
+		this.accountTotalDetails = dataHandler.getAccountsTotalDetailsByAccount(account);
+		this.accountTransactionDetails = dataHandler.getAccountsTransactionDetailsByAccount(account);
 	}
 
 	public synchronized boolean login() {
@@ -63,51 +77,51 @@ public abstract class AccountPage implements Config {
 		WebElement username = webDriver.findElement(fldUsername);
 		if (username == null)
 			return false;
-		username.sendKeys(accountDetails.getUsernameValue());
+		username.sendKeys(accountLoginDetails.getUsernameValue());
 		WebElement password = webDriver.findElement(fldPassword);
 		if (password == null)
 			return false;
-		password.sendKeys(accountDetails.getPasswordValue());
+		password.sendKeys(accountLoginDetails.getPasswordValue());
 
 		webDriver.findElement(btnLogin).click();
 		return true;
 	}
 
 	public void gotoHomePage() {
-		webDriver.get(accountDetails.getUrl());
+		webDriver.get(account.getUrl());
 	}
 
 	public abstract Double getTotal();
 
 	public List<Transaction> getTransactions(Double difference, List<Transaction> prevTransactions) {
 		// check if getting transactions is enabled for account
-		if (accountDetails.getTransTableLocator() == null)
+		if (accountTransactionDetails == null)
 			return new ArrayList<Transaction>();
 
 		int code = account.getId();
 		List<Transaction> result = new ArrayList<Transaction>();
 
 		// details link does not exist in WF case
-		if (accountDetails.getDetailsLinkLocator() != null) {
-			WebElement weDetails = webDriver.lookupElement(accountDetails.getDetailsLinkLocator());
+		if (accountNavigationDetails != null && accountNavigationDetails.getDetailsLinkLocator() != null) {
+			WebElement weDetails = webDriver.lookupElement(accountNavigationDetails.getDetailsLinkLocator());
 			if (weDetails != null) {
-				webDriver.waitToBeClickable(accountDetails.getDetailsLinkLocator());
+				webDriver.waitToBeClickable(accountNavigationDetails.getDetailsLinkLocator());
 				weDetails.click();
 			} else
 				return result;
-		} else if (accountDetails.getTransactionsPageUrl() != null) {
-			webDriver.get(accountDetails.getTransactionsPageUrl());
+		} else if (accountNavigationDetails != null && accountNavigationDetails.getTransactionsPageUrl() != null) {
+			webDriver.get(accountNavigationDetails.getTransactionsPageUrl());
 			webDriver.switchTo().defaultContent();
 		}
 
-		By byDate = By.xpath(accountDetails.getTransDateLocator());
-		By byAmount = By.xpath(accountDetails.getTransAmountLocator());
-		By byAmountSup = (accountDetails.getTransAmountSupLocator() == null) ? null
-				: By.xpath(accountDetails.getTransAmountSupLocator());
-		By byDescription = By.xpath(accountDetails.getTransDescriptionLocator());
-		By byDescriptionSup = (accountDetails.getTransDescriptionSupLocator() == null) ? null
-				: By.xpath(accountDetails.getTransDescriptionSupLocator());
-		Integer dateFormat = accountDetails.getTransDateFormat();
+		By byDate = By.xpath(accountTransactionDetails.getTransDateLocator());
+		By byAmount = By.xpath(accountTransactionDetails.getTransAmountLocator());
+		By byAmountSup = (accountTransactionDetails.getTransAmountSupLocator() == null) ? null
+				: By.xpath(accountTransactionDetails.getTransAmountSupLocator());
+		By byDescription = By.xpath(accountTransactionDetails.getTransDescriptionLocator());
+		By byDescriptionSup = (accountTransactionDetails.getTransDescriptionSupLocator() == null) ? null
+				: By.xpath(accountTransactionDetails.getTransDescriptionSupLocator());
+		Integer dateFormat = accountTransactionDetails.getTransDateFormat();
 
 		// CURRENT PERIOD TRANSACTIONS
 		List<WebElement> currentPeriodRows;
@@ -115,13 +129,14 @@ public abstract class AccountPage implements Config {
 		// and posted transaction populate in /table/tbody[2]
 		// but.. if there is no pending transactions then posted transactions
 		// populate in /table/tbody
-		if (webDriver.lookupElement(By.xpath(accountDetails.getTransTableLocator())) == null)
-			if (accountDetails.getTransTableSupLocator() == null)
+		if (webDriver.lookupElement(accountTransactionDetails.getTransTableLocator()) == null)
+			if (accountTransactionDetails.getTransTableSupLocator() == null)
 				currentPeriodRows = null;
 			else
-				currentPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
+				currentPeriodRows = webDriver
+						.findElements(accountTransactionDetails.getTransTableSupLocator());
 		else
-			currentPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
+			currentPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
 		if (currentPeriodRows == null)
 			logger.info("No rows found in the current period table");
 		else {
@@ -167,8 +182,9 @@ public abstract class AccountPage implements Config {
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
-						if (accountDetails.getAllAccountsLinkLocator() != null) {
-							WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
+						if (accountNavigationDetails!=null && accountNavigationDetails.getAllAccountsLinkLocator() != null) {
+							WebElement accounts = webDriver
+									.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
 							if (accounts != null)
 								accounts.click();
 							Util.sleep(3000);
@@ -184,31 +200,34 @@ public abstract class AccountPage implements Config {
 		// lets see how it will go... not many accounts reach that point
 		// for some accounts previous period transactions are not considered
 		// (i.e. WF)
-		if (accountDetails.getPeriodSwitchLocator() != null) {
+		if (accountNavigationDetails==null || accountNavigationDetails.getPeriodSwitchLocator() == null) 
+			return new ArrayList<Transaction>();
+		else{			
 			// AmEx case: before select prev period a button should be clicked
-			if (accountDetails.getPeriodSwitchSupLocator() != null) {
-				WebElement periods = webDriver.findElement(accountDetails.getPeriodSwitchSupLocator());
+			if (accountNavigationDetails.getPeriodSwitchSupLocator() != null) {
+				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchSupLocator());
 				if (periods != null)
 					periods.click();
 				else
-					return result;
+					return new ArrayList<Transaction>();
 			}
 
-			WebElement period = webDriver.findElement(accountDetails.getPeriodSwitchLocator());
+			WebElement period = webDriver.findElement(accountNavigationDetails.getPeriodSwitchLocator());
 			if (period != null) {
-				if ("click".equals(accountDetails.getActionToSwitchPeriod()))
+				if ("click".equals(accountNavigationDetails.getActionToSwitchPeriod()))
 					period.click();
 				else
 					new Select(period).selectByIndex(1);
 			} else
-				return result;
+				return new ArrayList<Transaction>();
 
 			// Wait for previous transactions table to be loaded
 			Util.sleep(3000);
-			if (webDriver.lookupElement(By.xpath(accountDetails.getTransTableLocator())) == null)
-				previousPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableSupLocator()));
+			if (webDriver.lookupElement(accountTransactionDetails.getTransTableLocator()) == null)
+				previousPeriodRows = webDriver
+						.findElements(accountTransactionDetails.getTransTableSupLocator());
 			else
-				previousPeriodRows = webDriver.findElements(By.xpath(accountDetails.getTransTableLocator()));
+				previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
 			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
 			for (WebElement row : previousPeriodRows) {
 				// logger.info("Row in the previous period table: {}",
@@ -225,8 +244,9 @@ public abstract class AccountPage implements Config {
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
-						if (accountDetails.getAllAccountsLinkLocator() != null) {
-							WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
+						if (accountNavigationDetails.getAllAccountsLinkLocator() != null) {
+							WebElement accounts = webDriver
+									.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
 							if (accounts != null)
 								accounts.click();
 							Util.sleep(3000);
@@ -237,8 +257,8 @@ public abstract class AccountPage implements Config {
 			}
 		}
 
-		if (accountDetails.getAllAccountsLinkLocator() != null) {
-			WebElement accounts = webDriver.findElement(accountDetails.getAllAccountsLinkLocator());
+		if (accountNavigationDetails.getAllAccountsLinkLocator() != null) {
+			WebElement accounts = webDriver.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
 			if (accounts != null)
 				accounts.click();
 			Util.sleep(3000);

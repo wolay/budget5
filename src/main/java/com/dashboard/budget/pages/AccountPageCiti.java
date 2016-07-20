@@ -3,6 +3,7 @@ package com.dashboard.budget.pages;
 import static com.dashboard.budget.Util.convertStringAmountToDouble;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
@@ -11,7 +12,7 @@ import com.dashboard.budget.DAO.Account;
 public class AccountPageCiti extends AccountPage {
 
 	public AccountPageCiti(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 
 	@Override
@@ -30,9 +31,14 @@ public class AccountPageCiti extends AccountPage {
 
 	@Override
 	public Double getTotal() {
+
+		WebElement ad = webDriver.lookupElement(By.id("cmlink_InterstitialRemindMeLater"));
+		if (ad != null)
+			ad.click();
+
 		int code = account.getId();
 		// Expedia
-		if (code==111) {
+		if (code == 111) {
 			amount = webDriver
 					.findElement(By.cssSelector("div.cA-spf-firstBalanceElementValue.cA-spf-accPanlBalElmtPos > span"));
 			if (amount == null)
@@ -42,21 +48,22 @@ public class AccountPageCiti extends AccountPage {
 			else
 				return Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Thank you
-		} else if (code==112) {
+		} else if (code == 112) {
 			amount = webDriver.findElement(By.xpath("//div[2]/div[2]/div/div[2]/span"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Hilton
-		} else if (code==113) {
+		} else if (code == 113) {
 			// weird but.. locator changes sometimes
 			amount = webDriver.findElement(By.xpath("//div[3]/div[2]/div/div[2]/span"));
 			if (amount == null)
 				amount = webDriver.findElement(By.xpath("//div[3]/div/div[2]/span"));
 			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 			// Costco
-		} else if (code==114) {
+		} else if (code == 114) {
 			amount = webDriver.findElement(By.xpath("//div[4]/div[2]/div/div[2]/span"));
-			//amount = webDriver.findElement(By.xpath("//div[3]/div/div[2]/span"));
-			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));			
+			// amount =
+			// webDriver.findElement(By.xpath("//div[3]/div/div[2]/span"));
+			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
 		}
 
 		return null;

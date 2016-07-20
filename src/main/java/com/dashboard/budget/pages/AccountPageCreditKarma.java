@@ -8,7 +8,7 @@ import com.dashboard.budget.DAO.Account;
 public class AccountPageCreditKarma extends AccountPage {
 
 	public AccountPageCreditKarma(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 
 	public int getScore() {

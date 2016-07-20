@@ -12,7 +12,7 @@ import com.dashboard.budget.DAO.Account;
 public class AccountPageBestBuy extends AccountPage {
 
 	public AccountPageBestBuy(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 
 	@Override

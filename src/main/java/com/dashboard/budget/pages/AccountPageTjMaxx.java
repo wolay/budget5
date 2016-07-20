@@ -14,22 +14,22 @@ public class AccountPageTjMaxx extends AccountPage {
 	private By btnLoginConfirmation = By.cssSelector("a.RegisterNextBtnleft > span");
 
 	public AccountPageTjMaxx(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 
 	@Override
 	public boolean login() {
-		fldUsername = By.name(accountDetails.getUsernameLocator());
+		fldUsername = accountLoginDetails.getUsernameLocator();
 		if(fldUsername==null)
 			return false;
-		fldPassword = By.name(accountDetails.getPasswordLocator());
+		fldPassword = accountLoginDetails.getPasswordLocator();
 		if(fldPassword==null)
 			return false;		
-		btnLogin = accountDetails.getLoginLocator();
+		btnLogin = accountLoginDetails.getLoginLocator();
 		if(btnLogin==null)
 			return false;
 
-		webDriver.findElement(fldUsername).sendKeys(accountDetails.getUsernameValue());
+		webDriver.findElement(fldUsername).sendKeys(accountLoginDetails.getUsernameValue());
 		webDriver.findElement(btnLogin).click();
 
 		// secret question
@@ -60,7 +60,7 @@ public class AccountPageTjMaxx extends AccountPage {
 				return false;
 		}
 
-		webDriver.findElement(fldPassword).sendKeys(accountDetails.getPasswordValue());
+		webDriver.findElement(fldPassword).sendKeys(accountLoginDetails.getPasswordValue());
 		webDriver.findElement(btnLoginConfirmation).click();
 		return true;
 	}

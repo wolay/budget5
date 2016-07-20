@@ -12,7 +12,7 @@ import com.dashboard.budget.DAO.Account;
 public class AccountPagePayPal extends AccountPage {
 
 	public AccountPagePayPal(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 
 	@Override

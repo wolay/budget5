@@ -12,7 +12,7 @@ import com.dashboard.budget.DAO.Account;
 public class AccountPageMacys extends AccountPage {
 
 	public AccountPageMacys(Account account, DataHandler dataHandler) {
-		super(account);
+		super(account, dataHandler);
 	}
 
 	@Override
