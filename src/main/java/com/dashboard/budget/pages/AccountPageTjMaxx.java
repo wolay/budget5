@@ -19,18 +19,14 @@ public class AccountPageTjMaxx extends AccountPage {
 
 	@Override
 	public boolean login() {
-		fldUsername = accountLoginDetails.getUsernameLocator();
-		if(fldUsername==null)
+		WebElement username = webDriver.findElement(fldUsername);
+		if (username == null)
 			return false;
-		fldPassword = accountLoginDetails.getPasswordLocator();
-		if(fldPassword==null)
-			return false;		
-		btnLogin = accountLoginDetails.getLoginLocator();
-		if(btnLogin==null)
-			return false;
-
-		webDriver.findElement(fldUsername).sendKeys(accountLoginDetails.getUsernameValue());
-		webDriver.findElement(btnLogin).click();
+		username.sendKeys(accountLoginDetails.getUsernameValue());
+		WebElement login = webDriver.findElement(btnLogin);
+		if (login == null)
+			return false;	
+		login.click();
 
 		// secret question
 		WebElement securityLabel = webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
@@ -60,7 +56,10 @@ public class AccountPageTjMaxx extends AccountPage {
 				return false;
 		}
 
-		webDriver.findElement(fldPassword).sendKeys(accountLoginDetails.getPasswordValue());
+		WebElement password = webDriver.findElement(fldPassword);
+		if (password == null)
+			return false;		
+		password.sendKeys(accountLoginDetails.getPasswordValue());
 		webDriver.findElement(btnLoginConfirmation).click();
 		return true;
 	}
