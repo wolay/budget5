@@ -46,10 +46,10 @@ public abstract class AccountPage implements Config {
 	public AccountPage(Account account, DataHandler dataHandler) {
 		this.account = account;
 		this.dataHandler = dataHandler;
-		this.accountLoginDetails = dataHandler.getAccountsLoginDetailsByAccount(account);
-		this.accountNavigationDetails = dataHandler.getAccountsNavigationDetailsByAccount(account);
-		this.accountTotalDetails = dataHandler.getAccountsTotalDetailsByAccount(account);
-		this.accountTransactionDetails = dataHandler.getAccountsTransactionDetailsByAccount(account);
+		this.accountLoginDetails = account.getAccountDetailsLogin();
+		this.accountNavigationDetails = account.getAccountDetailsNavigation();
+		this.accountTotalDetails = account.getAccountDetailsTotal();
+		this.accountTransactionDetails = account.getAccountDetailsTransaction();
 		fldUsername = accountLoginDetails.getUsernameLocator();
 		fldPassword = accountLoginDetails.getPasswordLocator();
 		btnLogin = accountLoginDetails.getLoginLocator();
@@ -66,10 +66,10 @@ public abstract class AccountPage implements Config {
 
 	public void setAccount(Account account) {
 		this.account = account;
-		this.accountLoginDetails = dataHandler.getAccountsLoginDetailsByAccount(account);
-		this.accountNavigationDetails = dataHandler.getAccountsNavigationDetailsByAccount(account);
-		this.accountTotalDetails = dataHandler.getAccountsTotalDetailsByAccount(account);
-		this.accountTransactionDetails = dataHandler.getAccountsTransactionDetailsByAccount(account);
+		this.accountLoginDetails = account.getAccountDetailsLogin();
+		this.accountNavigationDetails = account.getAccountDetailsNavigation();
+		this.accountTotalDetails = account.getAccountDetailsTotal();
+		this.accountTransactionDetails = account.getAccountDetailsTransaction();
 	}
 
 	public synchronized boolean login() {
@@ -98,7 +98,6 @@ public abstract class AccountPage implements Config {
 		if (accountTransactionDetails == null)
 			return new ArrayList<Transaction>();
 
-		int code = account.getId();
 		List<Transaction> result = new ArrayList<Transaction>();
 
 		// details link does not exist in WF case
@@ -178,7 +177,7 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(code, date, description, amount, ""));
+					result.add(new Transaction(account, date, description, amount, ""));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
@@ -240,7 +239,7 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(code, date, description, amount, ""));
+					result.add(new Transaction(account, date, description, amount, ""));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {

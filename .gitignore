@@ -117,6 +117,9 @@ $RECYCLE.BIN/
 /target/
 src/output/
 DataHandler.java
+Starter.java
+jdbc.properties
+*.log*
 
 # hidden files
 .*

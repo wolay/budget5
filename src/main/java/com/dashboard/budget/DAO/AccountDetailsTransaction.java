@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,8 +18,7 @@ public class AccountDetailsTransaction {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
-	@OneToOne
-	@JoinColumn(name="account_id")
+	@OneToOne(mappedBy="accountDetailsTransaction")
 	private Account account;
 	private String transTableLocator;
 	private String transTableSupLocator;
@@ -30,7 +28,8 @@ public class AccountDetailsTransaction {
 	private String transDescriptionSupLocator;
 	private String transAmountLocator;
 	private String transAmountSupLocator;
-
+	
+	public AccountDetailsTransaction(){}
 	public AccountDetailsTransaction(Account account, String transTableLocator, String transTableSupLocator, String transDateLocator, Integer transDateFormat,
 			String transDescriptionLocator, String transDescriptionSupLocator, String transAmountLocator,
 			String transAmountSupLocator) {
@@ -44,10 +43,16 @@ public class AccountDetailsTransaction {
 		this.transDescriptionSupLocator = transDescriptionSupLocator;
 		this.transAmountLocator = transAmountLocator;
 		this.transAmountSupLocator = transAmountSupLocator;
+		
+		this.account.setAccountDetailsTransaction(this);
 	}
 	
 	public int getId() {
 		return id;
+	}
+	
+	public Account getAccount(){
+		return account;
 	}
 	
 	public By getTransTableLocator() {

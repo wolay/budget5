@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,8 +18,7 @@ public class AccountDetailsLogin {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	@OneToOne
-	@JoinColumn(name = "account_id")
+	@OneToOne(mappedBy="accountDetailsLogin")
 	private Account account;
 	private String usernameLocator;
 	private String usernameValue;
@@ -28,7 +26,8 @@ public class AccountDetailsLogin {
 	private String passwordValue;
 	private String loginLocator;
 	private String logoutLocator;
-
+	
+	public AccountDetailsLogin(){}
 	public AccountDetailsLogin(Account account, String usernameLocator, String usernameValue, String passwordLocator,
 			String passwordValue, String loginLocator, String logoutLocator) {
 		super();
@@ -39,10 +38,16 @@ public class AccountDetailsLogin {
 		this.passwordValue = passwordValue;
 		this.loginLocator = loginLocator;
 		this.logoutLocator = logoutLocator;
+		
+		this.account.setAccountDetailsLogin(this);
 	}
 
 	public int getId() {
 		return id;
+	}
+	
+	public Account getAccount(){
+		return account;
 	}
 
 	public By getUsernameLocator() {

@@ -4,7 +4,6 @@ package com.dashboard.budget;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,10 +15,25 @@ import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.CreditScore;
-import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
-import com.dashboard.budget.pages.*;
+import com.dashboard.budget.pages.AccountPage;
+import com.dashboard.budget.pages.AccountPageAmEx;
+import com.dashboard.budget.pages.AccountPageAmazon;
+import com.dashboard.budget.pages.AccountPageBestBuy;
+import com.dashboard.budget.pages.AccountPageBoA;
+import com.dashboard.budget.pages.AccountPageCapOne;
+import com.dashboard.budget.pages.AccountPageChase;
+import com.dashboard.budget.pages.AccountPageCiti;
+import com.dashboard.budget.pages.AccountPageCreditKarma;
+import com.dashboard.budget.pages.AccountPageJCPenney;
+import com.dashboard.budget.pages.AccountPageKohls;
+import com.dashboard.budget.pages.AccountPageMacys;
+import com.dashboard.budget.pages.AccountPageNordstorm;
+import com.dashboard.budget.pages.AccountPagePayPal;
+import com.dashboard.budget.pages.AccountPageSaks;
+import com.dashboard.budget.pages.AccountPageTjMaxx;
+import com.dashboard.budget.pages.AccountPageWF;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
@@ -89,11 +103,11 @@ public class WebDriverManager implements Config {
 		}
 	}
 
-	private Double getDifference(Account account, Double amount, Map<Integer, Double> prevTotals) {
+	private Double getDifference(Account account, Double amount, List<Total> prevTotals) {
 		if (amount == null)
 			return 0.00;
 
-		Double prevTotal = prevTotals.get(account.getId());
+		Double prevTotal = prevTotals.stream().filter(t -> t.getAccount() == account).findFirst().get().getAmount();
 		if (prevTotal == null)
 			return null;
 		else
@@ -116,17 +130,18 @@ public class WebDriverManager implements Config {
 	}
 
 	public List<Total> getNewTotals(List<Account> accountsIn, List<Transaction> transactions,
-			Map<Integer, Double> prevTotals, List<Transaction> prevTransactions) {
+			List<Total> prevTotals, List<Transaction> prevTransactions) {
 		List<Account> accounts;
 
 		if (!isRunningBankAccounts) {
 			logger.info("Running bank accounts skipped");
 			return new ArrayList<Total>();
 		}
-		if (bankAccountsFilter.equals(""))
-			accounts = accountsIn;
-		else
-			accounts = Util.getAccountsByDriver(accountsIn, bankAccountsFilter);
+		if (!bankAccountsFilter.equals(""))
+			accountsIn = Util.getAccountsByDriver(accountsIn, bankAccountsFilter);
+		
+		// skipping bank account having totals for today
+		accounts = Util.skipUpdatedAccounts(accountsIn, prevTotals);
 
 		List<Total> result = new ArrayList<Total>();
 		ExecutorService executor = Executors.newFixedThreadPool(1);

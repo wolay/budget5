@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,8 +18,7 @@ public class AccountDetailsNavigation {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
-	@OneToOne
-	@JoinColumn(name="account_id")
+	@OneToOne(mappedBy="accountDetailsNavigation")
 	private Account account;	
 	private String allAccountsLinkLocator;
 	private String transactionsPageUrl;
@@ -28,7 +26,8 @@ public class AccountDetailsNavigation {
 	private String actionToSwitchPeriod;
 	private String periodSwitchLocator;
 	private String periodSwitchSupLocator;
-
+	
+	public AccountDetailsNavigation(){}
 	public AccountDetailsNavigation(Account account, String allAccountsLinkLocator, String transactionsPageUrl,
 			String detailsLinkLocator, String actionToSwitchPeriod, String periodSwitchLocator, String periodSwitchSupLocator) {
 		super();
@@ -39,10 +38,16 @@ public class AccountDetailsNavigation {
 		this.actionToSwitchPeriod = actionToSwitchPeriod;
 		this.periodSwitchLocator = periodSwitchLocator;
 		this.periodSwitchSupLocator = periodSwitchSupLocator;
+		
+		this.account.setAccountDetailsNavigation(this);
 	}
 	
 	public int getId() {
 		return id;
+	}
+	
+	public Account getAccount(){
+		return account;
 	}
 
 	public By getAllAccountsLinkLocator() {

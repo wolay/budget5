@@ -18,10 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,12 +34,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FilenameUtils;
+import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.CreditScore;
-import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
@@ -73,7 +71,9 @@ public class Util implements Config {
 			case 6:
 				return new SimpleDateFormat("MMMMM dd yyyy", Locale.ENGLISH).parse(string.trim());
 			case 7:
-				return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).parse(string.trim());				
+				return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).parse(string.trim());
+			case 8:
+				return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).parse(string.trim()+", "+new Date().getYear());				
 			}
 		} catch (ParseException ex) {
 			logger.error(ex.getMessage());
@@ -115,14 +115,14 @@ public class Util implements Config {
 			return input;
 	}
 
-	public static Map<Integer, Double> getPrevTotals() {
+	public static List<Total> getPrevTotals(List<Account> accounts) {
 		// open latest file to compare results
 		File filePrevSummary = getLastFileModified(dirOutputTotals);
 
 		// Delimiter used in CSV file
 		final String COMMA_DELIMITER = ",";
 		BufferedReader fileReader = null;
-		Map<Integer, Double> result = new HashMap<Integer, Double>();
+		List<Total> result = new ArrayList<Total>();
 
 		try {
 			String line = "";
@@ -138,12 +138,16 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
-					if(tokens[1].trim().equals(""))
+					if (tokens[1].trim().equals(""))
+						continue;
+					Account account = accounts.stream().filter(a -> a.getId() == Integer.valueOf(tokens[1])).findFirst()
+							.orElse(null);
+					if (account == null)
 						continue;
 					if (tokens[3].equals("N/A"))
-						result.put(Integer.valueOf(tokens[1]), null);
+						result.add(new Total(Util.convertStringToDateByType("2016-07-19", 0), account, null, null));
 					else
-						result.put(Integer.valueOf(tokens[1]), Double.valueOf(tokens[3]));
+						result.add(new Total(Util.convertStringToDateByType("2016-07-19", 0), account, Double.valueOf(tokens[3]), null));
 				}
 			}
 		} catch (Exception e) {
@@ -161,7 +165,7 @@ public class Util implements Config {
 		return result;
 	}
 
-	public static List<Transaction> getPrevTransactions() {
+	public static List<Transaction> getPrevTransactions(List<Account> accounts) {
 		// open latest file to compare results
 		File filePrevSummary = getLastFileModified(dirOutputTransactions);
 
@@ -184,10 +188,16 @@ public class Util implements Config {
 				// Get all tokens available in line
 				String[] tokens = line.split(COMMA_DELIMITER);
 				if (tokens.length > 0) {
-					result.add(new Transaction(Integer.valueOf(tokens[0]), Util.convertStringToDateByType(tokens[1], 0),
-							tokens[2], Double.valueOf(tokens[3]), ""));
+					System.out.println(line);
+					Account account = accounts.stream().filter(a -> a.getId() == Integer.valueOf(tokens[0])).findFirst()
+							.orElse(null);
+					if (account == null)
+						continue;
+					result.add(new Transaction(account, Util.convertStringToDateByType(tokens[1], 0), tokens[2],
+							Double.valueOf(tokens[3]), ""));
 				}
 			}
+			logger.info("All {} transactions loaded from file", result.size());
 		} catch (Exception e) {
 			logger.error("Error in CsvFileReader !!!");
 			e.printStackTrace();
@@ -262,9 +272,9 @@ public class Util implements Config {
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(amountToString(total.getDifference()));
 				fileWriter.append(NEW_LINE_SEPARATOR);
-				
-				//saving to DB
-				
+
+				// saving to DB
+
 			}
 
 			// Adding total
@@ -320,7 +330,7 @@ public class Util implements Config {
 
 			// Write a new student object list to the CSV file
 			for (Transaction transaction : transactions) {
-				fileWriter.append(String.valueOf(transaction.getCode()));
+				fileWriter.append(String.valueOf(transaction.getAccount().getId()));
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
 				fileWriter.append(COMMA_DELIMITER);
@@ -389,7 +399,7 @@ public class Util implements Config {
 						+ "'><td><a href='" + total.getAccount().getUrl() + "'>" + total.getAccount().getName()
 						+ "</a>";
 				List<Transaction> transactionsByAccount = transactions.stream()
-						.filter(p -> p.getCode() == total.getAccount().getId()).collect(Collectors.toList());
+						.filter(p -> p.getAccount() == total.getAccount()).collect(Collectors.toList());
 				if (transactionsByAccount.size() > 0) {
 					content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:100%;'>";
 					for (Transaction transaction : transactionsByAccount) {
@@ -478,7 +488,8 @@ public class Util implements Config {
 	public static boolean isPending(String row) {
 		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions")
 				|| row.contains("There is no recent activity") || row.contains("Posted Transactions")
-				|| row.equals("Pending") || row.contains("end of your statement") || row.startsWith("No activity posted"))
+				|| row.equals("Pending") || row.contains("end of your statement")
+				|| row.startsWith("No activity posted"))
 			return true;
 		else
 			return false;
@@ -524,6 +535,36 @@ public class Util implements Config {
 			int i = string.indexOf("Bank accounts");
 			return string.substring(i + 15, i + 16);
 		}
+	}
+
+	public static By getByLocator(String string) {
+		if (string == null)
+			return null;
+		if (string.startsWith("id"))
+			return By.id(string.replace("id:", ""));
+		if (string.startsWith("css"))
+			return By.cssSelector(string.replace("css:", ""));
+		if (string.startsWith("link"))
+			return By.linkText(string.replace("link:", ""));
+		if (string.startsWith("xpath"))
+			return By.xpath(string.replace("xpath:", ""));
+		if (string.startsWith("name"))
+			return By.name(string.replace("name:", ""));
+		if (string.startsWith("class"))
+			return By.className(string.replace("class:", ""));
+		else
+			return null;
+	}
+
+	public static List<Account> skipUpdatedAccounts(List<Account> accounts, List<Total> prevTotals) {
+		List<Account> result = new ArrayList<Account>();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+		prevTotals.stream().filter(t -> !sdf.format(t.getDate()).equals(sdf.format(new Date()))).forEach(t -> {
+			if (accounts.contains(t.getAccount()))
+				result.add(t.getAccount());
+		});
+
+		return result;
 	}
 
 }
