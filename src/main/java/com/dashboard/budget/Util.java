@@ -73,7 +73,8 @@ public class Util implements Config {
 			case 7:
 				return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).parse(string.trim());
 			case 8:
-				return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).parse(string.trim()+", "+new Date().getYear());				
+				return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
+						.parse(string.trim() + ", " + new Date().getYear());
 			}
 		} catch (ParseException ex) {
 			logger.error(ex.getMessage());
@@ -147,7 +148,8 @@ public class Util implements Config {
 					if (tokens[3].equals("N/A"))
 						result.add(new Total(Util.convertStringToDateByType("2016-07-19", 0), account, null, null));
 					else
-						result.add(new Total(Util.convertStringToDateByType("2016-07-19", 0), account, Double.valueOf(tokens[3]), null));
+						result.add(new Total(Util.convertStringToDateByType("2016-07-19", 0), account,
+								Double.valueOf(tokens[3]), null));
 				}
 			}
 		} catch (Exception e) {
@@ -193,7 +195,7 @@ public class Util implements Config {
 							.orElse(null);
 					if (account == null)
 						continue;
-					result.add(new Transaction(account, Util.convertStringToDateByType(tokens[1], 0), tokens[2],
+					result.add(new Transaction(account, null, Util.convertStringToDateByType(tokens[1], 0), tokens[2],
 							Double.valueOf(tokens[3]), ""));
 				}
 			}

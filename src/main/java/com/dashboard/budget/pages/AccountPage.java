@@ -21,6 +21,7 @@ import com.dashboard.budget.DAO.AccountDetailsLogin;
 import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
+import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
 public abstract class AccountPage implements Config {
@@ -93,7 +94,7 @@ public abstract class AccountPage implements Config {
 
 	public abstract Double getTotal();
 
-	public List<Transaction> getTransactions(Double difference, List<Transaction> prevTransactions) {
+	public List<Transaction> getTransactions(Total total, Double difference, List<Transaction> prevTransactions) {
 		// check if getting transactions is enabled for account
 		if (accountTransactionDetails == null)
 			return new ArrayList<Transaction>();
@@ -177,7 +178,7 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(account, date, description, amount, ""));
+					result.add(new Transaction(account, total, date, description, amount, ""));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
@@ -239,7 +240,7 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(account, date, description, amount, ""));
+					result.add(new Transaction(account, total, date, description, amount, ""));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {

@@ -24,6 +24,9 @@ public class Transaction {
 	@ManyToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
+	@ManyToOne
+	@JoinColumn(name = "total_id")	
+	private Total total;
 	private String decription;
 	private double amount;
 	private String category;
@@ -31,8 +34,9 @@ public class Transaction {
 	public Transaction() {
 	}
 
-	public Transaction(Account account, Date date, String decription, double amount, String category) {
+	public Transaction(Account account, Total total, Date date, String decription, double amount, String category) {
 		this.account = account;
+		this.total = total;
 		this.date = date;
 		this.decription = decription;
 		this.amount = amount;
@@ -45,6 +49,10 @@ public class Transaction {
 
 	public Account getAccount() {
 		return account;
+	}
+	
+	public Total getTotal() {
+		return total;
 	}
 
 	public Date getDate() {
