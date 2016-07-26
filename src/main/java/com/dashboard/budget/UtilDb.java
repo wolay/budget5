@@ -9,12 +9,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+
+
 
 public class UtilDb {
 	private EntityManager em;
@@ -115,18 +118,20 @@ public class UtilDb {
 		return accounts;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Total> loadPrevTotals() {
 
 		List<Total> totals = null;
+		
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
-			String sql = "select id, amount, date, difference, status, all_totals.account_id from mydb.totals all_totals "
+			String sql = "select id, amount, date, difference, status, all_totals.account_id as account_id from mydb.totals all_totals "
 					+ "right join (SELECT max(date) as max_date, account_id FROM mydb.totals group by account_id) last_totals "
 					+ "on all_totals.account_id=last_totals.account_id and all_totals.date=last_totals.max_date";
-			Query query = em.createNativeQuery(sql);
-			totals = query.getResultList();
+			Query query = em.createNativeQuery(sql, Total.class);
+			totals = (List<Total>) query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {

@@ -41,7 +41,8 @@ public class Manager {
 				newTransactions= new ArrayList<Transaction>();
 				// Previous balances & transactions
 				List<Account> accounts = dataHandler.getBankAccountsList();
-				List<Total> prevTotals = Util.getPrevTotals(accounts);//dataHandler.getPrevTotals();
+				//List<Total> prevTotals = Util.getPrevTotals(accounts);
+				List<Total> prevTotals = dataHandler.getPrevTotals();
 				//prevTransactions = dataHandler.get Util.getPrevTransactions(dataHandler.getBankAccountsList());
 				prevTransactions = dataHandler.getPrevTransactions();
 						
