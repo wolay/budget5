@@ -28,7 +28,7 @@ public class Manager {
 
 	public static void main(String[] args){
 		if(!webDriverManager.isOnline())
-			return;			
+			System.exit(0);			
 		
 		logger.info("Data collecting started");
 		StopWatch stopWatch = new StopWatch();
@@ -78,7 +78,7 @@ public class Manager {
 		logger.info(stopWatch.toString());
 
 		// Sending summary to email
-		Util.sendEmailSummary(totals, newTransactions, creditScores, stopWatch.toString());
+		Util.sendEmailSummary(totals, creditScores, stopWatch.toString());
 		
 		// Saving to files
 		//Util.writeTotalsToFile(totals);

@@ -1,7 +1,10 @@
 package com.dashboard.budget.DAO;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -30,6 +34,8 @@ public class Total implements Comparable<Object> {
 	private Double amount;
 	private Double difference;
 	private DataRetrievalStatus status;
+	@OneToMany(mappedBy = "total")
+	private List<Transaction> transactions;
 
 	public Total() {
 	}
@@ -98,6 +104,20 @@ public class Total implements Comparable<Object> {
 
 	public void setStatus(DataRetrievalStatus status) {
 		this.status = status;
+	}
+
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void addTransactions(Transaction transaction) {
+		try {
+			if (transactions == null)
+				transactions = new ArrayList<Transaction>();
+			transactions.add(transaction);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override

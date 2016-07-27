@@ -103,7 +103,7 @@ public class WebDriverManager implements Config {
 		}
 	}
 
-	private Double getDifference(Account account, Total total, Double amount, List<Total> prevTotals) {
+	private Double getDifference(Account account, Double amount, List<Total> prevTotals) {
 		if (amount == null)
 			return 0.00;
 
@@ -173,7 +173,7 @@ public class WebDriverManager implements Config {
 							+ Util.getThreadNumber(Thread.currentThread().getName()) + "): " + account.getName());
 					int attempt = 0;
 					Double amount = null;
-					Total total =  null;
+					Total total = null;
 					Double difference = null;
 					boolean isDownloaded = false;
 					while (!isDownloaded && attempt < maxAttemptsToDownloadData) {
@@ -190,11 +190,16 @@ public class WebDriverManager implements Config {
 						} else
 							accountPage.setAccount(account);
 
-						amount = accountPage.getTotal();						
+						amount = accountPage.getTotal();
 						if (amount != null) {
-							total = new Total(account, amount, difference,
-									(amount != null) ? DataRetrievalStatus.OK : DataRetrievalStatus.FAILED);
+							difference = getDifference(account, amount, prevTotals);							
+							total = new Total(account, amount, difference, DataRetrievalStatus.OK);
 							logger.info("{}, total: {}", account.getName(), amount);
+							if (difference != null && difference != 0.00) {
+								logger.info("{}, difference: {}", account.getName(), difference);
+								addTransactionsForDifference(total, transactions, accountPage, difference,
+										prevTransactions);
+							}											
 						} else {
 							logger.error("Error while getting total for: {}", account.getName());
 							accountPage.quit();
@@ -202,11 +207,6 @@ public class WebDriverManager implements Config {
 							continue;
 						}
 
-						difference = getDifference(account, total, amount, prevTotals);
-						if (difference != null && difference != 0.00) {
-							logger.info("{}, difference: {}", account.getName(), difference);
-							addTransactionsForDifference(total, transactions, accountPage, difference, prevTransactions);
-						}
 						isDownloaded = true;
 					}
 					result.add(total);

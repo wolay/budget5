@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -366,7 +365,7 @@ public class Util implements Config {
 		}
 	}
 
-	public static void sendEmailSummary(List<Total> totals, List<Transaction> transactions,
+	public static void sendEmailSummary(List<Total> totals,
 			List<CreditScore> creditScores, String spentTime) {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.mail.ru");
@@ -392,19 +391,17 @@ public class Util implements Config {
 			// Budget
 			String content = "<b>Budget: </b>";
 			content = content
-					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:450px;'><thead><tr><th>Account</th><th>Amount</th><th>Diff</th></tr></thead>";
-			content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b>"
+					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:450px;'><thead><tr><th>Date</th><th>Account</th><th>Amount</th><th>Diff</th></tr></thead>";
+			content = content + "<tfoot><tr><td></td><td><b>TOTAL</b></td><td><b>"
 					+ amountToString(DataHandler.getFullTotal(totals)) + "</b></td><td><b>"
 					+ amountToString(DataHandler.getFullDiff(totals)) + "</b></td></tr></tfoot><tbody>";
 			for (Total total : totals) {
-				content = content + "<tr style='background-color:" + Util.getStatusColor(total.getStatus())
-						+ "'><td><a href='" + total.getAccount().getUrl() + "'>" + total.getAccount().getName()
+				content = content + "<tr style='background-color:" + Util.getStatusColor(total)
+						+ "'><td>"+convertDateToStringType2(total.getDate())+"</td><td><a href='" + total.getAccount().getUrl() + "'>" + total.getAccount().getName()
 						+ "</a>";
-				List<Transaction> transactionsByAccount = transactions.stream()
-						.filter(p -> p.getAccount() == total.getAccount()).collect(Collectors.toList());
-				if (transactionsByAccount.size() > 0) {
+				if(total.getTransactions()!=null && total.getTransactions().size() > 0) {
 					content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:100%;'>";
-					for (Transaction transaction : transactionsByAccount) {
+					for (Transaction transaction : total.getTransactions()) {
 						content = content + "<tr><td width='10'><font size='1'>"
 								+ Util.convertDateToStringType2(transaction.getDate())
 								+ "</font></td><td><font size='1'>" + transaction.getDecription()
@@ -438,15 +435,15 @@ public class Util implements Config {
 		}
 	}
 
-	private static String getStatusColor(DataRetrievalStatus status) {
-		if (status == DataRetrievalStatus.OK)
+	private static String getStatusColor(Total total) {
+		if (isDateToday(total.getDate()))
 			return "#BCE954";
-		else if (status == DataRetrievalStatus.FAILED)
-			return "#FF7F50";
-		else if (status == DataRetrievalStatus.SKIPPED)
+		//else if (status == DataRetrievalStatus.FAILED)
+		//	return "#FF7F50";
+		else //if (status == DataRetrievalStatus.SKIPPED)
 			return "#FFE87C";
-		else
-			return "white";
+		//else
+		//	return "white";
 	}
 
 	public static File getLastFileModified(String dir) {
@@ -557,11 +554,16 @@ public class Util implements Config {
 		else
 			return null;
 	}
+	
+	public static boolean isDateToday(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+		return sdf.format(date).equals(sdf.format(new Date()));
+	}
 
 	public static List<Account> skipUpdatedAccounts(List<Account> accounts, List<Total> prevTotals) {
 		List<Account> result = new ArrayList<Account>();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-		prevTotals.stream().filter(t -> !sdf.format(t.getDate()).equals(sdf.format(new Date()))).forEach(t -> {
+		
+		prevTotals.stream().filter(t -> !isDateToday(t.getDate())).forEach(t -> {
 			if (accounts.contains(t.getAccount()))
 				result.add(t.getAccount());
 		});

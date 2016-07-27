@@ -36,8 +36,8 @@ public class Account{
 	private AccountDetailsTransaction accountDetailsTransaction;
 	@OneToMany(mappedBy="account")
 	private Set<Total> totals;
-	//@OneToMany(mappedBy="account")
-	//private Set<Transaction> transactions = new Set<Transaction>();	
+	@OneToMany(mappedBy="account")
+	private Set<Transaction> transactions;	
 
 	public Account() {
 	}

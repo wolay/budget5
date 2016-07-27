@@ -189,6 +189,7 @@ public abstract class AccountPage implements Config {
 								accounts.click();
 							Util.sleep(3000);
 						}
+						result.stream().forEach(t -> total.addTransactions(t));
 						return result;
 					}
 				}
@@ -251,6 +252,7 @@ public abstract class AccountPage implements Config {
 								accounts.click();
 							Util.sleep(3000);
 						}
+						result.stream().forEach(t -> total.addTransactions(t));
 						return result;
 					}
 				}
