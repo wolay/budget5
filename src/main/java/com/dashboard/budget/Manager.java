@@ -21,6 +21,7 @@ public class Manager {
 	private static DataHandler dataHandler = new DataHandler();
 	private static WebDriverManager webDriverManager = new WebDriverManager(dataHandler);
 	
+	private static List<Account> accounts;
 	private static List<Total> totals;
 	private static List<Transaction> newTransactions;
 	private static List<Transaction> prevTransactions;
@@ -40,9 +41,9 @@ public class Manager {
 				Thread.currentThread().setName("Bank accounts");				
 				newTransactions= new ArrayList<Transaction>();
 				// Previous balances & transactions
-				List<Account> accounts = dataHandler.getBankAccountsList();
-				//List<Total> prevTotals = Util.getPrevTotals(accounts);
-				List<Total> prevTotals = dataHandler.getPrevTotals();
+				accounts = dataHandler.getBankAccountsList();
+				List<Total> prevTotals = Util.getTotalsFromDb(accounts);
+				//List<Total> prevTotals = dataHandler.getPrevTotals();
 				//prevTransactions = dataHandler.get Util.getPrevTransactions(dataHandler.getBankAccountsList());
 				prevTransactions = dataHandler.getPrevTransactions();
 						
@@ -76,9 +77,6 @@ public class Manager {
 		stopWatch.stop();
 		
 		logger.info(stopWatch.toString());
-
-		// Sending summary to email
-		Util.sendEmailSummary(totals, creditScores, stopWatch.toString());
 		
 		// Saving to files
 		//Util.writeTotalsToFile(totals);
@@ -86,6 +84,10 @@ public class Manager {
 		dataHandler.saveNewTransactionsToDb(newTransactions);
 		//newTransactions.addAll(prevTransactions);
 		//Util.writeTransactionsToFile(newTransactions);
+		
+		// Sending summary to email
+		Util.sendEmailSummary(Util.getTotalsFromDb(accounts), creditScores, stopWatch.toString());
+		
 		System.exit(0);
 		
 	}
