@@ -178,7 +178,7 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(account, total, date, description, amount, ""));
+					result.add(new Transaction(account, total, date, description, amount, null));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
@@ -241,7 +241,7 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(account, total, date, description, amount, ""));
+					result.add(new Transaction(account, total, date, description, amount, null));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {

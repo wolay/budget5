@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -29,12 +30,14 @@ public class Transaction {
 	private Total total;
 	private String decription;
 	private double amount;
-	private String category;
+	@OneToOne
+	@JoinColumn(name = "category_id", unique=true)
+	private TransactionCategory category;
 
 	public Transaction() {
 	}
 
-	public Transaction(Account account, Total total, Date date, String decription, double amount, String category) {
+	public Transaction(Account account, Total total, Date date, String decription, double amount, TransactionCategory category) {
 		this.account = account;
 		this.total = total;
 		this.date = date;
@@ -79,11 +82,11 @@ public class Transaction {
 		this.amount = amount;
 	}
 
-	public String getCategory() {
+	public TransactionCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(TransactionCategory category) {
 		this.category = category;
 	}
 
