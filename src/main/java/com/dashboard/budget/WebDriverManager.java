@@ -141,7 +141,7 @@ public class WebDriverManager implements Config {
 			accountsIn = Util.getAccountsByDriver(accountsIn, bankAccountsFilter);
 
 		// skipping bank account having totals for today
-		accounts = Util.skipUpdatedAccounts(accountsIn, prevTotals);
+		accounts = Util.skipUpdatedBankAccounts(accountsIn, prevTotals);
 
 		List<Total> result = new ArrayList<Total>();
 		ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -192,14 +192,14 @@ public class WebDriverManager implements Config {
 
 						amount = accountPage.getTotal();
 						if (amount != null) {
-							difference = getDifference(account, amount, prevTotals);							
+							difference = getDifference(account, amount, prevTotals);
 							total = new Total(account, amount, difference, DataRetrievalStatus.OK);
 							logger.info("{}, total: {}", account.getName(), amount);
 							if (difference != null && difference != 0.00) {
 								logger.info("{}, difference: {}", account.getName(), difference);
 								addTransactionsForDifference(total, transactions, accountPage, difference,
 										prevTransactions);
-							}											
+							}
 						} else {
 							logger.error("Error while getting total for: {}", account.getName());
 							accountPage.quit();
@@ -220,7 +220,7 @@ public class WebDriverManager implements Config {
 		return result;
 	}
 
-	public List<CreditScore> getCreditScores() {
+	public List<CreditScore> getCreditScores(List<Account> accountsIn) {
 
 		if (!isRunningCreditScores) {
 			logger.info("Running credit scores skipped");
@@ -229,18 +229,21 @@ public class WebDriverManager implements Config {
 
 		Thread.currentThread().setName("Credit scores");
 
+		// skipping bank account having totals for today
+		List<Account> accounts = Util.skipUpdatedCreditScores(accountsIn, dataHandler.getCreditScores());
+
 		List<CreditScore> result = new ArrayList<CreditScore>();
 
-		for (Account account : dataHandler.getCreditScoreList()) {
+		for (Account account : accounts) {
 			AccountPage accountPage = new AccountPageCreditKarma(account, dataHandler);
 			accountPage.gotoHomePage();
 			accountPage.login();
 
 			int score = accountPage.getScore();
-			result.add(new CreditScore(account.getOwner(), score));
-			logger.info("Credit score {}: {}", account.getOwner(), score);
-
 			accountPage.quit();
+
+			result.add(new CreditScore(account, account.getOwner(), score, 0));
+			logger.info("Credit score {}: {}", account.getOwner(), score);
 		}
 
 		return result;

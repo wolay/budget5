@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -50,6 +51,7 @@ public class Util implements Config {
 
 	private static Logger logger = LoggerFactory.getLogger(Util.class);
 
+	@SuppressWarnings("deprecation")
 	public static Date convertStringToDateByType(String string, int type) {
 		string = string.replace("\n", " ");
 		try {
@@ -195,7 +197,7 @@ public class Util implements Config {
 					if (account == null)
 						continue;
 					result.add(new Transaction(account, null, Util.convertStringToDateByType(tokens[1], 0), tokens[2],
-							Double.valueOf(tokens[3]), ""));
+							Double.valueOf(tokens[3]), null));
 				}
 			}
 			logger.info("All {} transactions loaded from file", result.size());
@@ -343,7 +345,7 @@ public class Util implements Config {
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(amountToString(transaction.getAmount()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(transaction.getCategory());
+				fileWriter.append(transaction.getCategory().toString());
 				fileWriter.append(NEW_LINE_SEPARATOR);
 			}
 
@@ -563,7 +565,7 @@ public class Util implements Config {
 		return (isDateToday(date)) ? "today" : convertDateToStringType2(date);
 	}
 
-	public static List<Account> skipUpdatedAccounts(List<Account> accounts, List<Total> prevTotals) {
+	public static List<Account> skipUpdatedBankAccounts(List<Account> accounts, List<Total> prevTotals) {
 		List<Account> result = new ArrayList<Account>();
 
 		prevTotals.stream().filter(t -> !isDateToday(t.getDate())).forEach(t -> {
@@ -572,6 +574,17 @@ public class Util implements Config {
 		});
 
 		return result;
+	}
+	
+	public static List<Account> skipUpdatedCreditScores(List<Account> accounts, List<CreditScore> prevCreditScores) {
+		List<Account> excludeList = new ArrayList<Account>();
+
+		prevCreditScores.stream().filter(t -> !isDateToday(t.getDate())).forEach(t -> {
+			if (accounts.contains(t.getAccount()))
+				excludeList.add(t.getAccount());
+		});
+
+		return accounts.stream().filter(a -> !excludeList.contains(a)).collect(Collectors.toList());
 	}
 
 }

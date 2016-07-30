@@ -58,7 +58,7 @@ public class Manager {
 		// Getting credit scores
 		Thread t2 = new Thread() {
 			public void run() {
-				creditScores = webDriverManager.getCreditScores();
+				creditScores = webDriverManager.getCreditScores(dataHandler.getCreditScoreList());
 			}
 		};
 		t2.start();
@@ -82,6 +82,7 @@ public class Manager {
 		//Util.writeTotalsToFile(totals);
 		dataHandler.saveNewTotalsToDb(totals);
 		dataHandler.saveNewTransactionsToDb(newTransactions);
+		dataHandler.saveCreditScoresToDb(creditScores);
 		//newTransactions.addAll(prevTransactions);
 		//Util.writeTransactionsToFile(newTransactions);
 		

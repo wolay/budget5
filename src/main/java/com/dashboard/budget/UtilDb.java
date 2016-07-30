@@ -13,6 +13,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
@@ -119,7 +120,7 @@ public class UtilDb {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Total> loadPrevTotals() {
+	public List<Total> loadTotalsFromDb() {
 
 		List<Total> totals = null;
 		
@@ -144,7 +145,7 @@ public class UtilDb {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Transaction> loadPrevTransactions() {
+	public List<Transaction> loadTransactionsFromDb() {
 
 		List<Transaction> transactions = null;
 
@@ -162,6 +163,28 @@ public class UtilDb {
 		}
 
 		return transactions;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<CreditScore> loadCreditScoresFromDb() {
+
+		List<CreditScore> creditScores = null;
+
+		EntityTransaction txn = em.getTransaction();
+		try {
+			txn.begin();
+			Query query = em.createQuery("select creditscore from CreditScore creditscore");
+			creditScores = query.getResultList();
+			txn.commit();
+		} catch (Exception ex) {
+			if (txn != null) {
+				txn.rollback();
+			}
+			ex.printStackTrace();
+		}
+
+		return creditScores;
 	}
 
 	public void saveTotalsToDb(List<Total> totals) {
@@ -207,10 +230,25 @@ public class UtilDb {
 			e.printStackTrace();
 		}
 	}
+	
+	public void saveCreditScoreToDb(CreditScore creditScore) {
+		EntityTransaction txn = em.getTransaction();
+		try {
+			txn.begin();
+			em.persist(creditScore);
+			txn.commit();
+		} catch (Exception e) {
+			if (txn != null) {
+				txn.rollback();
+			}
+			e.printStackTrace();
+		}
+	}
 
 	public void close() {
 		if (em != null) {
 			em.close();
 		}
 	}
+
 }
