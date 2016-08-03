@@ -228,22 +228,23 @@ public class WebDriverManager implements Config {
 		}
 
 		Thread.currentThread().setName("Credit scores");
-
-		// skipping bank account having totals for today
-		List<Account> accounts = Util.skipUpdatedCreditScores(accountsIn, dataHandler.getCreditScores());
-
+		
 		List<CreditScore> result = new ArrayList<CreditScore>();
+		for(CreditScore creditScore: dataHandler.getCreditScores()){
+			if(Util.isDateToday(creditScore.getDate()))
+				result.add(creditScore);
+			else{
+				Account account = creditScore.getAccount();
+				AccountPage accountPage = new AccountPageCreditKarma(account, dataHandler);
+				accountPage.gotoHomePage();
+				accountPage.login();
 
-		for (Account account : accounts) {
-			AccountPage accountPage = new AccountPageCreditKarma(account, dataHandler);
-			accountPage.gotoHomePage();
-			accountPage.login();
+				int score = accountPage.getScore();
+				accountPage.quit();
 
-			int score = accountPage.getScore();
-			accountPage.quit();
-
-			result.add(new CreditScore(account, account.getOwner(), score, 0));
-			logger.info("Credit score {}: {}", account.getOwner(), score);
+				result.add(new CreditScore(account, account.getOwner(), score, 0));
+				logger.info("New credit score {}: {}", account.getOwner(), score);				
+			}
 		}
 
 		return result;

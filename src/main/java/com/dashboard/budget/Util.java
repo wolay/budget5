@@ -575,16 +575,5 @@ public class Util implements Config {
 
 		return result;
 	}
-	
-	public static List<Account> skipUpdatedCreditScores(List<Account> accounts, List<CreditScore> prevCreditScores) {
-		List<Account> excludeList = new ArrayList<Account>();
-
-		prevCreditScores.stream().filter(t -> !isDateToday(t.getDate())).forEach(t -> {
-			if (accounts.contains(t.getAccount()))
-				excludeList.add(t.getAccount());
-		});
-
-		return accounts.stream().filter(a -> !excludeList.contains(a)).collect(Collectors.toList());
-	}
 
 }
