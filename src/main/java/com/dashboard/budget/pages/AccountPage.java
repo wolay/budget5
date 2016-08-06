@@ -121,6 +121,8 @@ public abstract class AccountPage implements Config {
 		By byDescription = By.xpath(accountTransactionDetails.getTransDescriptionLocator());
 		By byDescriptionSup = (accountTransactionDetails.getTransDescriptionSupLocator() == null) ? null
 				: By.xpath(accountTransactionDetails.getTransDescriptionSupLocator());
+		By byCategoryNav = By.xpath(accountTransactionDetails.getTransCategoryNavLocator());
+		By byCategory = By.xpath(accountTransactionDetails.getTransCategoryLocator());
 		Integer dateFormat = accountTransactionDetails.getTransDateFormat();
 
 		// CURRENT PERIOD TRANSACTIONS
@@ -178,7 +180,13 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(account, total, date, description, amount, null));
+					//trying to get Category
+					String categoryStr = null;
+					if(byCategoryNav!=null){
+						row.findElement(byCategoryNav).click();
+						categoryStr = row.findElement(byCategory).getText();
+					}		
+					result.add(new Transaction(account, total, date, description, amount, categoryStr, null));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
@@ -241,7 +249,13 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					result.add(new Transaction(account, total, date, description, amount, null));
+					//trying to get Category
+					String categoryStr = null;
+					if(byCategoryNav!=null){
+						row.findElement(byCategoryNav).click();
+						categoryStr = row.findElement(byCategory).getText();
+					}	
+					result.add(new Transaction(account, total, date, description, amount, categoryStr, null));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {

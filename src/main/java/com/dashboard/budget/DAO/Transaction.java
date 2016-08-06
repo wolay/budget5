@@ -15,7 +15,7 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "transactions")
-public class Transaction {
+public class Transaction implements Comparable<Object> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,23 +26,26 @@ public class Transaction {
 	@JoinColumn(name = "account_id")
 	private Account account;
 	@ManyToOne
-	@JoinColumn(name = "total_id")	
+	@JoinColumn(name = "total_id")
 	private Total total;
 	private String decription;
 	private double amount;
 	@OneToOne
-	@JoinColumn(name = "category_id", unique=true)
+	@JoinColumn(name = "category_id", unique = true)
 	private TransactionCategory category;
+	private String categoryStr;
 
 	public Transaction() {
 	}
 
-	public Transaction(Account account, Total total, Date date, String decription, double amount, TransactionCategory category) {
+	public Transaction(Account account, Total total, Date date, String decription, double amount,
+			String categoryStr, TransactionCategory category) {
 		this.account = account;
 		this.total = total;
 		this.date = date;
 		this.decription = decription;
 		this.amount = amount;
+		this.categoryStr = categoryStr;
 		this.category = category;
 	}
 
@@ -53,7 +56,7 @@ public class Transaction {
 	public Account getAccount() {
 		return account;
 	}
-	
+
 	public Total getTotal() {
 		return total;
 	}
@@ -88,6 +91,14 @@ public class Transaction {
 
 	public void setCategory(TransactionCategory category) {
 		this.category = category;
+	}
+	
+	public String getCategoryStr() {
+		return categoryStr;
+	}
+
+	public void setCategoryStr(String categoryStr) {
+		this.categoryStr = categoryStr;
 	}
 
 	@Override
@@ -134,8 +145,14 @@ public class Transaction {
 
 	@Override
 	public String toString() {
-		return "Transaction [id=" + id + ", date=" + date + ", account=" + account + ", decription=" + decription
-				+ ", amount=" + amount + ", category=" + category + "]";
+		return "Transaction [id=" + id + ", date=" + date + ", account=" + account + ", total=" + total
+				+ ", decription=" + decription + ", amount=" + amount + ", category=" + category + ", categoryStr="
+				+ categoryStr + "]";
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return date.compareTo(((Transaction) o).getDate());
 	}
 
 }
