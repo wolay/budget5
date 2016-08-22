@@ -32,14 +32,14 @@ public class Transaction implements Comparable<Object> {
 	private double amount;
 	@OneToOne
 	@JoinColumn(name = "category_id", unique = true)
-	private TransactionCategory category;
+	private Category category;
 	private String categoryStr;
 
 	public Transaction() {
 	}
 
 	public Transaction(Account account, Total total, Date date, String decription, double amount,
-			String categoryStr, TransactionCategory category) {
+			String categoryStr, Category category) {
 		this.account = account;
 		this.total = total;
 		this.date = date;
@@ -85,11 +85,11 @@ public class Transaction implements Comparable<Object> {
 		this.amount = amount;
 	}
 
-	public TransactionCategory getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(TransactionCategory category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 	

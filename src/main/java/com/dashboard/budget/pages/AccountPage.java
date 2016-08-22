@@ -21,6 +21,7 @@ import com.dashboard.budget.DAO.AccountDetailsLogin;
 import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
+import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
@@ -94,7 +95,7 @@ public abstract class AccountPage implements Config {
 
 	public abstract Double getTotal();
 
-	public List<Transaction> getTransactions(Total total, Double difference, List<Transaction> prevTransactions) {
+	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) {
 		// check if getting transactions is enabled for account
 		if (accountTransactionDetails == null)
 			return new ArrayList<Transaction>();
@@ -114,6 +115,7 @@ public abstract class AccountPage implements Config {
 			webDriver.switchTo().defaultContent();
 		}
 
+		Double difference = 0.0;
 		By byDate = By.xpath(accountTransactionDetails.getTransDateLocator());
 		By byAmount = By.xpath(accountTransactionDetails.getTransAmountLocator());
 		By byAmountSup = (accountTransactionDetails.getTransAmountSupLocator() == null) ? null
@@ -121,8 +123,10 @@ public abstract class AccountPage implements Config {
 		By byDescription = By.xpath(accountTransactionDetails.getTransDescriptionLocator());
 		By byDescriptionSup = (accountTransactionDetails.getTransDescriptionSupLocator() == null) ? null
 				: By.xpath(accountTransactionDetails.getTransDescriptionSupLocator());
-		By byCategoryNav = By.xpath(accountTransactionDetails.getTransCategoryNavLocator());
-		By byCategory = By.xpath(accountTransactionDetails.getTransCategoryLocator());
+		By byCategoryNav = (accountTransactionDetails.getTransCategoryNavLocator() == null) ? null
+				: By.xpath(accountTransactionDetails.getTransCategoryNavLocator());
+		By byCategory = (accountTransactionDetails.getTransCategoryLocator() == null) ? null
+				: By.xpath(accountTransactionDetails.getTransCategoryLocator());
 		Integer dateFormat = accountTransactionDetails.getTransDateFormat();
 
 		// CURRENT PERIOD TRANSACTIONS
@@ -135,8 +139,7 @@ public abstract class AccountPage implements Config {
 			if (accountTransactionDetails.getTransTableSupLocator() == null)
 				currentPeriodRows = null;
 			else
-				currentPeriodRows = webDriver
-						.findElements(accountTransactionDetails.getTransTableSupLocator());
+				currentPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableSupLocator());
 		else
 			currentPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
 		if (currentPeriodRows == null)
@@ -180,17 +183,23 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					//trying to get Category
+					// trying to get Category
 					String categoryStr = null;
-					if(byCategoryNav!=null){
+					Category category = null;
+					if (byCategoryNav != null && row.findElements(byCategoryNav).size() > 0) {
 						row.findElement(byCategoryNav).click();
-						categoryStr = row.findElement(byCategory).getText();
-					}		
-					result.add(new Transaction(account, total, date, description, amount, categoryStr, null));
+						if (accountTransactionDetails.getTransCategoryLocator().startsWith("."))
+							categoryStr = row.findElement(byCategory).getText();
+						else // absolute path
+							categoryStr = webDriver.findElement(byCategory).getText();
+						category = dataHandler.recognizeCategory(categoryStr);
+					}
+					result.add(new Transaction(account, total, date, description, amount, categoryStr, category));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
-						if (accountNavigationDetails!=null && accountNavigationDetails.getAllAccountsLinkLocator() != null) {
+						if (accountNavigationDetails != null
+								&& accountNavigationDetails.getAllAccountsLinkLocator() != null) {
 							WebElement accounts = webDriver
 									.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
 							if (accounts != null)
@@ -209,9 +218,9 @@ public abstract class AccountPage implements Config {
 		// lets see how it will go... not many accounts reach that point
 		// for some accounts previous period transactions are not considered
 		// (i.e. WF)
-		if (accountNavigationDetails==null || accountNavigationDetails.getPeriodSwitchLocator() == null) 
+		if (accountNavigationDetails == null || accountNavigationDetails.getPeriodSwitchLocator() == null)
 			return new ArrayList<Transaction>();
-		else{			
+		else {
 			// AmEx case: before select prev period a button should be clicked
 			if (accountNavigationDetails.getPeriodSwitchSupLocator() != null) {
 				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchSupLocator());
@@ -233,8 +242,7 @@ public abstract class AccountPage implements Config {
 			// Wait for previous transactions table to be loaded
 			Util.sleep(3000);
 			if (webDriver.lookupElement(accountTransactionDetails.getTransTableLocator()) == null)
-				previousPeriodRows = webDriver
-						.findElements(accountTransactionDetails.getTransTableSupLocator());
+				previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableSupLocator());
 			else
 				previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
 			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
@@ -249,12 +257,13 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
-					//trying to get Category
+					// trying to get Category
 					String categoryStr = null;
-					if(byCategoryNav!=null){
+					if (byCategoryNav != null) {
 						row.findElement(byCategoryNav).click();
+						Util.sleep(2000);
 						categoryStr = row.findElement(byCategory).getText();
-					}	
+					}
 					result.add(new Transaction(account, total, date, description, amount, categoryStr, null));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);

@@ -28,11 +28,13 @@ public class AccountDetailsTransaction {
 	private String transDescriptionSupLocator;
 	private String transAmountLocator;
 	private String transAmountSupLocator;
+	private String transCategoryNavLocator;
+	private String transCategoryLocator;
 	
 	public AccountDetailsTransaction(){}
 	public AccountDetailsTransaction(Account account, String transTableLocator, String transTableSupLocator, String transDateLocator, Integer transDateFormat,
 			String transDescriptionLocator, String transDescriptionSupLocator, String transAmountLocator,
-			String transAmountSupLocator) {
+			String transAmountSupLocator, String transCategoryNavLocator, String transCategoryLocator) {
 		super();
 		this.account = account;
 		this.transTableLocator = transTableLocator;
@@ -43,6 +45,8 @@ public class AccountDetailsTransaction {
 		this.transDescriptionSupLocator = transDescriptionSupLocator;
 		this.transAmountLocator = transAmountLocator;
 		this.transAmountSupLocator = transAmountSupLocator;
+		this.transCategoryNavLocator = transCategoryNavLocator;
+		this.transCategoryLocator = transCategoryLocator;		
 		
 		this.account.setAccountDetailsTransaction(this);
 	}
@@ -86,4 +90,13 @@ public class AccountDetailsTransaction {
 	public String getTransAmountSupLocator() {
 		return transAmountSupLocator;
 	}
+	
+	public String getTransCategoryNavLocator() {
+		return transCategoryNavLocator;
+	}
+	
+	public String getTransCategoryLocator() {
+		return transCategoryLocator;
+	}
+	
 }

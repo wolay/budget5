@@ -8,8 +8,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "transaction_categories")
-public class TransactionCategory {
+@Table(name = "categories")
+public class Category {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,8 +20,8 @@ public class TransactionCategory {
 	@OneToOne(mappedBy="category")
 	private BudgetPlan budgetPlan;	
 	
-	public TransactionCategory(){}
-	public TransactionCategory(String name) {
+	public Category(){}
+	public Category(String name) {
 		this.name = name;
 	}
 	
