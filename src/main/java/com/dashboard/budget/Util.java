@@ -392,19 +392,25 @@ public class Util implements Config {
 			// Budget
 			String content = "<b>Budget: </b>";
 			content = content
-					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:450px;'><thead><tr><th>Date</th><th>Account</th><th>Amount</th><th>Diff</th></tr></thead>";
+					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><thead><tr><th>Date</th><th>Account</th><th>Amount</th><th>Diff</th></tr></thead>";
 			content = content + "<tfoot><tr><td></td><td><b>TOTAL</b></td><td><b>"
 					+ amountToString(DataHandler.getFullTotal(totals)) + "</b></td><td><b>"
 					+ amountToString(DataHandler.getFullDiff(totals)) + "</b></td></tr></tfoot><tbody>";
+			Collections.sort(totals);
 			for (Total total : totals) {
 				content = content + "<tr style='background-color:" + Util.getStatusColor(total) + "'><td>"
 						+ formatDateForEmail(total.getDate()) + "</td><td><a href='" + total.getAccount().getUrl()
 						+ "'>" + total.getAccount().getName() + "</a>";
-				if (total.getTransactions() != null && total.getTransactions().size() > 0) {
+				List<Transaction> transactions = total.getTransactions();
+				if (transactions != null)
+					Collections.sort(transactions);
+				if (transactions != null && transactions.size() > 0) {
 					content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:100%;'>";
 					for (Transaction transaction : total.getTransactions()) {
 						content = content + "<tr><td width='10'><font size='1'>"
 								+ Util.convertDateToStringType2(transaction.getDate())
+								+ "</font></td><td><font size='1'>"
+								+ ((transaction.getCategory() == null) ? "" : transaction.getCategory().getName())
 								+ "</font></td><td><font size='1'>" + transaction.getDecription()
 								+ "</font></td><td width='11'><font size='1'>" + amountToString(transaction.getAmount())
 								+ "</font></td></tr>";
