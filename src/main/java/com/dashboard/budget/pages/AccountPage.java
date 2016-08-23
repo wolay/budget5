@@ -115,7 +115,7 @@ public abstract class AccountPage implements Config {
 			webDriver.switchTo().defaultContent();
 		}
 
-		Double difference = 0.0;
+		Double difference = total.getDifference();
 		By byDate = By.xpath(accountTransactionDetails.getTransDateLocator());
 		By byAmount = By.xpath(accountTransactionDetails.getTransAmountLocator());
 		By byAmountSup = (accountTransactionDetails.getTransAmountSupLocator() == null) ? null
@@ -230,6 +230,7 @@ public abstract class AccountPage implements Config {
 					return new ArrayList<Transaction>();
 			}
 
+			//Util.sleep(3000);
 			WebElement period = webDriver.findElement(accountNavigationDetails.getPeriodSwitchLocator());
 			if (period != null) {
 				if ("click".equals(accountNavigationDetails.getActionToSwitchPeriod()))
@@ -240,11 +241,11 @@ public abstract class AccountPage implements Config {
 				return new ArrayList<Transaction>();
 
 			// Wait for previous transactions table to be loaded
-			Util.sleep(3000);
-			if (webDriver.lookupElement(accountTransactionDetails.getTransTableLocator()) == null)
+			Util.sleep(5000);
+			previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
+			if (previousPeriodRows == null)
 				previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableSupLocator());
-			else
-				previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
+
 			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
 			for (WebElement row : previousPeriodRows) {
 				// logger.info("Row in the previous period table: {}",
