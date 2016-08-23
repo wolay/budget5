@@ -66,8 +66,8 @@ public class AccountDetailsNavigation {
 		return Util.getByLocator(periodSwitchLocator);
 	}
 
-	public By getActionToSwitchPeriod() {
-		return Util.getByLocator(actionToSwitchPeriod);
+	public String getActionToSwitchPeriod() {
+		return actionToSwitchPeriod;
 	}
 
 	public By getPeriodSwitchSupLocator() {
