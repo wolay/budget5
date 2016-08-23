@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -30,8 +29,8 @@ public class Transaction implements Comparable<Object> {
 	private Total total;
 	private String decription;
 	private double amount;
-	@OneToOne
-	@JoinColumn(name = "category_id", unique = true)
+	@ManyToOne
+	@JoinColumn(name = "category_id")
 	private Category category;
 	private String categoryStr;
 

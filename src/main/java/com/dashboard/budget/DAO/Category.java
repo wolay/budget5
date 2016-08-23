@@ -1,9 +1,12 @@
 package com.dashboard.budget.DAO;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -15,8 +18,8 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String name;
-	@OneToOne(mappedBy="category")
-	private Transaction transaction;
+	@OneToMany(mappedBy="category")
+	private Set<Transaction> transactions;
 	@OneToOne(mappedBy="category")
 	private BudgetPlan budgetPlan;	
 	
@@ -31,6 +34,10 @@ public class Category {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public Set<Transaction> getTransaction(){
+		return transactions;
 	}
 	
 	@Override
