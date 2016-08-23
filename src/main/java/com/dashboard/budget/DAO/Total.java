@@ -39,7 +39,7 @@ public class Total implements Comparable<Object> {
 	public Total() {
 	}
 
-	public Total(Date date, Account account, Double amount, Double difference) {
+	public Total(Account account, Date date, Double amount, Double difference) {
 		this.date = date;
 		this.account = account;
 		this.amount = amount;

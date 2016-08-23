@@ -117,13 +117,13 @@ public class WebDriverManager implements Config {
 
 	private void addTransactionsForDifference(Total total, List<Transaction> transactions, AccountPage accountPage,
 			Double difference, List<Transaction> prevTransactions) {
-		List<Transaction> newTransactions = accountPage.getTransactions(total, difference, prevTransactions);
+		List<Transaction> newTransactions = accountPage.getTransactions(total, prevTransactions);
 		if (newTransactions.isEmpty()) {
 			logger.error("No transactions found for difference");
 		} else {
 			for (Transaction newTransaction : newTransactions) {
-				logger.info("{}, transaction: {}, {}, {}", accountPage.getAccount().getName(), newTransaction.getDate(),
-						newTransaction.getDecription(), newTransaction.getAmount());
+				logger.info("{}, transaction: {}, {}, {}, {} ({})", accountPage.getAccount().getName(), newTransaction.getDate(),
+						newTransaction.getDecription(), newTransaction.getAmount(), newTransaction.getCategory(), newTransaction.getCategoryStr());
 			}
 			transactions.addAll(newTransactions);
 		}
@@ -144,7 +144,6 @@ public class WebDriverManager implements Config {
 		accounts = Util.skipUpdatedBankAccounts(accountsIn, prevTotals);
 
 		List<Total> result = new ArrayList<Total>();
-		ExecutorService executor = Executors.newFixedThreadPool(1);
 
 		logger.info("Number of accounts to run: {}", accounts.size());
 
@@ -161,7 +160,7 @@ public class WebDriverManager implements Config {
 				drivers.add(driver);
 		}
 
-		executor = Executors.newFixedThreadPool(nubmberOfThreads,
+		ExecutorService executor = Executors.newFixedThreadPool(nubmberOfThreads,
 				new ThreadFactoryBuilder().setNameFormat("%d").build());
 
 		for (List<String> driver : drivers) {
@@ -228,13 +227,13 @@ public class WebDriverManager implements Config {
 		}
 
 		Thread.currentThread().setName("Credit scores");
-		
+
 		List<CreditScore> result = new ArrayList<CreditScore>();
-		for(CreditScore creditScore: dataHandler.getCreditScores()){
-			if(Util.isDateToday(creditScore.getDate()))
-				result.add(creditScore);
-			else{
-				Account account = creditScore.getAccount();
+		dataHandler.getCreditScores().stream().forEach(s -> {
+			if (Util.isDateToday(s.getDate()))
+				result.add(s);
+			else {
+				Account account = s.getAccount();
 				AccountPage accountPage = new AccountPageCreditKarma(account, dataHandler);
 				accountPage.gotoHomePage();
 				accountPage.login();
@@ -243,9 +242,9 @@ public class WebDriverManager implements Config {
 				accountPage.quit();
 
 				result.add(new CreditScore(account, account.getOwner(), score, 0));
-				logger.info("New credit score {}: {}", account.getOwner(), score);				
+				logger.info("New credit score {}: {}", account.getOwner(), score);
 			}
-		}
+		});
 
 		return result;
 	}

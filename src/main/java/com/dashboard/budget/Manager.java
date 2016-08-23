@@ -42,8 +42,8 @@ public class Manager {
 				newTransactions= new ArrayList<Transaction>();
 				// Previous balances & transactions
 				accounts = dataHandler.getBankAccountsList();
-				List<Total> prevTotals = Util.getTotalsFromDb(accounts);
-				//List<Total> prevTotals = dataHandler.getPrevTotals();
+				//List<Total> prevTotals = Util.getTotalsFromFile(accounts);
+				List<Total> prevTotals = dataHandler.getPrevTotals();
 				//prevTransactions = dataHandler.get Util.getPrevTransactions(dataHandler.getBankAccountsList());
 				prevTransactions = dataHandler.getPrevTransactions();
 						
@@ -87,7 +87,7 @@ public class Manager {
 		//Util.writeTransactionsToFile(newTransactions);
 		
 		// Sending summary to email
-		Util.sendEmailSummary(Util.getTotalsFromDb(accounts), creditScores, stopWatch.toString());
+		Util.sendEmailSummary(dataHandler.getLastTotals(), creditScores, stopWatch.toString());
 		
 		System.exit(0);
 		

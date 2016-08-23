@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
@@ -190,64 +191,31 @@ public class UtilDb implements Config{
 
 		return creditScores;
 	}
-
-	public void saveTotalsToDb(List<Total> totals) {
-		if(!bankAccountsFilter.isEmpty()){
-			logger.info("Debug mode -> save to db not happened");
-			return;
-		}
-		totals.stream().filter(t -> t.getAmount() != null).forEach(t -> {
-			EntityTransaction txn = em.getTransaction();
-			try {
-				txn.begin();
-				em.persist(t);
-				txn.commit();
-			} catch (Exception e) {
-				if (txn != null) {
-					txn.rollback();
-				}
-				e.printStackTrace();
-			}
-		});
-	}
-
-	public void saveTotalToDb(Total total) {
-		if(!bankAccountsFilter.isEmpty()){
-			logger.info("Debug mode -> save to db not happened");
-			return;
-		}
-		EntityTransaction txn = em.getTransaction();
-		try {
-			txn.begin();
-			em.persist(total);
-			txn.commit();
-		} catch (Exception e) {
-			if (txn != null) {
-				txn.rollback();
-			}
-			e.printStackTrace();
-		}
-	}
-
-	public void saveTransactionToDb(Transaction transaction) {
-		if(!bankAccountsFilter.isEmpty()){
-			logger.info("Debug mode -> save to db not happened");
-			return;
-		}
-		EntityTransaction txn = em.getTransaction();
-		try {
-			txn.begin();
-			em.persist(transaction);
-			txn.commit();
-		} catch (Exception e) {
-			if (txn != null) {
-				txn.rollback();
-			}
-			e.printStackTrace();
-		}
-	}
 	
-	public void saveCreditScoreToDb(CreditScore creditScore) {
+
+	@SuppressWarnings("unchecked")
+	public List<Category> loadCategoriesFromDb() {
+
+		List<Category> categories = null;
+
+		EntityTransaction txn = em.getTransaction();
+		try {
+			txn.begin();
+			Query query = em.createQuery("select category from Category category");
+			categories = query.getResultList();
+			txn.commit();
+		} catch (Exception ex) {
+			if (txn != null) {
+				txn.rollback();
+			}
+			ex.printStackTrace();
+		}
+
+		return categories;
+	}
+
+	
+	public void saveToDb(Object object) {
 		if(!bankAccountsFilter.isEmpty()){
 			logger.info("Debug mode -> save to db not happened");
 			return;
@@ -255,7 +223,7 @@ public class UtilDb implements Config{
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
-			em.persist(creditScore);
+			em.persist(object);
 			txn.commit();
 		} catch (Exception e) {
 			if (txn != null) {
@@ -270,5 +238,4 @@ public class UtilDb implements Config{
 			em.close();
 		}
 	}
-
 }

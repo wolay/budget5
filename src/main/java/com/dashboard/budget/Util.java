@@ -17,13 +17,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -117,7 +117,7 @@ public class Util implements Config {
 			return input;
 	}
 
-	public static List<Total> getTotalsFromDb(List<Account> accounts) {
+	public static List<Total> getTotalsFromFile(List<Account> accounts) {
 		// open latest file to compare results
 		File filePrevSummary = getLastFileModified(dirOutputTotals);
 
@@ -147,9 +147,9 @@ public class Util implements Config {
 					if (account == null)
 						continue;
 					if (tokens[3].equals("N/A"))
-						result.add(new Total(Util.convertStringToDateByType("2016-07-19", 0), account, null, null));
+						result.add(new Total(account, Util.convertStringToDateByType("2016-07-19", 0), null, null));
 					else
-						result.add(new Total(Util.convertStringToDateByType("2016-07-19", 0), account,
+						result.add(new Total(account, Util.convertStringToDateByType("2016-07-19", 0),
 								Double.valueOf(tokens[3]), null));
 				}
 			}
@@ -197,7 +197,7 @@ public class Util implements Config {
 					if (account == null)
 						continue;
 					result.add(new Transaction(account, null, Util.convertStringToDateByType(tokens[1], 0), tokens[2],
-							Double.valueOf(tokens[3]), null));
+							Double.valueOf(tokens[3]), null, null));
 				}
 			}
 			logger.info("All {} transactions loaded from file", result.size());
@@ -521,7 +521,7 @@ public class Util implements Config {
 		try {
 			// logger.info("attempt to shutdown executor");
 			executor.shutdown();
-			executor.awaitTermination(10, TimeUnit.MINUTES);
+			executor.awaitTermination(15, TimeUnit.MINUTES);
 		} catch (InterruptedException e) {
 			logger.error("tasks interrupted");
 		} finally {
@@ -569,6 +569,10 @@ public class Util implements Config {
 
 	public static String formatDateForEmail(Date date) {
 		return (isDateToday(date)) ? "today" : convertDateToStringType2(date);
+	}
+
+	public static Account getAccountById(List<Account> accounts, int id) {
+		return accounts.stream().filter(a -> a.getId() == id).findFirst().orElse(null);
 	}
 
 	public static List<Account> skipUpdatedBankAccounts(List<Account> accounts, List<Total> prevTotals) {
