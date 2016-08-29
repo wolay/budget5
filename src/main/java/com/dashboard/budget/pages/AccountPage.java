@@ -146,13 +146,22 @@ public abstract class AccountPage implements Config {
 			logger.info("No rows found in the current period table");
 		else {
 			logger.info("Rows in the current period table: {}", currentPeriodRows.size());
+			Date prevDate = null;
 			for (WebElement row : currentPeriodRows) {
 				logger.info("Row in the current period table: {}", row.getText());
 				if (Util.isPending(row.getText()))
 					continue;
-				if (Util.isPending(row.findElement(byDate).getText()))
-					continue;
-				Date date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
+				// special case for Chase - transactions within one day are
+				// grouped
+				// so only 1st shown transaction has date in the row
+				Date date;
+				if (row.findElement(byDate).getText().equals("") && account.getBank().equals("chs"))
+					date = prevDate;
+				else {
+					if (Util.isPending(row.findElement(byDate).getText()))
+						continue;
+					date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
+				}
 				double amount;
 				// Amount consideration got complicated due PayPal
 				if (byAmountSup == null)
@@ -210,6 +219,7 @@ public abstract class AccountPage implements Config {
 						return result;
 					}
 				}
+				prevDate = date;
 			}
 		}
 
@@ -230,7 +240,7 @@ public abstract class AccountPage implements Config {
 					return new ArrayList<Transaction>();
 			}
 
-			//Util.sleep(3000);
+			// Util.sleep(3000);
 			WebElement period = webDriver.findElement(accountNavigationDetails.getPeriodSwitchLocator());
 			if (period != null) {
 				if ("click".equals(accountNavigationDetails.getActionToSwitchPeriod()))
