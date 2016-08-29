@@ -495,7 +495,7 @@ public class Util implements Config {
 		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions")
 				|| row.contains("There is no recent activity") || row.contains("Posted Transactions")
 				|| row.equals("Pending") || row.contains("end of your statement")
-				|| row.startsWith("No activity posted"))
+				|| row.startsWith("No activity posted") || row.equals("You've reached the end of the statement cycle account activity."))
 			return true;
 		else
 			return false;

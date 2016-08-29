@@ -21,7 +21,7 @@ public class AccountPageChase extends AccountPage {
 		// IHG
 		if (code == 131) {
 			Util.sleep(5000);
-			WebElement nav = webDriver.lookupElement(By.xpath("//div[@id='creditcardGroupaccounts']/div[2]/div[2]/div"));
+			WebElement nav = webDriver.findElement(By.xpath("//section[2]/div/div/img"));
 			if (nav != null) {
 				nav.click();
 				Util.sleep(5000);
