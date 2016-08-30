@@ -12,9 +12,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.CreditScore;
@@ -22,9 +19,7 @@ import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
 
-
 public class UtilDb implements Config{
-	private static Logger logger = LoggerFactory.getLogger(UtilDb.class);
 	private EntityManager em;
 
 	public void dropDb() {
@@ -219,10 +214,10 @@ public class UtilDb implements Config{
 
 	
 	public void saveToDb(Object object) {
-		if(!bankAccountsFilter.isEmpty()){
+		/*if(!bankAccountsFilter.isEmpty()){
 			logger.info("Debug mode -> save to db not happened");
 			return;
-		}
+		}*/
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();

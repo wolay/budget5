@@ -1,6 +1,5 @@
 package com.dashboard.budget;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,10 +10,6 @@ import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
-/**
- * Hello world!
- *
- */
 public class Manager {
 
 	private static Logger logger = LoggerFactory.getLogger(Manager.class);
@@ -22,16 +17,17 @@ public class Manager {
 	private static WebDriverManager webDriverManager = new WebDriverManager(dataHandler);
 	
 	private static List<Account> accounts;
-	private static List<Total> totals;
-	private static List<Transaction> newTransactions;
+	private static List<Total> prevTotals;
+	private static List<Total> newTotals;
 	private static List<Transaction> prevTransactions;
+	private static List<Transaction> newTransactions;
 	private static List<CreditScore> creditScores;
 
 	public static void main(String[] args){
 		if(!webDriverManager.isOnline())
 			System.exit(0);			
 		
-		logger.info("Data collecting started");
+		logger.info("Data collecting started...");
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		
@@ -39,17 +35,14 @@ public class Manager {
 		Thread t1 = new Thread() {
 			public void run() {
 				Thread.currentThread().setName("Bank accounts");				
-				newTransactions= new ArrayList<Transaction>();
 				// Previous balances & transactions
 				accounts = dataHandler.getBankAccountsList();
-				//List<Total> prevTotals = Util.getTotalsFromFile(accounts);
-				List<Total> prevTotals = dataHandler.getPrevTotals();
-				//prevTransactions = dataHandler.get Util.getPrevTransactions(dataHandler.getBankAccountsList());
+				prevTotals = dataHandler.getPrevTotals();
 				prevTransactions = dataHandler.getPrevTransactions();
 						
 				// New balances & transactions
-				totals = webDriverManager.getNewTotals(accounts, newTransactions, prevTotals, prevTransactions);
-				logger.info("automation total: {}", Util.roundDouble(DataHandler.getFullTotal(totals)));
+				newTotals = webDriverManager.getNewTotals(accounts, newTransactions, prevTotals, prevTransactions);
+				logger.info("automation total: {}", Util.roundDouble(DataHandler.getFullTotal(newTotals)));
 
 			}
 		};
@@ -78,13 +71,10 @@ public class Manager {
 		
 		logger.info(stopWatch.toString());
 		
-		// Saving to files
-		//Util.writeTotalsToFile(totals);
-		dataHandler.saveNewTotalsToDb(totals);
-		dataHandler.saveNewTransactionsToDb(newTransactions);
+		// Saving
+		logger.info("Saving new data to DB...");
+		dataHandler.saveNewTotalsWithTransactionsToDb(newTotals);
 		dataHandler.saveCreditScoresToDb(creditScores);
-		//newTransactions.addAll(prevTransactions);
-		//Util.writeTransactionsToFile(newTransactions);
 		
 		// Sending summary to email
 		Util.sendEmailSummary(dataHandler.getLastTotals(), creditScores, stopWatch.toString());

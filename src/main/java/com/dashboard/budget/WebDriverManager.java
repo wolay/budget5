@@ -122,8 +122,9 @@ public class WebDriverManager implements Config {
 			logger.error("No transactions found for difference");
 		} else {
 			for (Transaction newTransaction : newTransactions) {
-				logger.info("{}, transaction: {}, {}, {}, {} ({})", accountPage.getAccount().getName(), newTransaction.getDate(),
-						newTransaction.getDecription(), newTransaction.getAmount(), newTransaction.getCategory(), newTransaction.getCategoryStr());
+				logger.info("{}, transaction: {}, {}, {}, {} ({})", accountPage.getAccount().getName(),
+						newTransaction.getDate(), newTransaction.getDecription(), newTransaction.getAmount(),
+						newTransaction.getCategory(), newTransaction.getCategoryStr());
 			}
 			transactions.addAll(newTransactions);
 		}
