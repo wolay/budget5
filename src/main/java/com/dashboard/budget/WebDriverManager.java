@@ -44,6 +44,7 @@ public class WebDriverManager implements Config {
 
 	private static Logger logger = LoggerFactory.getLogger(WebDriverManager.class);
 	private DataHandler dataHandler;
+	private AccountPage accountPage = null;
 
 	public WebDriverManager(DataHandler dataHandler) {
 		this.dataHandler = dataHandler;
@@ -165,9 +166,9 @@ public class WebDriverManager implements Config {
 				new ThreadFactoryBuilder().setNameFormat("%d").build());
 
 		for (List<String> driver : drivers) {
-			executor.submit(() -> {
-				AccountPage accountPage = null;
-				for (Account account : Util.getAccountsByDriver(accounts, driver.get(0), driver.get(1))) {
+			executor.submit(() -> {				
+				accounts.stream().filter(a -> a.getBank().equals(driver.get(0)) && a.getOwner().equals(driver.get(1)))
+						.forEach(account -> {
 					Thread.currentThread().setPriority(account.getPriority());
 					Thread.currentThread().setName("Bank accounts ("
 							+ Util.getThreadNumber(Thread.currentThread().getName()) + "): " + account.getName());
@@ -210,7 +211,7 @@ public class WebDriverManager implements Config {
 						isDownloaded = true;
 					}
 					result.add(total);
-				}
+				});
 				accountPage.quit();
 			});
 		}

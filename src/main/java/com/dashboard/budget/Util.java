@@ -224,18 +224,6 @@ public class Util implements Config {
 		return result;
 	}
 
-	public static List<Account> getAccountsByDriver(List<Account> accounts, String driver, String owner) {
-		List<Account> result = new ArrayList<Account>();
-		for (Account account : accounts) {
-			if (!account.getBank().equals(driver))
-				continue;
-			if (!account.getOwner().equals(owner))
-				continue;
-			result.add(account);
-		}
-		return result;
-	}
-
 	public static String amountToString(Double amount) {
 		if (amount == null)
 			return "N/A";
