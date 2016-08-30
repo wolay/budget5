@@ -179,8 +179,11 @@ public class UtilDb implements Config{
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
-			Query query = em.createQuery("select creditscore from CreditScore creditscore");
-			creditScores = query.getResultList();
+			String sql = "select id, credit_scores.date, difference,name,score,credit_scores.account_id from mydb.credit_scores "
+					+ "right join (SELECT max(date) as date, account_id FROM mydb.credit_scores group by account_id) max_dates "
+					+ "on credit_scores.date=max_dates.date and credit_scores.account_id=max_dates.account_id";
+			Query query = em.createNativeQuery(sql, CreditScore.class);
+			creditScores = (List<CreditScore>) query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
