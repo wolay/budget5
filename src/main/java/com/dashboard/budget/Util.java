@@ -426,6 +426,12 @@ public class Util implements Config {
 			content = content + "<P><b>Credit scores: </b>";
 			for (CreditScore creditScore : creditScores) {
 				content = content + "<br>" + creditScore.getName() + ": " + creditScore.getScore();
+				if(creditScore.getDifference()>0)
+					content = content + "(<font color='green'>+"+creditScore.getDifference()+"</font>)";
+				else if(creditScore.getDifference()<0)
+					content = content + "(<font color='red'>"+creditScore.getDifference()+"</font>)";
+				else
+					content = content + "(+"+creditScore.getDifference()+")";
 			}
 
 			// Time spent for retrieving

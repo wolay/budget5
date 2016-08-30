@@ -241,7 +241,7 @@ public class WebDriverManager implements Config {
 				int score = accountPage.getScore();
 				accountPage.quit();
 
-				result.add(new CreditScore(account, account.getOwner(), score, 0));
+				result.add(new CreditScore(account, account.getOwner(), score, score - s.getScore()));
 				logger.info("New credit score {}: {}", account.getOwner(), score);
 			}
 		});
