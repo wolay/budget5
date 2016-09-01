@@ -116,8 +116,8 @@ public class WebDriverManager implements Config {
 
 	}
 
-	private void addTransactionsForDifference(Total total, List<Transaction> transactions, AccountPage accountPage,
-			Double difference, List<Transaction> prevTransactions) {
+	private void addTransactionsForDifference(Total total, AccountPage accountPage, Double difference,
+			List<Transaction> prevTransactions) {
 		List<Transaction> newTransactions = accountPage.getTransactions(total, prevTransactions);
 		if (newTransactions.isEmpty()) {
 			logger.error("No transactions found for difference");
@@ -127,11 +127,10 @@ public class WebDriverManager implements Config {
 						newTransaction.getDate(), newTransaction.getDecription(), newTransaction.getAmount(),
 						newTransaction.getCategory(), newTransaction.getCategoryStr());
 			}
-			transactions.addAll(newTransactions);
 		}
 	}
 
-	public List<Total> getNewTotals(List<Account> accountsIn, List<Transaction> transactions, List<Total> prevTotals,
+	public List<Total> getNewTotals(List<Account> accountsIn, List<Total> prevTotals,
 			List<Transaction> prevTransactions) {
 		List<Account> accounts;
 
@@ -166,7 +165,7 @@ public class WebDriverManager implements Config {
 				new ThreadFactoryBuilder().setNameFormat("%d").build());
 
 		for (List<String> driver : drivers) {
-			executor.submit(() -> {				
+			executor.submit(() -> {
 				accounts.stream().filter(a -> a.getBank().equals(driver.get(0)) && a.getOwner().equals(driver.get(1)))
 						.forEach(account -> {
 					Thread.currentThread().setPriority(account.getPriority());
@@ -198,8 +197,7 @@ public class WebDriverManager implements Config {
 							logger.info("{}, total: {}", account.getName(), amount);
 							if (difference != null && difference != 0.00) {
 								logger.info("{}, difference: {}", account.getName(), difference);
-								addTransactionsForDifference(total, transactions, accountPage, difference,
-										prevTransactions);
+								addTransactionsForDifference(total, accountPage, difference, prevTransactions);
 							}
 						} else {
 							logger.error("Error while getting total for: {}", account.getName());
@@ -213,6 +211,7 @@ public class WebDriverManager implements Config {
 					result.add(total);
 				});
 				accountPage.quit();
+				accountPage = null;
 			});
 		}
 

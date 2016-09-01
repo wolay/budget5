@@ -20,7 +20,6 @@ public class Manager {
 	private static List<Total> prevTotals;
 	private static List<Total> newTotals;
 	private static List<Transaction> prevTransactions;
-	private static List<Transaction> newTransactions;
 	private static List<CreditScore> creditScores;
 
 	public static void main(String[] args){
@@ -41,7 +40,7 @@ public class Manager {
 				prevTransactions = dataHandler.getPrevTransactions();
 						
 				// New balances & transactions
-				newTotals = webDriverManager.getNewTotals(accounts, newTransactions, prevTotals, prevTransactions);
+				newTotals = webDriverManager.getNewTotals(accounts, prevTotals, prevTransactions);
 				logger.info("automation total: {}", Util.roundDouble(DataHandler.getFullTotal(newTotals)));
 
 			}
