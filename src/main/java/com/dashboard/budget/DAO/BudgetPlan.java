@@ -21,7 +21,7 @@ public class BudgetPlan {
 	private int id;
 	private boolean isActive;
 	@OneToOne
-	@JoinColumn(name = "category_id", unique=true)	
+	@JoinColumn(name = "category_id")	
 	private Category category;
 	@Type(type = "date")
 	private Date startDate;

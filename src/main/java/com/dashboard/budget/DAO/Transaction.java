@@ -29,10 +29,13 @@ public class Transaction implements Comparable<Object> {
 	private Total total;
 	private String decription;
 	private double amount;
+	private String categoryStr;
 	@ManyToOne
 	@JoinColumn(name = "category_id")
-	private Category category;
-	private String categoryStr;
+	private Category category;	
+	@ManyToOne
+	@JoinColumn(name = "categorization_rule_id")
+	private CategorizationRule categorizationRule;	
 
 	public Transaction() {
 	}

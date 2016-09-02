@@ -22,6 +22,8 @@ public class Category {
 	private Set<Transaction> transactions;
 	@OneToOne(mappedBy="category")
 	private BudgetPlan budgetPlan;	
+	@OneToMany(mappedBy="category")
+	private Set<CategorizationRule> categorizationRules;	
 	
 	public Category(){}
 	public Category(String name) {
