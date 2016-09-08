@@ -13,6 +13,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.CategorizationRule;
 import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
@@ -211,6 +212,27 @@ public class UtilDb implements Config{
 
 		return categories;
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<CategorizationRule> loadCategorizationRulesFromDb() {
+		List<CategorizationRule> categorizationRules = null;
+
+		EntityTransaction txn = em.getTransaction();
+		try {
+			txn.begin();
+			Query query = em.createQuery("select categorizationRule from CategorizationRule categorizationRule");
+			categorizationRules = query.getResultList();
+			txn.commit();
+		} catch (Exception ex) {
+			if (txn != null) {
+				txn.rollback();
+			}
+			ex.printStackTrace();
+		}
+
+		return categorizationRules;
+	}
 
 	
 	public void saveToDb(Object object) {
@@ -236,4 +258,5 @@ public class UtilDb implements Config{
 			em.close();
 		}
 	}
+
 }
