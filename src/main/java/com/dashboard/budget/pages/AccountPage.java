@@ -127,6 +127,8 @@ public abstract class AccountPage implements Config {
 				: By.xpath(accountTransactionDetails.getTransCategoryNavLocator());
 		By byCategory = (accountTransactionDetails.getTransCategoryLocator() == null) ? null
 				: By.xpath(accountTransactionDetails.getTransCategoryLocator());
+		By byCategorySup = (accountTransactionDetails.getTransCategorySupLocator() == null) ? null
+				: By.xpath(accountTransactionDetails.getTransCategorySupLocator());
 		Integer dateFormat = accountTransactionDetails.getTransDateFormat();
 
 		// CURRENT PERIOD TRANSACTIONS
@@ -195,13 +197,26 @@ public abstract class AccountPage implements Config {
 					// trying to get Category
 					String categoryStr = null;
 					Category category = null;
-					if (byCategoryNav != null && row.findElements(byCategoryNav).size() > 0) {
-						row.findElement(byCategoryNav).click();
-						if (accountTransactionDetails.getTransCategoryLocator().startsWith("."))
-							categoryStr = row.findElement(byCategory).getText();
-						else // absolute path
-							categoryStr = webDriver.findElement(byCategory).getText();
-						category = dataHandler.recognizeCategory(categoryStr);
+					if (byCategoryNav != null) {
+						WebElement weCategoryNav = webDriver.findElementInRow(row, byCategoryNav);
+						if (weCategoryNav == null)
+							logger.error("Cannot find category navigation locatore");
+						else {
+							webDriver.clickElementWithAction(weCategoryNav);
+							if (accountTransactionDetails.getTransCategoryLocator().startsWith(".")) {
+								WebElement weCategory = webDriver.findElementInRow(row, byCategory);
+								if (weCategory != null)
+									categoryStr = weCategory.getText();
+								else
+									categoryStr = row.findElement(byCategorySup).getText();
+							} else // absolute path
+								categoryStr = webDriver.findElement(byCategory).getText();
+							weCategoryNav.click();
+							
+							logger.info("Category in current row: {}", categoryStr);
+							category = dataHandler.recognizeCategory(categoryStr);
+							logger.info("Recognized category: {}", category);
+						}
 					}
 					result.add(new Transaction(account, total, date, description, amount, categoryStr, category));
 					difference = Util.roundDouble(difference - amount);
@@ -270,12 +285,19 @@ public abstract class AccountPage implements Config {
 				if (matchTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;
-					if (byCategoryNav != null) {
+					Category category = null;
+					if (byCategoryNav != null && row.findElements(byCategoryNav).size() > 0) {
 						row.findElement(byCategoryNav).click();
 						Util.sleep(2000);
-						categoryStr = row.findElement(byCategory).getText();
+						if (accountTransactionDetails.getTransCategoryLocator().startsWith("."))
+							categoryStr = row.findElement(byCategory).getText();
+						else // absolute path
+							categoryStr = webDriver.findElement(byCategory).getText();
+						logger.info("Category in current row: {}", categoryStr);
+						category = dataHandler.recognizeCategory(categoryStr);
+						logger.info("Recognized category: {}", category);
 					}
-					result.add(new Transaction(account, total, date, description, amount, categoryStr, null));
+					result.add(new Transaction(account, total, date, description, amount, categoryStr, category));
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
