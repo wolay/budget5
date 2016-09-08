@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -114,6 +115,15 @@ public class UberWebDriver implements Config {
 		
 		try {
 			wait.until(ExpectedConditions.elementToBeClickable(by));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
+	public void clickElementWithAction(WebElement elem) {
+		try {
+			Actions actions = new Actions(webDriver);
+			actions.click(elem).build().perform();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
