@@ -32,6 +32,10 @@ public class UberWebDriver implements Config {
 		webDriver.get(url);
 	}
 
+	public WebDriver getWebDriver() {
+		return webDriver;
+	}
+
 	public void quit() {
 		webDriver.quit();
 	}
@@ -74,6 +78,19 @@ public class UberWebDriver implements Config {
 			return null;
 		}
 	}
+	
+	public WebElement findElementInRow(WebElement row, By by) {
+		int i = 0;
+		while (row.findElements(by).size() == 0 && i < 20) {
+			Util.sleep(500);
+			i++;
+		}
+		List<WebElement> elements = row.findElements(by);
+		if (elements.size() > 0)
+			return elements.get(0);
+		else
+			return null;
+	}
 
 	public List<WebElement> findElements(By by) {
 		try {
@@ -94,6 +111,11 @@ public class UberWebDriver implements Config {
 	}
 
 	public void waitToBeClickable(By by) {
-		wait.until(ExpectedConditions.elementToBeClickable(by));
+		
+		try {
+			wait.until(ExpectedConditions.elementToBeClickable(by));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
 	}
 }
