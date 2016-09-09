@@ -200,7 +200,7 @@ public class WebDriverManager implements Config {
 								addTransactionsForDifference(total, accountPage, difference, prevTransactions);
 								// if no transactions found for difference
 								// better not to save it but to wait next day
-								if (total.getTransactions().size() == 0)
+								if (total.getTransactions() == null)
 									total = null;
 							}
 						} else {
@@ -212,7 +212,8 @@ public class WebDriverManager implements Config {
 
 						isDownloaded = true;
 					}
-					result.add(total);
+					if (total != null)
+						result.add(total);
 				});
 				accountPage.quit();
 				accountPage = null;
