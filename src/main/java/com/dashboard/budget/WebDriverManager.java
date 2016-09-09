@@ -198,6 +198,10 @@ public class WebDriverManager implements Config {
 							if (difference != null && difference != 0.00) {
 								logger.info("{}, difference: {}", account.getName(), difference);
 								addTransactionsForDifference(total, accountPage, difference, prevTransactions);
+								// if no transactions found for difference
+								// better not to save it but to wait next day
+								if (total.getTransactions().size() == 0)
+									total = null;
 							}
 						} else {
 							logger.error("Error while getting total for: {}", account.getName());
