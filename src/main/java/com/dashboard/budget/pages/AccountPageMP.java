@@ -9,9 +9,9 @@ import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 
-public class AccountPageBoA extends AccountPage {
+public class AccountPageMP extends AccountPage {
 
-	public AccountPageBoA(Account account, DataHandler dataHandler) {
+	public AccountPageMP(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
 	}
 

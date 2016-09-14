@@ -18,6 +18,7 @@ public class Account{
 	private int id;
 	private String name;
 	private String bank;
+	private boolean isMyPortfolio;
 	private String url;
 	private String browser;
 	private String owner;
@@ -41,13 +42,14 @@ public class Account{
 	public Account() {
 	}
 
-	public Account(int id, String name, String bank, String url, String browser, String owner) {
+	public Account(int id, String name, String bank, String url, String browser, String owner, boolean isMyPortfolio) {
 		this.id = id;
 		this.name = name;
 		this.bank = bank;
 		this.url = url;
 		this.browser = browser;
 		this.owner = owner;
+		this.isMyPortfolio = isMyPortfolio;
 	}
 
 	public int getId() {
@@ -60,6 +62,10 @@ public class Account{
 
 	public String getBank() {
 		return bank;
+	}
+	
+	public boolean getIsMyProtfolio(){
+		return isMyPortfolio;
 	}
 
 	public String getBrowser() {
@@ -134,7 +140,8 @@ public class Account{
 
 	@Override
 	public String toString() {
-		return "Account [id=" + id + ", name=" + name + ", bank=" + bank + ", url=" + url + ", browser=" + browser
-				+ ", owner=" + owner + "]";
+		return "Account [id=" + id + ", name=" + name + ", bank=" + bank + ", isMyPortfolio=" + isMyPortfolio + ", url="
+				+ url + ", browser=" + browser + ", owner=" + owner + "]";
 	}
+
 }

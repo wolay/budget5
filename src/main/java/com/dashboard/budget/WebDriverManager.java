@@ -21,9 +21,7 @@ import com.dashboard.budget.pages.AccountPage;
 import com.dashboard.budget.pages.AccountPageAmEx;
 import com.dashboard.budget.pages.AccountPageAmazon;
 import com.dashboard.budget.pages.AccountPageBestBuy;
-import com.dashboard.budget.pages.AccountPageBoA;
-import com.dashboard.budget.pages.AccountPageCapOne;
-import com.dashboard.budget.pages.AccountPageChase;
+import com.dashboard.budget.pages.AccountPageMP;
 import com.dashboard.budget.pages.AccountPageCiti;
 import com.dashboard.budget.pages.AccountPageCreditKarma;
 import com.dashboard.budget.pages.AccountPageJCPenney;
@@ -33,7 +31,6 @@ import com.dashboard.budget.pages.AccountPageNordstorm;
 import com.dashboard.budget.pages.AccountPagePayPal;
 import com.dashboard.budget.pages.AccountPageSaks;
 import com.dashboard.budget.pages.AccountPageTjMaxx;
-import com.dashboard.budget.pages.AccountPageWF;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
@@ -51,52 +48,30 @@ public class WebDriverManager implements Config {
 	}
 
 	private AccountPage getAccountPage(Account account) {
-		switch (account.getId()) {
-		case 101:
-			return new AccountPageWF(account, dataHandler);
-		case 102:
-			return new AccountPageWF(account, dataHandler);
-		case 103:
-			return new AccountPageWF(account, dataHandler);
-		case 111:
+		switch (account.getBank()) {
+		case "mp":
+			return new AccountPageMP(account, dataHandler);
+		case "citi":
 			return new AccountPageCiti(account, dataHandler);
-		case 112:
-			return new AccountPageCiti(account, dataHandler);
-		case 113:
-			return new AccountPageCiti(account, dataHandler);
-		case 121:
+		case "amex":
 			return new AccountPageAmEx(account, dataHandler);
-		case 122:
-			return new AccountPageAmEx(account, dataHandler);
-		case 124:
-			return new AccountPageAmEx(account, dataHandler);
-		case 131:
-			return new AccountPageChase(account, dataHandler);
-		case 132:
-			return new AccountPageChase(account, dataHandler);
-		case 141:
-			return new AccountPageBoA(account, dataHandler);
-		case 181:
+		case "pp":
 			return new AccountPagePayPal(account, dataHandler);
-		case 191:
-			return new AccountPageCapOne(account, dataHandler);
-		case 201:
+		case "amz":
 			return new AccountPageAmazon(account, dataHandler);
-		case 203:
+		case "nrd":
 			return new AccountPageNordstorm(account, dataHandler);
-		case 205:
+		case "sks":
 			return new AccountPageSaks(account, dataHandler);
-		case 207:
+		case "tjm":
 			return new AccountPageTjMaxx(account, dataHandler);
-		case 208:
-			return new AccountPageTjMaxx(account, dataHandler);
-		case 209:
+		case "mcs":
 			return new AccountPageMacys(account, dataHandler);
-		case 211:
+		case "bb":
 			return new AccountPageBestBuy(account, dataHandler);
-		case 213:
+		case "khl":
 			return new AccountPageKohls(account, dataHandler);
-		case 215:
+		case "jcp":
 			return new AccountPageJCPenney(account, dataHandler);
 
 		default:
