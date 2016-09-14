@@ -21,7 +21,6 @@ public class Account{
 	private String url;
 	private String browser;
 	private String owner;
-	public Integer priority;
 	@OneToOne(cascade={CascadeType.PERSIST})
 	@JoinColumn(name = "account_details_login_id", unique=true)
 	private AccountDetailsLogin accountDetailsLogin;
@@ -42,14 +41,13 @@ public class Account{
 	public Account() {
 	}
 
-	public Account(int id, String name, String bank, String url, String browser, String owner, int priority) {
+	public Account(int id, String name, String bank, String url, String browser, String owner) {
 		this.id = id;
 		this.name = name;
 		this.bank = bank;
 		this.url = url;
 		this.browser = browser;
 		this.owner = owner;
-		this.priority = priority;
 	}
 
 	public int getId() {
@@ -70,10 +68,6 @@ public class Account{
 
 	public String getOwner() {
 		return owner;
-	}
-
-	public int getPriority() {
-		return priority;
 	}
 
 	public String getUrl() {
@@ -141,6 +135,6 @@ public class Account{
 	@Override
 	public String toString() {
 		return "Account [id=" + id + ", name=" + name + ", bank=" + bank + ", url=" + url + ", browser=" + browser
-				+ ", owner=" + owner + ", priority=" + priority + "]";
+				+ ", owner=" + owner + "]";
 	}
 }
