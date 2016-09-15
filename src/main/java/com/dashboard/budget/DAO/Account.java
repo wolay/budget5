@@ -12,32 +12,33 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "accounts")
-public class Account{
+public class Account {
 
 	@Id
 	private int id;
 	private String name;
 	private String bank;
 	private boolean isMyPortfolio;
+	private String myPortfolioId;
 	private String url;
-	private String browser;
 	private String owner;
-	@OneToOne(cascade={CascadeType.PERSIST})
-	@JoinColumn(name = "account_details_login_id", unique=true)
+	private boolean isEnabled;
+	@OneToOne(cascade = { CascadeType.PERSIST })
+	@JoinColumn(name = "account_details_login_id", unique = true)
 	private AccountDetailsLogin accountDetailsLogin;
-	@OneToOne(cascade={CascadeType.PERSIST})
-	@JoinColumn(name = "account_details_navigation_id", unique=true)
+	@OneToOne(cascade = { CascadeType.PERSIST })
+	@JoinColumn(name = "account_details_navigation_id", unique = true)
 	private AccountDetailsNavigation accountDetailsNavigation;
-	@OneToOne(cascade={CascadeType.PERSIST})
-	@JoinColumn(name = "account_details_total_id", unique=true)
+	@OneToOne(cascade = { CascadeType.PERSIST })
+	@JoinColumn(name = "account_details_total_id", unique = true)
 	private AccountDetailsTotal accountDetailsTotal;
-	@OneToOne(cascade={CascadeType.PERSIST})
-	@JoinColumn(name = "account_details_transaction_id", unique=true)
+	@OneToOne(cascade = { CascadeType.PERSIST })
+	@JoinColumn(name = "account_details_transaction_id", unique = true)
 	private AccountDetailsTransaction accountDetailsTransaction;
-	@OneToMany(mappedBy="account")
+	@OneToMany(mappedBy = "account")
 	private Set<Total> totals;
-	@OneToMany(mappedBy="account")
-	private Set<Transaction> transactions;	
+	@OneToMany(mappedBy = "account")
+	private Set<Transaction> transactions;
 
 	public Account() {
 	}
@@ -47,7 +48,6 @@ public class Account{
 		this.name = name;
 		this.bank = bank;
 		this.url = url;
-		this.browser = browser;
 		this.owner = owner;
 		this.isMyPortfolio = isMyPortfolio;
 	}
@@ -63,13 +63,13 @@ public class Account{
 	public String getBank() {
 		return bank;
 	}
-	
-	public boolean getIsMyProtfolio(){
+
+	public boolean getIsMyProtfolio() {
 		return isMyPortfolio;
 	}
 
-	public String getBrowser() {
-		return browser;
+	public String getMyPortfolioId() {
+		return myPortfolioId;
 	}
 
 	public String getOwner() {
@@ -78,6 +78,10 @@ public class Account{
 
 	public String getUrl() {
 		return url;
+	}
+
+	public boolean getIsEnabled() {
+		return isEnabled;
 	}
 
 	public AccountDetailsLogin getAccountDetailsLogin() {
@@ -140,8 +144,9 @@ public class Account{
 
 	@Override
 	public String toString() {
-		return "Account [id=" + id + ", name=" + name + ", bank=" + bank + ", isMyPortfolio=" + isMyPortfolio + ", url="
-				+ url + ", browser=" + browser + ", owner=" + owner + "]";
+		return "Account [id=" + id + ", name=" + name + ", bank=" + bank + ", isMyPortfolio=" + isMyPortfolio
+				+ ", myPortfolioId=" + myPortfolioId + ", url=" + url + ", owner=" + owner + ", isEnabled=" + isEnabled
+				+ "]";
 	}
 
 }
