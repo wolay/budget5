@@ -23,6 +23,8 @@ public class AccountDetailsNavigation {
 	private String allAccountsLinkLocator;
 	private String transactionsPageUrl;
 	private String detailsLinkLocator;
+	private String detailsLinkSupLocator;
+	private boolean switchWindowFotTransactions;
 	private String actionToSwitchPeriod;
 	private String periodSwitchLocator;
 	private String periodSwitchSupLocator;
@@ -30,7 +32,6 @@ public class AccountDetailsNavigation {
 	public AccountDetailsNavigation(){}
 	public AccountDetailsNavigation(Account account, String allAccountsLinkLocator, String transactionsPageUrl,
 			String detailsLinkLocator, String actionToSwitchPeriod, String periodSwitchLocator, String periodSwitchSupLocator) {
-		super();
 		this.account = account;
 		this.allAccountsLinkLocator = allAccountsLinkLocator;
 		this.transactionsPageUrl = transactionsPageUrl;
@@ -60,6 +61,14 @@ public class AccountDetailsNavigation {
 
 	public By getDetailsLinkLocator() {
 		return Util.getByLocator(detailsLinkLocator);
+	}
+	
+	public By getDetailsLinkSupLocator() {
+		return Util.getByLocator(detailsLinkSupLocator);
+	}
+	
+	public boolean getSwitchWindowForTransactions(){
+		return switchWindowFotTransactions;
 	}
 
 	public By getPeriodSwitchLocator() {
