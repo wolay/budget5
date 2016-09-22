@@ -35,6 +35,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FilenameUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -414,12 +415,12 @@ public class Util implements Config {
 			content = content + "<P><b>Credit scores: </b>";
 			for (CreditScore creditScore : creditScores) {
 				content = content + "<br>" + creditScore.getName() + ": " + creditScore.getScore();
-				if(creditScore.getDifference()>0)
-					content = content + "(<font color='green'>+"+creditScore.getDifference()+"</font>)";
-				else if(creditScore.getDifference()<0)
-					content = content + "(<font color='red'>"+creditScore.getDifference()+"</font>)";
+				if (creditScore.getDifference() > 0)
+					content = content + "(<font color='green'>+" + creditScore.getDifference() + "</font>)";
+				else if (creditScore.getDifference() < 0)
+					content = content + "(<font color='red'>" + creditScore.getDifference() + "</font>)";
 				else
-					content = content + "(+"+creditScore.getDifference()+")";
+					content = content + "(+" + creditScore.getDifference() + ")";
 			}
 
 			// Time spent for retrieving
@@ -489,7 +490,9 @@ public class Util implements Config {
 		if ("".equals(row.trim()) || row.contains("pending transactions") || row.contains("Pending Transactions")
 				|| row.contains("There is no recent activity") || row.contains("Posted Transactions")
 				|| row.equals("Pending") || row.contains("end of your statement")
-				|| row.startsWith("No activity posted") || row.equals("You've reached the end of the statement cycle account activity."))
+				|| row.startsWith("No activity posted")
+				|| row.equals("You've reached the end of the statement cycle account activity.")
+				|| row.equals("In Progress and Cleared Transactions"))
 			return true;
 		else
 			return false;
@@ -580,4 +583,9 @@ public class Util implements Config {
 		return result;
 	}
 
+	// SELENIUM
+	public static String getLocatorForWebElement(WebElement we) {
+		// assuming locator in xpath
+		return we.toString().substring(we.toString().indexOf("->") + 10);
+	}
 }

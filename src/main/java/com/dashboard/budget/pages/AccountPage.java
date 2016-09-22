@@ -102,7 +102,6 @@ public abstract class AccountPage implements Config {
 
 		List<Transaction> result = new ArrayList<Transaction>();
 
-		// details link does not exist in WF case
 		if (accountNavigationDetails != null && accountNavigationDetails.getDetailsLinkLocator() != null) {
 			WebElement weDetails = webDriver.lookupElement(accountNavigationDetails.getDetailsLinkLocator());
 			if (weDetails != null) {
@@ -113,6 +112,24 @@ public abstract class AccountPage implements Config {
 		} else if (accountNavigationDetails != null && accountNavigationDetails.getTransactionsPageUrl() != null) {
 			webDriver.get(accountNavigationDetails.getTransactionsPageUrl());
 			webDriver.switchTo().defaultContent();
+		}
+
+		// switch window if required
+		if (accountNavigationDetails != null && accountNavigationDetails.getSwitchWindowForTransactions()) {
+			webDriver.switchTo().defaultContent(); // you are now outside both
+													// frames
+			webDriver.switchTo().frame("summaryFrame");
+			webDriver.switchTo().frame(0);
+		}
+
+		// 'My Portfolio' has a link to see all transactions
+		if (accountNavigationDetails.getDetailsLinkSupLocator() != null) {
+			WebElement weDetailsSup = webDriver.lookupElement(accountNavigationDetails.getDetailsLinkSupLocator());
+			if (weDetailsSup != null) {
+				webDriver.waitToBeClickable(accountNavigationDetails.getDetailsLinkSupLocator());
+				weDetailsSup.click();
+			} else
+				return result;
 		}
 
 		Double difference = total.getDifference();
@@ -133,10 +150,6 @@ public abstract class AccountPage implements Config {
 
 		// CURRENT PERIOD TRANSACTIONS
 		List<WebElement> currentPeriodRows;
-		// Little trick for Citi - pending transactions populate in /table/tboby
-		// and posted transaction populate in /table/tbody[2]
-		// but.. if there is no pending transactions then posted transactions
-		// populate in /table/tbody
 		if (webDriver.lookupElement(accountTransactionDetails.getTransTableLocator()) == null)
 			if (accountTransactionDetails.getTransTableSupLocator() == null)
 				currentPeriodRows = null;
@@ -148,7 +161,6 @@ public abstract class AccountPage implements Config {
 			logger.info("No rows found in the current period table");
 		else {
 			logger.info("Rows in the current period table: {}", currentPeriodRows.size());
-			Date prevDate = null;
 			for (WebElement row : currentPeriodRows) {
 				logger.info("Row in the current period table: {}", row.getText());
 				if (Util.isPending(row.getText()))
@@ -157,17 +169,17 @@ public abstract class AccountPage implements Config {
 				// grouped
 				// so only 1st shown transaction has date in the row
 				Date date;
-				if (row.findElement(byDate).getText().equals("") && account.getBank().equals("chs"))
-					date = prevDate;
-				else {
-					if (Util.isPending(row.findElement(byDate).getText()))
-						continue;
-					date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
-				}
+				if (Util.isPending(row.findElement(byDate).getText()))
+					continue;
+				date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
+
 				double amount;
 				// Amount consideration got complicated due PayPal
 				if (byAmountSup == null)
-					amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+					if (account.getIsMyProtfolio())
+						amount = Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+					else
+						amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
 				else {
 					if ("negative".equals(row.findElement(byAmountSup).getText()))
 						amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
@@ -211,12 +223,26 @@ public abstract class AccountPage implements Config {
 									categoryStr = row.findElement(byCategorySup).getText();
 							} else // absolute path
 								categoryStr = webDriver.findElement(byCategory).getText();
-							weCategoryNav.click();
-							
+							// weCategoryNav.click();
+
 							logger.info("Category in current row: {}", categoryStr);
 							category = dataHandler.recognizeCategory(categoryStr);
 							logger.info("Recognized category: {}", category);
 						}
+					} else if (byCategory != null) {
+						if (accountTransactionDetails.getTransCategoryLocator().startsWith(".")) {
+							WebElement weCategory = webDriver.findElementInRow(row, byCategory);
+							if (weCategory != null)
+								categoryStr = weCategory.getText();
+							else
+								categoryStr = row.findElement(byCategorySup).getText();
+						} else // absolute path
+							categoryStr = webDriver.findElement(byCategory).getText();
+						// weCategoryNav.click();
+
+						logger.info("Category in current row: {}", categoryStr);
+						category = dataHandler.recognizeCategory(categoryStr);
+						logger.info("Recognized category: {}", category);
 					}
 					result.add(new Transaction(account, total, date, description, amount, categoryStr, category));
 					difference = Util.roundDouble(difference - amount);
@@ -234,7 +260,6 @@ public abstract class AccountPage implements Config {
 						return result;
 					}
 				}
-				prevDate = date;
 			}
 		}
 

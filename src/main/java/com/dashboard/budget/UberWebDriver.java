@@ -110,9 +110,17 @@ public class UberWebDriver implements Config {
 			logger.error("Unable to find locator: {}", by);
 		}
 	}
+	
+	public void waitFrameToBeAvailableAndSwitchToIt(String frame) {	
+		try {
+			wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frame));
+			webDriver.switchTo().frame(frame);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
 
 	public void waitToBeClickable(By by) {
-		
 		try {
 			wait.until(ExpectedConditions.elementToBeClickable(by));
 		} catch (Exception e) {
