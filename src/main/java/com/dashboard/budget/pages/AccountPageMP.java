@@ -41,7 +41,6 @@ public class AccountPageMP extends AccountPage {
 			}
 
 			// navigate to MyPortfolio page if it's not there yet
-			System.out.println(webDriver.getWebDriver().getTitle());
 			if (!webDriver.getWebDriver().getTitle().contains("My Portfolio")) {
 				Actions action = new Actions(webDriver.getWebDriver());
 				WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
@@ -55,7 +54,17 @@ public class AccountPageMP extends AccountPage {
 
 			totalsList = new ArrayList<mpTotal>();
 
-			// TODO - refresh page is any of accounts is outdated
+			// Waiting for table to refresh
+			WebElement refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
+			if(refreshStatus==null){
+				logger.error("Cannot find refresh status locator");
+				return null;
+			}
+			while(refreshStatus.getText().equals("Refreshing")){
+				logger.info("Waiting for refreshing accounts table...");
+				Util.sleep(1000);
+				refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
+			}
 
 			// debit accounts
 			List<WebElement> debitAccounts = webDriver
