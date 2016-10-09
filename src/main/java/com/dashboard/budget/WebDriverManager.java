@@ -93,16 +93,22 @@ public class WebDriverManager implements Config {
 
 	private void addTransactionsForDifference(Total total, AccountPage accountPage, Double difference,
 			List<Transaction> prevTransactions) {
-		List<Transaction> newTransactions = accountPage.getTransactions(total, prevTransactions);
-		if (newTransactions.isEmpty()) {
-			logger.error("No transactions found for difference");
-		} else {
-			for (Transaction newTransaction : newTransactions) {
-				logger.info("{}, transaction: {}, {}, {}, {} ({})", accountPage.getAccount().getName(),
-						newTransaction.getDate(), newTransaction.getDecription(), newTransaction.getAmount(),
-						newTransaction.getCategory(), newTransaction.getCategoryStr());
+		try {
+			List<Transaction> newTransactions;
+			newTransactions = accountPage.getTransactions(total, prevTransactions);
+			if (newTransactions.isEmpty()) {
+				logger.error("No transactions found for difference");
+			} else {
+				for (Transaction newTransaction : newTransactions) {
+					logger.info("{}, transaction: {}, {}, {}, {} ({})", accountPage.getAccount().getName(),
+							newTransaction.getDate(), newTransaction.getDecription(), newTransaction.getAmount(),
+							newTransaction.getCategory(), newTransaction.getCategoryStr());
+				}
 			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
 		}
+
 	}
 
 	public List<Total> getNewTotals(List<Account> accountsIn, List<Total> prevTotals,
@@ -140,8 +146,8 @@ public class WebDriverManager implements Config {
 
 		for (List<String> driver : drivers) {
 			executor.submit(() -> {
-				accounts.stream().filter(a -> a.getBank().equals(driver.get(0)) && a.getOwner().equals(driver.get(1)))
-						.forEach(account -> {
+				accounts.stream().filter(a -> a.getBank().equals(driver.get(0)) && a.getOwner().equals(driver.get(1))
+						&& a.getIsEnabled()).forEach(account -> {
 					Thread.currentThread().setName("Bank accounts ("
 							+ Util.getThreadNumber(Thread.currentThread().getName()) + "): " + account.getName());
 					int attempt = 0;

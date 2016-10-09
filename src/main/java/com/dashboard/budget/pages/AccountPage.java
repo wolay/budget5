@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -95,41 +96,61 @@ public abstract class AccountPage implements Config {
 
 	public abstract Double getTotal();
 
-	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) {
+	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) throws Exception {
 		// check if getting transactions is enabled for account
 		if (accountTransactionDetails == null)
 			return new ArrayList<Transaction>();
 
 		List<Transaction> result = new ArrayList<Transaction>();
 
-		if (accountNavigationDetails != null && accountNavigationDetails.getDetailsLinkLocator() != null) {
+		if (account.getIsMyProtfolio()) {
+			if (!webDriver.getWebDriver().getTitle().contains("Transaction")) {
+				Actions action = new Actions(webDriver.getWebDriver());
+				WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
+				if (we != null)
+					action.moveToElement(we).build().perform();
+				WebElement submit1 = webDriver.findElement(By.linkText("Transactions"));
+				if (submit1 != null)
+					submit1.click();
+			}
+
+			// select account from dropdown list
+			WebElement accountsLink = webDriver.findElement(By.id("dropdown_itemAccountId"));
+			if (accountsLink != null)
+				accountsLink.click();
+
+			List<WebElement> accounts = webDriver.findElements(By.className(" groupItem"));
+			WebElement weAccount = accounts.stream()
+					.filter(a -> !a.getText().equals("") && a.getText().contains(account.getMyPortfolioId()))
+					.findFirst().get();
+			if (weAccount != null)
+				webDriver.clickElementWithAction(weAccount);
+
+			// select period for 1 month
+			WebElement periodList = webDriver.findElement(By.id("dropdown_dateRangeId"));
+			if (periodList != null) {
+				if (!periodList.getText().equals("1 month")) {
+					periodList.click();
+					WebElement periodItem = webDriver.findElement(By.id("custom_multi_select_2_dateRangeId"));
+					if (periodItem != null)
+						periodItem.click();
+				}
+			}
+
+		} else if (accountNavigationDetails != null && accountNavigationDetails.getDetailsLinkLocator() != null) {
 			WebElement weDetails = webDriver.lookupElement(accountNavigationDetails.getDetailsLinkLocator());
 			if (weDetails != null) {
 				webDriver.waitToBeClickable(accountNavigationDetails.getDetailsLinkLocator());
-				weDetails.click();
+				try {
+					weDetails.click();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			} else
 				return result;
 		} else if (accountNavigationDetails != null && accountNavigationDetails.getTransactionsPageUrl() != null) {
 			webDriver.get(accountNavigationDetails.getTransactionsPageUrl());
 			webDriver.switchTo().defaultContent();
-		}
-
-		// switch window if required
-		if (accountNavigationDetails != null && accountNavigationDetails.getSwitchWindowForTransactions()) {
-			webDriver.switchTo().defaultContent(); // you are now outside both
-													// frames
-			webDriver.switchTo().frame("summaryFrame");
-			webDriver.switchTo().frame(0);
-		}
-
-		// 'My Portfolio' has a link to see all transactions
-		if (accountNavigationDetails.getDetailsLinkSupLocator() != null) {
-			WebElement weDetailsSup = webDriver.lookupElement(accountNavigationDetails.getDetailsLinkSupLocator());
-			if (weDetailsSup != null) {
-				webDriver.waitToBeClickable(accountNavigationDetails.getDetailsLinkSupLocator());
-				weDetailsSup.click();
-			} else
-				return result;
 		}
 
 		Double difference = total.getDifference();
@@ -248,7 +269,11 @@ public abstract class AccountPage implements Config {
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
-						if (accountNavigationDetails != null
+						// return to the main page (from where Transactions will
+						// be opened)
+						if (account.getIsMyProtfolio())
+							webDriver.getWebDriver().navigate().back();
+						else if (accountNavigationDetails != null
 								&& accountNavigationDetails.getAllAccountsLinkLocator() != null) {
 							WebElement accounts = webDriver
 									.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
@@ -326,7 +351,11 @@ public abstract class AccountPage implements Config {
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
-						if (accountNavigationDetails.getAllAccountsLinkLocator() != null) {
+						// return to the main page (from where Transactions will
+						// be opened)
+						if (account.getIsMyProtfolio())
+							webDriver.getWebDriver().navigate().back();
+						else if (accountNavigationDetails.getAllAccountsLinkLocator() != null) {
 							WebElement accounts = webDriver
 									.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
 							if (accounts != null)
