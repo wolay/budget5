@@ -387,6 +387,8 @@ public class Util implements Config {
 					+ amountToString(DataHandler.getFullDiff(totals)) + "</b></td></tr></tfoot><tbody>";
 			Collections.sort(totals);
 			for (Total total : totals) {
+				if(!total.getAccount().getIsEnabled())
+					continue;
 				content = content + "<tr style='background-color:" + Util.getStatusColor(total) + "'><td>"
 						+ formatDateForEmail(total.getDate()) + "</td><td><a href='" + total.getAccount().getUrl()
 						+ "'>" + total.getAccount().getName() + "</a>";
