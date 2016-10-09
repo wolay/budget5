@@ -16,10 +16,10 @@ import com.dashboard.budget.Util;
 public class AccountDetailsNavigation {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	@OneToOne(mappedBy="accountDetailsNavigation")
-	private Account account;	
+	@OneToOne(mappedBy = "accountDetailsNavigation")
+	private Account account;
 	private String allAccountsLinkLocator;
 	private String transactionsPageUrl;
 	private String detailsLinkLocator;
@@ -27,27 +27,32 @@ public class AccountDetailsNavigation {
 	private boolean switchWindowFotTransactions;
 	private String actionToSwitchPeriod;
 	private String periodSwitchLocator;
-	private String periodSwitchSupLocator;
-	
-	public AccountDetailsNavigation(){}
+	private String periodSwitchPreLocator;
+	private String periodSwitchPostLocator;
+
+	public AccountDetailsNavigation() {
+	}
+
 	public AccountDetailsNavigation(Account account, String allAccountsLinkLocator, String transactionsPageUrl,
-			String detailsLinkLocator, String actionToSwitchPeriod, String periodSwitchLocator, String periodSwitchSupLocator) {
+			String detailsLinkLocator, String actionToSwitchPeriod, String periodSwitchLocator,
+			String periodSwitchPreLocator, String periodSwitchPostLocator) {
 		this.account = account;
 		this.allAccountsLinkLocator = allAccountsLinkLocator;
 		this.transactionsPageUrl = transactionsPageUrl;
 		this.detailsLinkLocator = detailsLinkLocator;
 		this.actionToSwitchPeriod = actionToSwitchPeriod;
 		this.periodSwitchLocator = periodSwitchLocator;
-		this.periodSwitchSupLocator = periodSwitchSupLocator;
-		
+		this.periodSwitchPreLocator = periodSwitchPreLocator;
+		this.periodSwitchPostLocator = periodSwitchPostLocator;
+
 		this.account.setAccountDetailsNavigation(this);
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
-	public Account getAccount(){
+
+	public Account getAccount() {
 		return account;
 	}
 
@@ -62,12 +67,12 @@ public class AccountDetailsNavigation {
 	public By getDetailsLinkLocator() {
 		return Util.getByLocator(detailsLinkLocator);
 	}
-	
+
 	public By getDetailsLinkSupLocator() {
 		return Util.getByLocator(detailsLinkSupLocator);
 	}
-	
-	public boolean getSwitchWindowForTransactions(){
+
+	public boolean getSwitchWindowForTransactions() {
 		return switchWindowFotTransactions;
 	}
 
@@ -79,8 +84,12 @@ public class AccountDetailsNavigation {
 		return actionToSwitchPeriod;
 	}
 
-	public By getPeriodSwitchSupLocator() {
-		return Util.getByLocator(periodSwitchSupLocator);
+	public By getPeriodSwitchPreLocator() {
+		return Util.getByLocator(periodSwitchPreLocator);
 	}
 	
+	public By getPeriodSwitchPostLocator() {
+		return Util.getByLocator(periodSwitchPostLocator);
+	}
+
 }

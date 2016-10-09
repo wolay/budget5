@@ -297,8 +297,8 @@ public abstract class AccountPage implements Config {
 			return new ArrayList<Transaction>();
 		else {
 			// AmEx case: before select prev period a button should be clicked
-			if (accountNavigationDetails.getPeriodSwitchSupLocator() != null) {
-				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchSupLocator());
+			if (accountNavigationDetails.getPeriodSwitchPreLocator() != null) {
+				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchPreLocator());
 				if (periods != null)
 					periods.click();
 				else
@@ -314,6 +314,15 @@ public abstract class AccountPage implements Config {
 					new Select(period).selectByIndex(1);
 			} else
 				return new ArrayList<Transaction>();
+			
+			// 
+			if (accountNavigationDetails.getPeriodSwitchPostLocator() != null) {
+				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchPostLocator());
+				if (periods != null)
+					periods.click();
+				else
+					return new ArrayList<Transaction>();
+			}
 
 			// Wait for previous transactions table to be loaded
 			Util.sleep(5000);
