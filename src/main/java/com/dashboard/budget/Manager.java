@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
@@ -76,7 +77,8 @@ public class Manager {
 		dataHandler.saveCreditScoresToDb(creditScores);
 		
 		// Sending summary to email
-		Util.sendEmailSummary(dataHandler.getLastTotals(), creditScores, stopWatch.toString());
+		Credential mailCredentials = dataHandler.getCredentials().stream().filter(c -> c.getName().equals("mailru")).findFirst().get();
+		Util.sendEmailSummary(dataHandler.getLastTotals(), creditScores, stopWatch.toString(), mailCredentials);
 		
 		System.exit(0);
 		

@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
@@ -356,7 +357,7 @@ public class Util implements Config {
 		}
 	}
 
-	public static void sendEmailSummary(List<Total> totals, List<CreditScore> creditScores, String spentTime) {
+	public static void sendEmailSummary(List<Total> totals, List<CreditScore> creditScores, String spentTime, Credential credentials) {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.mail.ru");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -366,7 +367,7 @@ public class Util implements Config {
 
 		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("aianitro@mail.ru", "Irina14022009");
+				return new PasswordAuthentication(credentials.getLogin(), credentials.getPassword());
 			}
 		});
 
