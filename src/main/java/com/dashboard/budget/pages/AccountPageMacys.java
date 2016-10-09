@@ -22,9 +22,6 @@ public class AccountPageMacys extends AccountPage {
 			summary.click();
 		else
 			return null;
-		WebElement cont = webDriver.findElement(By.id("speedBumpContinueBtn"));
-		if (cont != null)
-			cont.click();
 		// Store the current window handle
 		String winHandleBefore = webDriver.getWindowHandle();
 		// Switch to new window opened
@@ -40,9 +37,6 @@ public class AccountPageMacys extends AccountPage {
 		else{
 			// Switch back to original browser (first window)
 			webDriver.switchTo().window(winHandleBefore);
-			WebElement signoff = webDriver.findElement(By.cssSelector("a.sign_off.ui-link"));
-			if (signoff != null)
-				signoff.click();		
 			// Switch to new window opened
 			for (String winHandle : webDriver.getWindowHandles()) {
 				if (!winHandle.equals(winHandleBefore)) {
