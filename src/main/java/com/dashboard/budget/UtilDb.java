@@ -17,6 +17,7 @@ import com.dashboard.budget.DAO.CategorizationRule;
 import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
+import com.dashboard.budget.DAO.SecretQuestion;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
@@ -254,6 +255,27 @@ public class UtilDb implements Config{
 		}
 
 		return credentials;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SecretQuestion> loadSecretQuestionsFromDb() {
+
+		List<SecretQuestion> secretQuestions = null;
+
+		EntityTransaction txn = em.getTransaction();
+		try {
+			txn.begin();
+			Query query = em.createQuery("select secretQuestion from SecretQuestion secretQuestion");
+			secretQuestions = query.getResultList();
+			txn.commit();
+		} catch (Exception ex) {
+			if (txn != null) {
+				txn.rollback();
+			}
+			ex.printStackTrace();
+		}
+
+		return secretQuestions;
 	}
 
 	

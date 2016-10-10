@@ -39,6 +39,8 @@ public class Account {
 	private Set<Total> totals;
 	@OneToMany(mappedBy = "account")
 	private Set<Transaction> transactions;
+	@OneToMany(mappedBy = "account")
+	private Set<SecretQuestion> secretQuestions;	
 
 	public Account() {
 	}
