@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -17,7 +18,6 @@ public class Account {
 	@Id
 	private int id;
 	private String name;
-	private String bank;
 	private boolean isMyPortfolio;
 	private String myPortfolioId;
 	private String url;
@@ -39,13 +39,14 @@ public class Account {
 	private Set<Total> totals;
 	@OneToMany(mappedBy = "account")
 	private Set<Transaction> transactions;
-	@OneToMany(mappedBy = "account")
-	private Set<SecretQuestion> secretQuestions;	
+	@ManyToOne
+	@JoinColumn(name = "bank_id")
+	private Bank bank;
 
 	public Account() {
 	}
 
-	public Account(int id, String name, String bank, String url, String browser, String owner, boolean isMyPortfolio) {
+	public Account(int id, String name, Bank bank, String url, String browser, String owner, boolean isMyPortfolio) {
 		this.id = id;
 		this.name = name;
 		this.bank = bank;
@@ -62,7 +63,7 @@ public class Account {
 		return name;
 	}
 
-	public String getBank() {
+	public Bank getBank() {
 		return bank;
 	}
 

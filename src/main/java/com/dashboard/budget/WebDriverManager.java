@@ -48,7 +48,7 @@ public class WebDriverManager implements Config {
 	}
 
 	private AccountPage getAccountPage(Account account) {
-		switch (account.getBank()) {
+		switch (account.getBank().getName()) {
 		case "mp":
 			return new AccountPageMP(account, dataHandler);
 		case "citi":
@@ -135,7 +135,7 @@ public class WebDriverManager implements Config {
 		// Group accounts list by banks
 		accounts.stream().forEach(a -> {
 			List<String> driver = new ArrayList<String>();
-			driver.add(a.getBank());
+			driver.add(a.getBank().getName());
 			driver.add(a.getOwner());
 			if (!drivers.contains(driver))
 				drivers.add(driver);

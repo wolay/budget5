@@ -16,14 +16,14 @@ public class SecretQuestion {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	@ManyToOne
-	@JoinColumn(name = "account_id")
-	private Account account;
+	@JoinColumn(name = "bank_id")
+	private Bank bank;
 	private String question;
 	private String answer;
 	
 	public SecretQuestion(){}
-	public SecretQuestion(Account account, String question, String answer) {
-		this.account = account;
+	public SecretQuestion(Bank bank, String question, String answer) {
+		this.bank = bank;
 		this.question = question;
 		this.answer = answer;
 	}
@@ -32,8 +32,8 @@ public class SecretQuestion {
 		return id;
 	}
 	
-	public Account getAccount() {
-		return account;
+	public Bank getBank() {
+		return bank;
 	}
 	
 	public String getQuestion() {
@@ -46,8 +46,7 @@ public class SecretQuestion {
 	
 	@Override
 	public String toString() {
-		return "SecretQuestion [id=" + id + ", account=" + account + ", question=" + question + ", answer=" + answer
-				+ "]";
+		return "SecretQuestion [id=" + id + ", bank=" + bank + ", question=" + question + ", answer=" + answer + "]";
 	}
 	
 }
