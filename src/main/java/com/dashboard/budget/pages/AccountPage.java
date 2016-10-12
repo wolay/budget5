@@ -293,9 +293,11 @@ public abstract class AccountPage implements Config {
 		// lets see how it will go... not many accounts reach that point
 		// for some accounts previous period transactions are not considered
 		// (i.e. WF)
-		if (accountNavigationDetails == null || accountNavigationDetails.getPeriodSwitchLocator() == null)
+		if (accountNavigationDetails == null || accountNavigationDetails.getPeriodSwitchLocator() == null) {
+			if (account.getIsMyProtfolio())
+				webDriver.getWebDriver().navigate().back();
 			return new ArrayList<Transaction>();
-		else {
+		} else {
 			// AmEx case: before select prev period a button should be clicked
 			if (accountNavigationDetails.getPeriodSwitchPreLocator() != null) {
 				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchPreLocator());
@@ -314,8 +316,8 @@ public abstract class AccountPage implements Config {
 					new Select(period).selectByIndex(1);
 			} else
 				return new ArrayList<Transaction>();
-			
-			// 
+
+			//
 			if (accountNavigationDetails.getPeriodSwitchPostLocator() != null) {
 				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchPostLocator());
 				if (periods != null)

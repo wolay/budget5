@@ -357,7 +357,8 @@ public class Util implements Config {
 		}
 	}
 
-	public static void sendEmailSummary(List<Total> totals, List<CreditScore> creditScores, String spentTime, Credential credentials) {
+	public static void sendEmailSummary(List<Total> totals, List<CreditScore> creditScores, String spentTime,
+			Credential credentials) {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.mail.ru");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -493,7 +494,8 @@ public class Util implements Config {
 				|| row.equals("Pending") || row.contains("end of your statement")
 				|| row.startsWith("No activity posted")
 				|| row.equals("You've reached the end of the statement cycle account activity.")
-				|| row.equals("In Progress and Cleared Transactions"))
+				|| row.equals("In Progress and Cleared Transactions") || row.contains("Pending*")
+				|| row.contains("Total for"))
 			return true;
 		else
 			return false;

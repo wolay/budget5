@@ -146,7 +146,7 @@ public class WebDriverManager implements Config {
 
 		for (List<String> driver : drivers) {
 			executor.submit(() -> {
-				accounts.stream().filter(a -> a.getBank().equals(driver.get(0)) && a.getOwner().equals(driver.get(1))
+				accounts.stream().filter(a -> a.getBank().getName().equals(driver.get(0)) && a.getOwner().equals(driver.get(1))
 						&& a.getIsEnabled()).forEach(account -> {
 					Thread.currentThread().setName("Bank accounts ("
 							+ Util.getThreadNumber(Thread.currentThread().getName()) + "): " + account.getName());
