@@ -13,6 +13,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.Bank;
 import com.dashboard.budget.DAO.CategorizationRule;
 import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Credential;
@@ -99,6 +100,27 @@ public class UtilDb implements Config{
 				ex.printStackTrace();
 			}
 		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Bank> loadBanks() {
+
+		List<Bank> accounts = null;
+
+		EntityTransaction txn = em.getTransaction();
+		try {
+			txn.begin();
+			Query query = em.createQuery("select bank from Bank as bank");
+			accounts = query.getResultList();
+			txn.commit();
+		} catch (Exception ex) {
+			if (txn != null) {
+				txn.rollback();
+			}
+			ex.printStackTrace();
+		}
+
+		return accounts;
 	}
 
 	@SuppressWarnings("unchecked")
