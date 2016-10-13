@@ -29,13 +29,16 @@ public class AccountDetailsNavigation {
 	private String periodSwitchLocator;
 	private String periodSwitchPreLocator;
 	private String periodSwitchPostLocator;
+	private String secretQuestionLocator;
+	private String secretAnswerLocator;
+	
 
 	public AccountDetailsNavigation() {
 	}
 
 	public AccountDetailsNavigation(Account account, String allAccountsLinkLocator, String transactionsPageUrl,
 			String detailsLinkLocator, String actionToSwitchPeriod, String periodSwitchLocator,
-			String periodSwitchPreLocator, String periodSwitchPostLocator) {
+			String periodSwitchPreLocator, String periodSwitchPostLocator, String secretQuestionLocator, String secretAnswerLocator) {
 		this.account = account;
 		this.allAccountsLinkLocator = allAccountsLinkLocator;
 		this.transactionsPageUrl = transactionsPageUrl;
@@ -44,6 +47,8 @@ public class AccountDetailsNavigation {
 		this.periodSwitchLocator = periodSwitchLocator;
 		this.periodSwitchPreLocator = periodSwitchPreLocator;
 		this.periodSwitchPostLocator = periodSwitchPostLocator;
+		this.secretQuestionLocator = secretQuestionLocator;
+		this.secretAnswerLocator = secretAnswerLocator;
 
 		this.account.setAccountDetailsNavigation(this);
 	}
@@ -90,6 +95,14 @@ public class AccountDetailsNavigation {
 	
 	public By getPeriodSwitchPostLocator() {
 		return Util.getByLocator(periodSwitchPostLocator);
+	}
+
+	public By getSecretQuestionLocator() {
+		return Util.getByLocator(secretQuestionLocator);
+	}
+
+	public By getSecretAnswerLocator() {
+		return Util.getByLocator(secretAnswerLocator);
 	}
 
 }

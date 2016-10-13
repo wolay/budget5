@@ -12,6 +12,7 @@ import org.openqa.selenium.interactions.Actions;
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.SecretQuestion;
 
 public class AccountPageMP extends AccountPage {
 
@@ -139,6 +140,41 @@ public class AccountPageMP extends AccountPage {
 			logger.error("Unable to fint total for {} by locator {}", account.getName(), account.getIsMyProtfolio());
 			return null;
 		}
+	}
+
+	private boolean answerSecretQuestion() {
+		By secretQuestionLocator = account.getAccountDetailsNavigation().getSecretQuestionLocator();
+		By secretAnswerLocator = account.getAccountDetailsNavigation().getSecretQuestionLocator();
+
+		WebElement question = webDriver.lookupElement(secretQuestionLocator);
+		if (question == null)
+			return false;
+		else {
+			String secretQuestion = question.getText();
+			SecretQuestion secretAnswer = dataHandler.getSecretQuestions().stream()
+					.filter(sq -> sq.getBank() == account.getBank() && sq.getQuestion().equals("")).findFirst()
+					.orElse(null);
+			if (secretAnswer == null)
+				logger.error("Cannot find answer for question {}", secretQuestion);
+			else {
+				WebElement answer = webDriver.lookupElement(secretAnswerLocator);
+				answer.clear();
+				answer.sendKeys(secretAnswer.getAnswer());
+			}
+
+			WebElement submit = webDriver.findElement(By.id("yes-recognize"));
+			if (submit != null)
+				submit.click();
+
+			WebElement cont = webDriver.findElement(By.cssSelector("#verify-cq-submit > span"));
+			if (cont != null)
+				cont.click();
+			else
+				return false;
+
+			return true;
+		}
+
 	}
 
 	class mpTotal {
