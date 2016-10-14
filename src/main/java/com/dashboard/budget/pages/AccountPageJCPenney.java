@@ -3,7 +3,6 @@ package com.dashboard.budget.pages;
 import static com.dashboard.budget.Util.convertStringAmountToDouble;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
@@ -23,26 +22,15 @@ public class AccountPageJCPenney extends AccountPage {
 		webDriver.findElement(fldUsername).sendKeys(accountLoginDetails.getUsernameValue());
 		webDriver.findElement(By.name("button")).click();
 		
+		// Account blocked
+		if(Util.isProblemWithLogin(webDriver)){
+			logger.error("There is a problem with login: {}", account.getName());
+			return false;
+		}
 		// secret question
-		WebElement securityLabel = webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
-		if (securityLabel != null) {
-			String question = webDriver.findElement(By.xpath("//tr[4]/td[2]")).getText().trim();
-			if (question.equals("In what city were you married? (Enter full name of city)")) {
-				webDriver.findElement(By.name("challengeAnswer1")).clear();
-				webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Moscow");
-			} else if (question.equals("What city were you in on New Year's Eve, 1999?")) {
-				webDriver.findElement(By.name("challengeAnswer1")).clear();
-				webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Saransk");
-			} else if (question.equals("What was the name of your first pet?")) {
-				webDriver.findElement(By.name("challengeAnswer1")).clear();
-				webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Murzik");
-			}
-			WebElement submit = webDriver.findElement(By.id("submitChallengeAnswers"));
-			if (submit != null)
-				submit.click();
-			else
-				return false;
-		}		
+		if(Util.isSecretQuestionShown(webDriver))
+			if (!super.answerSecretQuestion())
+				return false;	
 		
 		webDriver.findElement(fldPassword).sendKeys(accountLoginDetails.getPasswordValue());		
 		webDriver.findElement(btnLogin).click();

@@ -135,6 +135,9 @@ public class Util implements Config {
 
 		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]")) != null)
 			return true;
+		
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Security Verification')]")) != null)
+			return true;
 
 		return false;
 	}

@@ -3,7 +3,6 @@ package com.dashboard.budget.pages;
 import static com.dashboard.budget.Util.convertStringAmountToDouble;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
@@ -18,22 +17,9 @@ public class AccountPageNordstorm extends AccountPage {
 	@Override
 	public Double getTotal() {
 		// secret question
-		String question = webDriver.lookupElement(By.cssSelector("h4.ng-binding")).getText();
-		if (question.equals("What was the name of your first pet?")) {
-			webDriver.findElement(By.id("answer1")).clear();
-			webDriver.findElement(By.id("answer1")).sendKeys("Jessy");
-		} else if (question.equals("What is your mother's middle name?")) {
-			webDriver.findElement(By.id("answer1")).clear();
-			webDriver.findElement(By.id("answer1")).sendKeys("Nikolaevna");
-		} else if (question.equals("What city were you in on New Year's Eve, 1999?")) {
-			webDriver.findElement(By.id("answer1")).clear();
-			webDriver.findElement(By.id("answer1")).sendKeys("Krasnodar");
-		}
-		WebElement submit = webDriver.findElement(By.xpath("//button"));
-		if (submit != null)
-			submit.click();
-		else
-			return null;
+		if(Util.isSecretQuestionShown(webDriver))
+			if (!super.answerSecretQuestion())
+				return null;	
 
 		// reading balance
 		String locator = "//ul[@class='accountslist ng-scope']/li[3]//strong";
