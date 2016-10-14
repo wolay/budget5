@@ -241,7 +241,7 @@ public class Util implements Config {
 	public static List<Account> getAccountsByDriver(List<Account> accounts, String driver) {
 		List<Account> result = new ArrayList<Account>();
 		for (Account account : accounts)
-			if (account.getBank().equals(driver))
+			if (account.getBank().getName().equals(driver))
 				result.add(account);
 		return result;
 	}
@@ -409,6 +409,8 @@ public class Util implements Config {
 					+ amountToString(DataHandler.getFullDiff(totals)) + "</b></td></tr></tfoot><tbody>";
 			Collections.sort(totals);
 			for (Total total : totals) {
+				if (!total.getAccount().getIsEnabled())
+					continue;
 				content = content + "<tr style='background-color:" + Util.getStatusColor(total) + "'><td>"
 						+ formatDateForEmail(total.getDate()) + "</td><td><a href='" + total.getAccount().getUrl()
 						+ "'>" + total.getAccount().getName() + "</a>";
