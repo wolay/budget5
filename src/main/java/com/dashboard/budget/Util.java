@@ -118,7 +118,7 @@ public class Util implements Config {
 		else
 			return input;
 	}
-	
+
 	public static boolean isProblemWithLogin(UberWebDriver webDriver) {
 		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Enter Account Number')]")) != null)
 			return true;
@@ -126,17 +126,17 @@ public class Util implements Config {
 		return false;
 	}
 
-	public static boolean isSecretQuestionShown(UberWebDriver webDriver) {		
+	public static boolean isSecretQuestionShown(UberWebDriver webDriver) {
 		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Secret')]")) != null)
 			return true;
 
-		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Verify Your Identity')]")) != null)
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Verify Your Identity')]"), 0) != null)
 			return true;
 
-		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]")) != null)
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"), 0) != null)
 			return true;
-		
-		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Security Verification')]")) != null)
+
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Security Verification')]"), 0) != null)
 			return true;
 
 		return false;

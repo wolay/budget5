@@ -58,8 +58,12 @@ public class UberWebDriver implements Config {
 	}
 
 	public WebElement lookupElement(By by) {
+		return lookupElement(by, 20);
+	}
+
+	public WebElement lookupElement(By by, int waitTime) {
 		int i = 0;
-		while (webDriver.findElements(by).size() == 0 && i < 20) {
+		while (webDriver.findElements(by).size() == 0 && i < waitTime) {
 			Util.sleep(500);
 			i++;
 		}
@@ -79,7 +83,7 @@ public class UberWebDriver implements Config {
 			return null;
 		}
 	}
-	
+
 	public WebElement findElementInRow(WebElement row, By by) {
 		int i = 0;
 		while (row.findElements(by).size() == 0 && i < 20) {
@@ -110,8 +114,8 @@ public class UberWebDriver implements Config {
 			logger.error("Unable to find locator: {}", by);
 		}
 	}
-	
-	public void waitFrameToBeAvailableAndSwitchToIt(String frame) {	
+
+	public void waitFrameToBeAvailableAndSwitchToIt(String frame) {
 		try {
 			wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frame));
 			webDriver.switchTo().frame(frame);
@@ -127,7 +131,7 @@ public class UberWebDriver implements Config {
 			logger.error(e.getMessage());
 		}
 	}
-	
+
 	public void clickElementWithAction(WebElement elem) {
 		try {
 			Actions actions = new Actions(webDriver);
