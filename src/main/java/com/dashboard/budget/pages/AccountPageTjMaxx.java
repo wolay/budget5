@@ -28,33 +28,15 @@ public class AccountPageTjMaxx extends AccountPage {
 			return false;	
 		login.click();
 
-		// secret question
-		WebElement securityLabel = webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"));
-		if (securityLabel != null) {
-			String question = webDriver.findElement(By.xpath("//tr[4]/td[2]")).getText().trim();
-			if ("Andrei".equals(account.getOwner())) {
-				if (question.equals("In what city were you married? (Enter full name of city)")) {
-					webDriver.findElement(By.name("challengeAnswer1")).clear();
-					webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Moscow");
-				} else if (question.equals("What was the name of your first pet?")) {
-					webDriver.findElement(By.name("challengeAnswer1")).clear();
-					webDriver.findElement(By.id("challengeAnswer1")).sendKeys("Murzik");
-				}
-			} else {
-				if (question.equals("In what city were you married? (Enter full name of city)")) {
-					webDriver.findElement(By.name("challengeAnswer1")).clear();
-					webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Moscow");
-				} else if (question.equals("What was the name of your first pet?")) {
-					webDriver.findElement(By.name("challengeAnswer1")).clear();
-					webDriver.findElement(By.name("challengeAnswer1")).sendKeys("Jessy");
-				}
-			}
-			WebElement submit = webDriver.findElement(By.id("submitChallengeAnswers"));
-			if (submit != null)
-				submit.click();
-			else
-				return false;
+		// Account blocked
+		if(Util.isProblemWithLogin(webDriver)){
+			logger.error("There is a problem with login: {}", account.getName());
+			return false;
 		}
+		// secret question
+		if(Util.isSecretQuestionShown(webDriver))
+			if (!super.answerSecretQuestion())
+				return false;
 
 		WebElement password = webDriver.findElement(fldPassword);
 		if (password == null)

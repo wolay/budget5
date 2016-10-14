@@ -118,6 +118,26 @@ public class Util implements Config {
 		else
 			return input;
 	}
+	
+	public static boolean isProblemWithLogin(UberWebDriver webDriver) {
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Enter Account Number')]")) != null)
+			return true;
+
+		return false;
+	}
+
+	public static boolean isSecretQuestionShown(UberWebDriver webDriver) {		
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Secret')]")) != null)
+			return true;
+
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Verify Your Identity')]")) != null)
+			return true;
+
+		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]")) != null)
+			return true;
+
+		return false;
+	}
 
 	public static List<Total> getTotalsFromFile(List<Account> accounts) {
 		// open latest file to compare results

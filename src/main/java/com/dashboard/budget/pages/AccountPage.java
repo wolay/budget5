@@ -23,6 +23,7 @@ import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
 import com.dashboard.budget.DAO.Category;
+import com.dashboard.budget.DAO.SecretQuestion;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
@@ -395,6 +396,54 @@ public abstract class AccountPage implements Config {
 
 	public int getScore() {
 		return 0;
+	}
+
+	protected boolean answerSecretQuestion() {
+		By secretQuestionLocator = account.getAccountDetailsNavigation().getSecretQuestionLocator();
+		By secretAnswerLocator = account.getAccountDetailsNavigation().getSecretAnswerLocator();
+		By secretSubmitLocator = account.getAccountDetailsNavigation().getSecretSubmitLocator();
+
+		WebElement question = webDriver.lookupElement(secretQuestionLocator);
+		if (question == null)
+			return false;
+		else {
+			String secretQuestion = question.getText();
+			// first trying to find answer by account
+			SecretQuestion secretAnswer = dataHandler.getSecretQuestions().stream()
+					.filter(sq -> sq.getAccount() == account && sq.getQuestion().equals(secretQuestion)).findFirst()
+					.orElse(null);
+			// if answer not found by account trying to find answer by bank
+			if (secretAnswer == null)
+				secretAnswer = dataHandler.getSecretQuestions().stream()
+						.filter(sq -> sq.getBank() == account.getBank() && sq.getQuestion().equals(secretQuestion)).findFirst()
+						.orElse(null);
+			if (secretAnswer == null)
+				logger.error("Cannot find answer for question {}", secretQuestion);
+			else {
+				WebElement answer = webDriver.lookupElement(secretAnswerLocator);
+				answer.clear();
+				answer.sendKeys(secretAnswer.getAnswer());
+			}
+
+			WebElement submit = webDriver.findElement(secretSubmitLocator);
+			if (submit != null)
+				submit.click();
+
+			/*
+			WebElement cont = webDriver.findElement(By.cssSelector("#verify-cq-submit > span"));
+			if (cont != null)
+				cont.click();
+			else
+				return false;
+				*/
+
+			return true;
+		}
+
+	}
+	
+	public UberWebDriver getWebDriver(){
+		return webDriver;
 	}
 
 	public void quit() {
