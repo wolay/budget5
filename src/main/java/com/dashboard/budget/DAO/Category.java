@@ -17,6 +17,7 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String name;
+	private boolean isDebit;
 	@OneToMany(mappedBy="category")
 	private Set<Transaction> transactions;
 	@OneToMany(mappedBy="category")
@@ -25,8 +26,9 @@ public class Category {
 	private Set<CategorizationRule> categorizationRules;	
 	
 	public Category(){}
-	public Category(String name) {
+	public Category(String name, boolean isDebit) {
 		this.name = name;
+		this.isDebit = isDebit;
 	}
 	
 	public int getId() {
@@ -35,6 +37,10 @@ public class Category {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public boolean isDebit(){
+		return isDebit;
 	}
 	
 	public Set<Transaction> getTransaction(){

@@ -420,7 +420,7 @@ public class Util implements Config {
 			// Budget
 			String content = "<b>Budget (this month): </b>";
 			content = content
-					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><thead><tr><th>Category</th><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
+					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:400px;'><thead><tr><th>Category</th><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
 
 			// Collecting all categories in transactions
 			for (Category category : dataHandler.getCategories()) {
@@ -436,7 +436,8 @@ public class Util implements Config {
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
 				content = content + "<tr><td>" + category.getName() + "</td><td>" + amountPlan + "</td><td>"
-						+ amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
+						+ ((category.isDebit()) ? amountToString(amountFact) : amountToString(-amountFact))
+						+ "</td><td>" + 0 + "</td></tr>";
 			}
 			content = content + "</tbody></table>";
 

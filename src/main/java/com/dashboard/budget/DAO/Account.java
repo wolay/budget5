@@ -23,6 +23,7 @@ public class Account {
 	private String url;
 	private String owner;
 	private boolean isEnabled;
+	private boolean isDebit;
 	@OneToOne(cascade = { CascadeType.PERSIST })
 	@JoinColumn(name = "account_details_login_id", unique = true)
 	private AccountDetailsLogin accountDetailsLogin;
@@ -89,6 +90,10 @@ public class Account {
 
 	public boolean getIsEnabled() {
 		return isEnabled;
+	}
+	
+	public boolean getIsDebit() {
+		return isDebit;
 	}
 
 	public AccountDetailsLogin getAccountDetailsLogin() {
