@@ -438,6 +438,27 @@ public class Util implements Config {
 			}
 			content = content + "</tbody></table>";
 
+			// Uncategorized transactions
+			List<Transaction> uncategorized = new ArrayList<Transaction>();
+			int allTransactions = 0;
+			for (Total total : totals) {
+				for (Transaction transaction : total.getTransactions()) {
+					if (transaction.getCategory().getName().equals("Unrecognized"))
+						uncategorized.add(transaction);
+				}
+				allTransactions += total.getTransactions().size();
+			}
+			content = content + "<P><b>Uncategorized transactions: </b>" + uncategorized.size() * 100 / allTransactions
+					+ "%";
+			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
+			for (Transaction transaction : uncategorized) {
+				content = content + "<tr><td><font size='1'>" + transaction.getAccount().getName()
+						+ "</font></td><td><font size='1'>" + transaction.getDecription()
+						+ "</font></td><td width='10'><font size='1'>" + transaction.getCategoryStr()
+						+ "</font></td></tr>";
+			}
+			content = content + "</tbody></table>";
+
 			// Credit scores
 			content = content + "<P><b>Credit scores: </b>";
 			for (CreditScore creditScore : creditScores) {
