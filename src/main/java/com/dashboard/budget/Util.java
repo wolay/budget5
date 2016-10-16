@@ -450,10 +450,12 @@ public class Util implements Config {
 			List<Transaction> uncategorized = new ArrayList<Transaction>();
 			int allTransactions = 0;
 			for (Total total : totals) {
-				for (Transaction transaction : total.getTransactions()) {
-					if (transaction.getCategory().getName().equals("Unrecognized"))
-						uncategorized.add(transaction);
-				}
+				if (!total.getTransactions().isEmpty())
+					for (Transaction transaction : total.getTransactions()) {
+						if (transaction.getCategory() == null
+								|| transaction.getCategory().getName().equals("Unrecognized"))
+							uncategorized.add(transaction);
+					}
 				allTransactions += total.getTransactions().size();
 			}
 			content = content + "<P><b>Uncategorized transactions: </b>" + uncategorized.size() * 100 / allTransactions
