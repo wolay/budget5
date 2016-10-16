@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -20,20 +20,22 @@ public class BudgetPlan {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private boolean isActive;
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "category_id")	
 	private Category category;
 	@Type(type = "date")
 	private Date startDate;
 	@Type(type = "date")
 	private Date endDate;
+	private Double amount;
 	
 	public BudgetPlan(){}
-	public BudgetPlan(Category category, Date startDate, Date endDate) {
+	public BudgetPlan(Category category, Date startDate, Date endDate, Double amount) {
 		super();
 		this.category = category;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.amount = amount;
 		this.isActive = true;
 	}
 
@@ -57,10 +59,14 @@ public class BudgetPlan {
 		return id;
 	}
 	
+	public Double getAmount() {
+		return amount;
+	}
+	
 	@Override
 	public String toString() {
 		return "BudgetPlan [id=" + id + ", isActive=" + isActive + ", category=" + category + ", startDate=" + startDate
-				+ ", endDate=" + endDate + "]";
+				+ ", endDate=" + endDate + ", amount=" + amount + "]";
 	}
 	
 }

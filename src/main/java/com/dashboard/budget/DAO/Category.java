@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -20,8 +19,8 @@ public class Category {
 	private String name;
 	@OneToMany(mappedBy="category")
 	private Set<Transaction> transactions;
-	@OneToOne(mappedBy="category")
-	private BudgetPlan budgetPlan;	
+	@OneToMany(mappedBy="category")
+	private Set<BudgetPlan> budgetPlan;	
 	@OneToMany(mappedBy="targetCategory")
 	private Set<CategorizationRule> categorizationRules;	
 	
@@ -42,6 +41,9 @@ public class Category {
 		return transactions;
 	}
 	
+	public Set<BudgetPlan> getBudgetPlan() {
+		return budgetPlan;
+	}
 	@Override
 	public String toString() {
 		return "TransactionCategory [id=" + id + ", name=" + name + "]";

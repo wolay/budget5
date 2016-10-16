@@ -40,6 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.BudgetPlan;
+import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
@@ -388,8 +390,12 @@ public class Util implements Config {
 		}
 	}
 
-	public static void sendEmailSummary(List<Total> totals, List<CreditScore> creditScores, String spentTime,
+	public static void sendEmailSummary(DataHandler dataHandler, List<CreditScore> creditScores, String spentTime,
 			Credential credentials) {
+		List<Total> totals = dataHandler.getLastTotals();
+		List<Transaction> allTransactions = dataHandler.getAllTransactions();
+		List<BudgetPlan> budgetPlans = dataHandler.getBudgetPlansList();
+
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.mail.ru");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -412,7 +418,30 @@ public class Util implements Config {
 			message.setSubject("Dashboard on " + today);
 
 			// Budget
-			String content = "<b>Budget: </b>";
+			String content = "<b>Budget (this month): </b>";
+			content = content
+					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><thead><tr><th>Category</th><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
+
+			// Collecting all categories in transactions
+			for (Category category : dataHandler.getCategories()) {
+				Double amountFact = allTransactions.stream()
+						.filter(t -> t.getCategory() == category && Util.isDateThisMonth(t.getDate()))
+						.mapToDouble(Transaction::getAmount).sum();
+				BudgetPlan budgetPlan = budgetPlans.stream().filter(b -> b.getCategory() == category).findFirst()
+						.orElse(null);
+				String amountPlan = "N/A";
+				if (budgetPlan == null)
+					logger.info("Category '{}' is not in budget plan", category.getName());
+				else
+					amountPlan = amountToString(budgetPlan.getAmount() / 3);
+
+				content = content + "<tr><td>" + category.getName() + "</td><td>" + amountPlan + "</td><td>"
+						+ amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
+			}
+			content = content + "</tbody></table>";
+
+			// Totals & transactions
+			content = content + "<P><b>Totals & transactions: </b>";
 			content = content
 					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><thead><tr><th>Date</th><th>Account</th><th>Amount</th><th>Diff</th></tr></thead>";
 			content = content + "<tfoot><tr><td></td><td><b>TOTAL</b></td><td><b>"
@@ -448,7 +477,7 @@ public class Util implements Config {
 
 			// Uncategorized transactions
 			List<Transaction> uncategorized = new ArrayList<Transaction>();
-			int allTransactions = 0;
+			int allTransactionsCounter = 0;
 			for (Total total : totals) {
 				if (!total.getTransactions().isEmpty())
 					for (Transaction transaction : total.getTransactions()) {
@@ -456,10 +485,10 @@ public class Util implements Config {
 								|| transaction.getCategory().getName().equals("Unrecognized"))
 							uncategorized.add(transaction);
 					}
-				allTransactions += total.getTransactions().size();
+				allTransactionsCounter += total.getTransactions().size();
 			}
-			content = content + "<P><b>Uncategorized transactions: </b>" + uncategorized.size() * 100 / allTransactions
-					+ "%";
+			content = content + "<P><b>Uncategorized transactions: </b>"
+					+ uncategorized.size() * 100 / allTransactionsCounter + "%";
 			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
 			for (Transaction transaction : uncategorized) {
 				content = content + "<tr><td><font size='1'>" + transaction.getAccount().getName()
@@ -619,7 +648,12 @@ public class Util implements Config {
 	}
 
 	public static boolean isDateToday(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(date).equals(sdf.format(new Date()));
+	}
+
+	public static boolean isDateThisMonth(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
 		return sdf.format(date).equals(sdf.format(new Date()));
 	}
 

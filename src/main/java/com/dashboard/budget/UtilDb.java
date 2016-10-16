@@ -14,6 +14,7 @@ import javax.persistence.Query;
 
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Bank;
+import com.dashboard.budget.DAO.BudgetPlan;
 import com.dashboard.budget.DAO.CategorizationRule;
 import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Credential;
@@ -103,15 +104,15 @@ public class UtilDb implements Config{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Bank> loadBanks() {
+	public List<Bank> loadBanksFromDb() {
 
-		List<Bank> accounts = null;
+		List<Bank> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
 			Query query = em.createQuery("select bank from Bank as bank");
-			accounts = query.getResultList();
+			entities = query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -120,19 +121,19 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return accounts;
+		return entities;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Account> loadAccounts() {
+	public List<Account> loadAccountsFromDb() {
 
-		List<Account> accounts = null;
+		List<Account> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
 			Query query = em.createQuery("select account from Account as account");
-			accounts = query.getResultList();
+			entities = query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -141,15 +142,35 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return accounts;
+		return entities;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BudgetPlan> loadBudgetPlansFromDb() {
+
+		List<BudgetPlan> entities = null;
+
+		EntityTransaction txn = em.getTransaction();
+		try {
+			txn.begin();
+			Query query = em.createQuery("select budgetPlan from BudgetPlan as budgetPlan");
+			entities = query.getResultList();
+			txn.commit();
+		} catch (Exception ex) {
+			if (txn != null) {
+				txn.rollback();
+			}
+			ex.printStackTrace();
+		}
+
+		return entities;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Total> loadTotalsFromDb() {
 
-		List<Total> totals = null;
+		List<Total> entities = null;
 		
-
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
@@ -157,7 +178,7 @@ public class UtilDb implements Config{
 					+ "right join (SELECT max(date) as max_date, account_id FROM mydb.totals group by account_id) last_totals "
 					+ "on all_totals.account_id=last_totals.account_id and all_totals.date=last_totals.max_date";
 			Query query = em.createNativeQuery(sql, Total.class);
-			totals = (List<Total>) query.getResultList();
+			entities = (List<Total>) query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -166,19 +187,19 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return totals;
+		return entities;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Transaction> loadTransactionsFromDb() {
 
-		List<Transaction> transactions = null;
+		List<Transaction> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
 			Query query = em.createQuery("select transaction from Transaction transaction");
-			transactions = query.getResultList();
+			entities = query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -187,14 +208,14 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return transactions;
+		return entities;
 	}
 	
 
 	@SuppressWarnings("unchecked")
 	public List<CreditScore> loadCreditScoresFromDb() {
 
-		List<CreditScore> creditScores = null;
+		List<CreditScore> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
@@ -203,7 +224,7 @@ public class UtilDb implements Config{
 					+ "right join (SELECT max(date) as date, account_id FROM mydb.credit_scores group by account_id) max_dates "
 					+ "on credit_scores.date=max_dates.date and credit_scores.account_id=max_dates.account_id";
 			Query query = em.createNativeQuery(sql, CreditScore.class);
-			creditScores = (List<CreditScore>) query.getResultList();
+			entities = (List<CreditScore>) query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -212,20 +233,20 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return creditScores;
+		return entities;
 	}
 	
 
 	@SuppressWarnings("unchecked")
 	public List<Category> loadCategoriesFromDb() {
 
-		List<Category> categories = null;
+		List<Category> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
 			Query query = em.createQuery("select category from Category category");
-			categories = query.getResultList();
+			entities = query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -234,19 +255,19 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return categories;
+		return entities;
 	}
 	
 
 	@SuppressWarnings("unchecked")
 	public List<CategorizationRule> loadCategorizationRulesFromDb() {
-		List<CategorizationRule> categorizationRules = null;
+		List<CategorizationRule> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
 			Query query = em.createQuery("select categorizationRule from CategorizationRule categorizationRule");
-			categorizationRules = query.getResultList();
+			entities = query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -255,19 +276,19 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return categorizationRules;
+		return entities;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Credential> loadCredentialsFromDb() {
 
-		List<Credential> credentials = null;
+		List<Credential> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
 			Query query = em.createQuery("select credential from Credential credential");
-			credentials = query.getResultList();
+			entities = query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -276,19 +297,19 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return credentials;
+		return entities;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<SecretQuestion> loadSecretQuestionsFromDb() {
 
-		List<SecretQuestion> secretQuestions = null;
+		List<SecretQuestion> entities = null;
 
 		EntityTransaction txn = em.getTransaction();
 		try {
 			txn.begin();
 			Query query = em.createQuery("select secretQuestion from SecretQuestion secretQuestion");
-			secretQuestions = query.getResultList();
+			entities = query.getResultList();
 			txn.commit();
 		} catch (Exception ex) {
 			if (txn != null) {
@@ -297,7 +318,7 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
-		return secretQuestions;
+		return entities;
 	}
 
 	
