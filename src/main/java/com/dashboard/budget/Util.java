@@ -127,16 +127,24 @@ public class Util implements Config {
 	}
 
 	public static boolean isSecretQuestionShown(UberWebDriver webDriver) {
-		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Secret')]")) != null)
+		WebElement secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Secret')]"));
+		if (secretQuestion != null && secretQuestion.isDisplayed())
 			return true;
 
-		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Verify Your Identity')]"), 0) != null)
+		secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Verify Your Identity')]"), 0);
+		if (secretQuestion != null && secretQuestion.isDisplayed())
 			return true;
 
-		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"), 0) != null)
+		secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Challenge Question')]"), 0);
+		if (secretQuestion != null && secretQuestion.isDisplayed())
 			return true;
 
-		if (webDriver.lookupElement(By.xpath("//*[contains(text(),'Security Verification')]"), 0) != null)
+		secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Security Verification')]"), 0);
+		if (secretQuestion != null && secretQuestion.isDisplayed())
+			return true;
+
+		secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Security question')]"), 0);
+		if (secretQuestion != null && secretQuestion.isDisplayed())
 			return true;
 
 		return false;
