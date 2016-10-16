@@ -42,8 +42,10 @@ public class Account {
 	@ManyToOne
 	@JoinColumn(name = "bank_id")
 	private Bank bank;
-	@OneToMany(mappedBy = "bank")
+	@OneToMany(mappedBy = "account")
 	private Set<SecretQuestion> secretQuestions;
+	@OneToMany(mappedBy = "account")
+	private Set<CategorizationRule> categorizationRule;
 
 	public Account() {
 	}

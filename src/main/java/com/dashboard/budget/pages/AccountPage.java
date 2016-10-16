@@ -22,7 +22,6 @@ import com.dashboard.budget.DAO.AccountDetailsLogin;
 import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
-import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.SecretQuestion;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
@@ -230,7 +229,6 @@ public abstract class AccountPage implements Config {
 				if (matchTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;
-					Category category = null;
 					if (byCategoryNav != null) {
 						WebElement weCategoryNav = webDriver.findElementInRow(row, byCategoryNav);
 						if (weCategoryNav == null)
@@ -246,10 +244,6 @@ public abstract class AccountPage implements Config {
 							} else // absolute path
 								categoryStr = webDriver.findElement(byCategory).getText();
 							// weCategoryNav.click();
-
-							logger.info("Category in current row: {}", categoryStr);
-							category = dataHandler.recognizeCategory(categoryStr);
-							logger.info("Recognized category: {}", category);
 						}
 					} else if (byCategory != null) {
 						if (accountTransactionDetails.getTransCategoryLocator().startsWith(".")) {
@@ -260,13 +254,15 @@ public abstract class AccountPage implements Config {
 								categoryStr = row.findElement(byCategorySup).getText();
 						} else // absolute path
 							categoryStr = webDriver.findElement(byCategory).getText();
-						// weCategoryNav.click();
-
-						logger.info("Category in current row: {}", categoryStr);
-						category = dataHandler.recognizeCategory(categoryStr);
-						logger.info("Recognized category: {}", category);
+					} else {
+						categoryStr = "";
 					}
-					result.add(new Transaction(account, total, date, description, amount, categoryStr, category));
+					Transaction newTransaction = new Transaction(account, total, date, description, amount, categoryStr,
+							null);
+					logger.info("Category in current row: {}", categoryStr);
+					dataHandler.recognizeCategoryInTransaction(newTransaction);
+					logger.info("Recognized category: {}", newTransaction.getCategory());
+					result.add(newTransaction);
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
@@ -347,7 +343,6 @@ public abstract class AccountPage implements Config {
 				if (matchTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;
-					Category category = null;
 					if (byCategoryNav != null && row.findElements(byCategoryNav).size() > 0) {
 						row.findElement(byCategoryNav).click();
 						Util.sleep(2000);
@@ -355,11 +350,14 @@ public abstract class AccountPage implements Config {
 							categoryStr = row.findElement(byCategory).getText();
 						else // absolute path
 							categoryStr = webDriver.findElement(byCategory).getText();
-						logger.info("Category in current row: {}", categoryStr);
-						category = dataHandler.recognizeCategory(categoryStr);
-						logger.info("Recognized category: {}", category);
-					}
-					result.add(new Transaction(account, total, date, description, amount, categoryStr, category));
+					} else
+						categoryStr = "";
+					Transaction newTransaction = new Transaction(account, total, date, description, amount, categoryStr,
+							null);
+					logger.info("Category in current row: {}", categoryStr);
+					dataHandler.recognizeCategoryInTransaction(newTransaction);
+					logger.info("Recognized category: {}", newTransaction.getCategory());
+					result.add(newTransaction);
 					difference = Util.roundDouble(difference - amount);
 					logger.info("Amount: {}, diff: {}", amount, difference);
 					if (difference == 0.0) {
@@ -407,7 +405,7 @@ public abstract class AccountPage implements Config {
 		if (question == null)
 			return false;
 		else {
-			String secretQuestion = question.getText();
+			String secretQuestion = question.getText().trim();
 			// first trying to find answer by account
 			SecretQuestion secretAnswer = dataHandler.getSecretQuestions().stream()
 					.filter(sq -> sq.getAccount() == account && sq.getQuestion().equals(secretQuestion)).findFirst()
@@ -415,8 +413,8 @@ public abstract class AccountPage implements Config {
 			// if answer not found by account trying to find answer by bank
 			if (secretAnswer == null)
 				secretAnswer = dataHandler.getSecretQuestions().stream()
-						.filter(sq -> sq.getBank() == account.getBank() && sq.getQuestion().equals(secretQuestion)).findFirst()
-						.orElse(null);
+						.filter(sq -> sq.getBank() == account.getBank() && sq.getQuestion().equals(secretQuestion))
+						.findFirst().orElse(null);
 			if (secretAnswer == null)
 				logger.error("Cannot find answer for question {}", secretQuestion);
 			else {
@@ -430,19 +428,17 @@ public abstract class AccountPage implements Config {
 				submit.click();
 
 			/*
-			WebElement cont = webDriver.findElement(By.cssSelector("#verify-cq-submit > span"));
-			if (cont != null)
-				cont.click();
-			else
-				return false;
-				*/
+			 * WebElement cont = webDriver.findElement(By.cssSelector(
+			 * "#verify-cq-submit > span")); if (cont != null) cont.click();
+			 * else return false;
+			 */
 
 			return true;
 		}
 
 	}
-	
-	public UberWebDriver getWebDriver(){
+
+	public UberWebDriver getWebDriver() {
 		return webDriver;
 	}
 

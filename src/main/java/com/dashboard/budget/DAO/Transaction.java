@@ -103,6 +103,14 @@ public class Transaction implements Comparable<Object> {
 		this.categoryStr = categoryStr;
 	}
 
+	public CategorizationRule getCategorizationRule() {
+		return categorizationRule;
+	}
+
+	public void setCategorizationRule(CategorizationRule categorizationRule) {
+		this.categorizationRule = categorizationRule;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

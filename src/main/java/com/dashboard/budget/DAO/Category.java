@@ -22,7 +22,7 @@ public class Category {
 	private Set<Transaction> transactions;
 	@OneToOne(mappedBy="category")
 	private BudgetPlan budgetPlan;	
-	@OneToMany(mappedBy="category")
+	@OneToMany(mappedBy="targetCategory")
 	private Set<CategorizationRule> categorizationRules;	
 	
 	public Category(){}
