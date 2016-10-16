@@ -17,7 +17,7 @@ public class AccountPageMacys extends AccountPage {
 
 	@Override
 	public Double getTotal() {
-		WebElement summary = webDriver.findElement(By.linkText("credit summary"));
+		WebElement summary = webDriver.findElement(By.linkText("Credit Summary"));
 		if (summary != null)
 			summary.click();
 		else
