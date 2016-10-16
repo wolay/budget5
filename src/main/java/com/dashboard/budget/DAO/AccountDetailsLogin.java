@@ -26,6 +26,7 @@ public class AccountDetailsLogin {
 	private String passwordValue;
 	private String loginLocator;
 	private String logoutLocator;
+	private String logoutPostLocator;
 	
 	public AccountDetailsLogin(){}
 	public AccountDetailsLogin(Account account, String usernameLocator, String usernameValue, String passwordLocator,
@@ -72,5 +73,9 @@ public class AccountDetailsLogin {
 
 	public By getLogoutLocator() {
 		return Util.getByLocator(logoutLocator);
+	}
+	
+	public By getLogoutPostLocator() {
+		return Util.getByLocator(logoutPostLocator);
 	}
 }

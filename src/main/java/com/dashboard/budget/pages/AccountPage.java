@@ -44,6 +44,7 @@ public abstract class AccountPage implements Config {
 	protected By fldPassword;
 	protected By btnLogin;
 	protected By btnLogout;
+	protected By btnPostLogout;
 	protected WebElement amount;
 
 	public AccountPage(Account account, DataHandler dataHandler) {
@@ -57,6 +58,7 @@ public abstract class AccountPage implements Config {
 		fldPassword = accountLoginDetails.getPasswordLocator();
 		btnLogin = accountLoginDetails.getLoginLocator();
 		btnLogout = accountLoginDetails.getLogoutLocator();
+		btnPostLogout = accountLoginDetails.getLogoutPostLocator();
 
 		this.webDriver = new UberWebDriver();
 		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
@@ -446,6 +448,14 @@ public abstract class AccountPage implements Config {
 		WebElement logout = webDriver.findElement(btnLogout);
 		if (logout != null) {
 			logout.click();
+
+			// For Macys: there is log out confirmation window
+			if (btnPostLogout != null) {
+				WebElement postLogout = webDriver.findElement(btnPostLogout);
+				if (postLogout != null)
+					postLogout.click();
+			}
+
 			logger.info("Account page {} was closed", account.getName());
 		} else
 			logger.error("Account page {} was not closed properly", account.getName());
