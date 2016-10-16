@@ -48,16 +48,19 @@ public class AccountPageMP extends AccountPage {
 			totalsList = new ArrayList<mpTotal>();
 
 			// Waiting for table to refresh
+			/*
 			WebElement refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
-			if(refreshStatus==null){
+			if (refreshStatus == null) {
 				logger.error("Cannot find refresh status locator");
 				return null;
 			}
-			while(refreshStatus.getText().equals("Refreshing")){
+			while (refreshStatus.getText().equals("Refreshing...")) {
 				logger.info("Waiting for refreshing accounts table...");
-				Util.sleep(1000);
+				Util.sleep(5000);
 				refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
 			}
+			logger.info("All My Portfolio accounts are up to date");
+			*/
 
 			// debit accounts
 			List<WebElement> debitAccounts = webDriver
