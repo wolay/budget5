@@ -478,18 +478,14 @@ public class Util implements Config {
 
 			// Uncategorized transactions
 			List<Transaction> uncategorized = new ArrayList<Transaction>();
-			int allTransactionsCounter = 0;
-			for (Total total : totals) {
-				if (!total.getTransactions().isEmpty())
-					for (Transaction transaction : total.getTransactions()) {
-						if (transaction.getCategory() == null
-								|| transaction.getCategory().getName().equals("Unrecognized"))
-							uncategorized.add(transaction);
-					}
-				allTransactionsCounter += total.getTransactions().size();
-			}
+			int allTransactionsCounter = (int) allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
+					.count();
+			allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate())).forEach(t -> {
+				if (t.getCategory() == null || t.getCategory().getName().equals("Unrecognized"))
+					uncategorized.add(t);
+			});
 			content = content + "<P><b>Uncategorized transactions: </b>"
-					+ uncategorized.size() * 100 / allTransactionsCounter + "%";
+					+ uncategorized.size() * 100 / allTransactionsCounter + "% (" + uncategorized.size() + ")";
 			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
 			for (Transaction transaction : uncategorized) {
 				content = content + "<tr><td><font size='1'>" + transaction.getAccount().getName()
