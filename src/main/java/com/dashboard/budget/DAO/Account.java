@@ -51,7 +51,7 @@ public class Account {
 	public Account() {
 	}
 
-	public Account(int id, String name, Bank bank, String url, String browser, String owner, boolean isMyPortfolio) {
+	public Account(int id, String name, Bank bank, String url, String owner, boolean isMyPortfolio) {
 		this.id = id;
 		this.name = name;
 		this.bank = bank;

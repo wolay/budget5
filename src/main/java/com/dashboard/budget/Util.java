@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -252,11 +253,8 @@ public class Util implements Config {
 	}
 
 	public static List<Account> getAccountsByDriver(List<Account> accounts, String driver) {
-		List<Account> result = new ArrayList<Account>();
-		for (Account account : accounts)
-			if (account.getBank().getName().equals(driver))
-				result.add(account);
-		return result;
+		return accounts.stream().filter(a -> a.getBank() != null && a.getBank().getName().equals(driver))
+				.collect(Collectors.toList());
 	}
 
 	public static String amountToString(Double amount) {

@@ -133,7 +133,7 @@ public class WebDriverManager implements Config {
 		List<List<String>> drivers = new ArrayList<List<String>>();
 
 		// Group accounts list by banks
-		accounts.stream().forEach(a -> {
+		accounts.stream().filter(a -> a.getBank() != null).forEach(a -> {
 			List<String> driver = new ArrayList<String>();
 			driver.add(a.getBank().getName());
 			driver.add(a.getOwner());
@@ -146,8 +146,8 @@ public class WebDriverManager implements Config {
 
 		for (List<String> driver : drivers) {
 			executor.submit(() -> {
-				accounts.stream().filter(a -> a.getBank().getName().equals(driver.get(0)) && a.getOwner().equals(driver.get(1))
-						&& a.getIsEnabled()).forEach(account -> {
+				accounts.stream().filter(a -> a.getBank()!=null && a.getBank().getName().equals(driver.get(0))
+						&& a.getOwner().equals(driver.get(1)) && a.getIsEnabled()).forEach(account -> {
 					Thread.currentThread().setName("Bank accounts ("
 							+ Util.getThreadNumber(Thread.currentThread().getName()) + "): " + account.getName());
 					int attempt = 0;
