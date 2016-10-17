@@ -421,8 +421,14 @@ public class Util implements Config {
 			String content = "<b>Budget (this month): </b>";
 			content = content
 					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:400px;'><thead><tr><th>Category</th><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
-
+			Double totalBudgetPlan = budgetPlans.stream().mapToDouble(BudgetPlan::getAmount).sum() / 3;
+			Double totalBudgetFact = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
+					.mapToDouble(Transaction::getAmount).sum();
+			content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b>" + amountToString(totalBudgetPlan)
+					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td></td></tr></tfoot><tbody>";
 			// Collecting all categories in transactions
+			List<Category> categories = dataHandler.getCategories();
+			Collections.sort(categories);
 			for (Category category : dataHandler.getCategories()) {
 				Double amountFact = allTransactions.stream()
 						.filter(t -> t.getCategory() == category && Util.isDateThisMonth(t.getDate()))
@@ -436,8 +442,9 @@ public class Util implements Config {
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
 				content = content + "<tr><td>" + category.getName() + "</td><td>" + amountPlan + "</td><td>"
-						+ ((category.isDebit()) ? amountToString(amountFact) : amountToString(-amountFact))
-						+ "</td><td>" + 0 + "</td></tr>";
+				// + ((category.isDebit()) ? amountToString(amountFact) :
+				// amountToString(-amountFact))
+						+ amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
 			}
 			content = content + "</tbody></table>";
 
@@ -484,16 +491,21 @@ public class Util implements Config {
 				if (t.getCategory() == null || t.getCategory().getName().equals("Unrecognized"))
 					uncategorized.add(t);
 			});
-			content = content + "<P><b>Uncategorized transactions: </b>"
-					+ uncategorized.size() * 100 / allTransactionsCounter + "% (" + uncategorized.size() + ")";
-			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
-			for (Transaction transaction : uncategorized) {
-				content = content + "<tr><td><font size='1'>" + transaction.getAccount().getName()
-						+ "</font></td><td><font size='1'>" + transaction.getDecription()
-						+ "</font></td><td width='10'><font size='1'>" + transaction.getCategoryStr()
-						+ "</font></td></tr>";
+			if (uncategorized.isEmpty())
+				content = content + "<P><b>Great news! There is no uncategorized transactions this month</b>";
+			else {
+				content = content + "<P><b>Uncategorized transactions: </b>"
+						+ uncategorized.size() * 100 / allTransactionsCounter + "% (" + uncategorized.size() + ")";
+				content = content
+						+ "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
+				for (Transaction transaction : uncategorized) {
+					content = content + "<tr><td><font size='1'>" + transaction.getAccount().getName()
+							+ "</font></td><td><font size='1'>" + transaction.getDecription()
+							+ "</font></td><td width='10'><font size='1'>" + transaction.getCategoryStr()
+							+ "</font></td></tr>";
+				}
+				content = content + "</tbody></table>";
 			}
-			content = content + "</tbody></table>";
 
 			// Credit scores
 			content = content + "<P><b>Credit scores: </b>";

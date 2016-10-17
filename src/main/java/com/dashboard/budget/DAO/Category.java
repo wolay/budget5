@@ -11,12 +11,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "categories")
-public class Category {
+public class Category implements Comparable<Object>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String name;
+	private int displayOrder;
 	private boolean isDebit;
 	@OneToMany(mappedBy="category")
 	private Set<Transaction> transactions;
@@ -26,8 +27,9 @@ public class Category {
 	private Set<CategorizationRule> categorizationRules;	
 	
 	public Category(){}
-	public Category(String name, boolean isDebit) {
+	public Category(String name, int displayOrder, boolean isDebit) {
 		this.name = name;
+		this.displayOrder = displayOrder;
 		this.isDebit = isDebit;
 	}
 	
@@ -37,6 +39,10 @@ public class Category {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public int getDisplayOrder() {
+		return displayOrder;
 	}
 	
 	public boolean isDebit(){
@@ -50,6 +56,12 @@ public class Category {
 	public Set<BudgetPlan> getBudgetPlan() {
 		return budgetPlan;
 	}
+	
+	@Override
+	public int compareTo(Object o) {
+		return this.displayOrder - ((Category) o).displayOrder;
+	}
+	
 	@Override
 	public String toString() {
 		return "TransactionCategory [id=" + id + ", name=" + name + "]";
