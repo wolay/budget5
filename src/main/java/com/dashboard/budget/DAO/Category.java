@@ -18,7 +18,7 @@ public class Category implements Comparable<Object>{
 	private int id;
 	private String name;
 	private int displayOrder;
-	private boolean isDebit;
+	private int type; // 1 - debit, 2 - credit, 3 - others
 	@OneToMany(mappedBy="category")
 	private Set<Transaction> transactions;
 	@OneToMany(mappedBy="category")
@@ -27,10 +27,10 @@ public class Category implements Comparable<Object>{
 	private Set<CategorizationRule> categorizationRules;	
 	
 	public Category(){}
-	public Category(String name, int displayOrder, boolean isDebit) {
+	public Category(String name, int displayOrder, int type) {
 		this.name = name;
 		this.displayOrder = displayOrder;
-		this.isDebit = isDebit;
+		this.type = type;
 	}
 	
 	public int getId() {
@@ -45,8 +45,8 @@ public class Category implements Comparable<Object>{
 		return displayOrder;
 	}
 	
-	public boolean isDebit(){
-		return isDebit;
+	public int getType(){
+		return type;
 	}
 	
 	public Set<Transaction> getTransaction(){
@@ -64,7 +64,7 @@ public class Category implements Comparable<Object>{
 	
 	@Override
 	public String toString() {
-		return "TransactionCategory [id=" + id + ", name=" + name + "]";
-	} 
+		return "Category [id=" + id + ", name=" + name + ", type=" + type + "]";
+	}
 
 }

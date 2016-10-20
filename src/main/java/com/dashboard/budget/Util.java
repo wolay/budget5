@@ -419,15 +419,16 @@ public class Util implements Config {
 			String content = "<b>Budget (this month): </b>";
 			content = content
 					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:400px;'><thead><tr><th>Category</th><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
-			Double totalBudgetPlan = budgetPlans.stream().mapToDouble(BudgetPlan::getAmount).sum() / 3;
+			Double totalBudgetPlan = budgetPlans.stream().filter(b -> b.isActive()).mapToDouble(BudgetPlan::getAmount).sum() / 3;
 			Double totalBudgetFact = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
 					.mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b>" + amountToString(totalBudgetPlan)
 					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td></td></tr></tfoot><tbody>";
 			// Collecting all categories in transactions
+			
 			List<Category> categories = dataHandler.getCategories();
 			Collections.sort(categories);
-			for (Category category : dataHandler.getCategories()) {
+			for (Category category : categories) {
 				Double amountFact = allTransactions.stream()
 						.filter(t -> t.getCategory() == category && Util.isDateThisMonth(t.getDate()))
 						.mapToDouble(Transaction::getAmount).sum();
@@ -440,8 +441,6 @@ public class Util implements Config {
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
 				content = content + "<tr><td>" + category.getName() + "</td><td>" + amountPlan + "</td><td>"
-				// + ((category.isDebit()) ? amountToString(amountFact) :
-				// amountToString(-amountFact))
 						+ amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
 			}
 			content = content + "</tbody></table>";
