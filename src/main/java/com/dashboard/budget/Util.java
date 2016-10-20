@@ -416,19 +416,28 @@ public class Util implements Config {
 			message.setSubject("Dashboard on " + today);
 
 			// Budget
+			// Collecting all categories in transactions
 			String content = "<b>Budget (this month): </b>";
 			content = content
-					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:400px;'><thead><tr><th>Category</th><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
-			Double totalBudgetPlan = budgetPlans.stream().filter(b -> b.isActive()).mapToDouble(BudgetPlan::getAmount).sum() / 3;
+					+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:450px;'><thead><tr><th>Category</th><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
+			Double totalBudgetPlan = budgetPlans.stream().filter(b -> b.isActive()).mapToDouble(BudgetPlan::getAmount)
+					.sum() / 3;
 			Double totalBudgetFact = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
 					.mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b>" + amountToString(totalBudgetPlan)
 					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td></td></tr></tfoot><tbody>";
-			// Collecting all categories in transactions
-			
-			List<Category> categories = dataHandler.getCategories();
-			Collections.sort(categories);
-			for (Category category : categories) {
+			// Grouping by type
+			// - Income
+			Double totalIncomePlan = budgetPlans.stream().filter(b -> b.getCategory().getType() == 1 && b.isActive())
+					.mapToDouble(BudgetPlan::getAmount).sum() / 3;
+			Double totalIncomeFact = allTransactions.stream()
+					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 1)
+					.mapToDouble(Transaction::getAmount).sum();
+			content = content + "<tr><td><b>Income</b></td><td><b>" + amountToString(totalIncomePlan)
+					+ "</b></td><td><b>" + amountToString(totalIncomeFact) + "</b></td><td>" + 0 + "</td></tr>";
+			for (Category category : dataHandler.getCategories()) {
+				if (category.getType() != 1)
+					continue;
 				Double amountFact = allTransactions.stream()
 						.filter(t -> t.getCategory() == category && Util.isDateThisMonth(t.getDate()))
 						.mapToDouble(Transaction::getAmount).sum();
@@ -440,9 +449,42 @@ public class Util implements Config {
 				else
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
-				content = content + "<tr><td>" + category.getName() + "</td><td>" + amountPlan + "</td><td>"
-						+ amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
+				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
+						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
 			}
+
+			// - Outcome
+			Double totalOutcomePlan = budgetPlans.stream().filter(b -> b.getCategory().getType() == 2 && b.isActive())
+					.mapToDouble(BudgetPlan::getAmount).sum() / 3;
+			Double totalOutcomeFact = allTransactions.stream()
+					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 2)
+					.mapToDouble(Transaction::getAmount).sum();
+			content = content + "<tr><td><b>Outcome</b></td><td><b>" + amountToString(totalOutcomePlan)
+					+ "</b></td><td><b>" + amountToString(totalOutcomeFact) + "</b></td><td>" + 0 + "</td></tr>";
+			for (Category category : dataHandler.getCategories()) {
+				if (category.getType() != 2)
+					continue;
+				Double amountFact = allTransactions.stream()
+						.filter(t -> t.getCategory() == category && Util.isDateThisMonth(t.getDate()))
+						.mapToDouble(Transaction::getAmount).sum();
+				BudgetPlan budgetPlan = budgetPlans.stream().filter(b -> b.getCategory() == category).findFirst()
+						.orElse(null);
+				String amountPlan = "N/A";
+				if (budgetPlan == null)
+					logger.info("Category '{}' is not in budget plan", category.getName());
+				else
+					amountPlan = amountToString(budgetPlan.getAmount() / 3);
+
+				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
+						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
+			}
+
+			// - Transfers
+			Double totalTransfer = allTransactions.stream()
+					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 3)
+					.mapToDouble(Transaction::getAmount).sum();
+			content = content + "<tr><td><b>Transfers</b></td><td><b>N/A</b></td><td><b>" + amountToString(totalTransfer)
+					+ "</b></td><td>" + 0 + "</td></tr>";
 			content = content + "</tbody></table>";
 
 			// Totals & transactions
