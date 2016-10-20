@@ -30,6 +30,7 @@ public class Transaction implements Comparable<Object> {
 	private String decription;
 	private double amount;
 	private String categoryStr;
+	private boolean isTransferComplete;
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;	
@@ -49,6 +50,7 @@ public class Transaction implements Comparable<Object> {
 		this.amount = amount;
 		this.categoryStr = categoryStr;
 		this.category = category;
+		this.isTransferComplete = false;
 	}
 
 	public int getId() {
@@ -85,6 +87,10 @@ public class Transaction implements Comparable<Object> {
 
 	public void setAmount(double amount) {
 		this.amount = amount;
+	}
+	
+	public boolean getIsTransferComplete(){
+		return isTransferComplete;
 	}
 
 	public Category getCategory() {

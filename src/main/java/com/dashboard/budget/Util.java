@@ -483,8 +483,8 @@ public class Util implements Config {
 			Double totalTransfer = allTransactions.stream()
 					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 3)
 					.mapToDouble(Transaction::getAmount).sum();
-			content = content + "<tr><td><b>Transfers</b></td><td><b>N/A</b></td><td><b>" + amountToString(totalTransfer)
-					+ "</b></td><td>" + 0 + "</td></tr>";
+			content = content + "<tr><td><b>Transfers</b></td><td><b>N/A</b></td><td><b>"
+					+ amountToString(totalTransfer) + "</b></td><td>" + 0 + "</td></tr>";
 			content = content + "</tbody></table>";
 
 			// Totals & transactions
@@ -542,6 +542,26 @@ public class Util implements Config {
 							+ "</font></td><td><font size='1'>" + transaction.getDecription()
 							+ "</font></td><td width='10'><font size='1'>" + transaction.getCategoryStr()
 							+ "</font></td></tr>";
+				}
+				content = content + "</tbody></table>";
+			}
+
+			// Transactions in transfer
+			List<Transaction> transfers = new ArrayList<Transaction>();
+			allTransactions
+					.stream().filter(t -> Util.isDateThisMonth(t.getDate())
+							&& t.getCategory().getName().equals("Transfer") && !t.getIsTransferComplete())
+					.forEach(t -> transfers.add(t));
+			if (transfers.isEmpty())
+				content = content + "<P><b>There is no transferring transactions</b>";
+			else {
+				content = content + "<P><b>Transactions in transfer: </b> (" + transfers.size() + ")";
+				content = content
+						+ "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
+				for (Transaction transfer : transfers) {
+					content = content + "<tr><td><font size='1'>" + transfer.getAccount().getName()
+							+ "</font></td><td><font size='1'>" + transfer.getDecription()
+							+ "</font></td><td width='10'><font size='1'>" + transfer.getAmount() + "</font></td></tr>";
 				}
 				content = content + "</tbody></table>";
 			}
