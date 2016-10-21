@@ -263,6 +263,17 @@ public class Util implements Config {
 		return String.valueOf(Util.roundDouble(amount));
 	}
 
+	public static String amountToStringForEmail(Double amount) {
+		if (amount == null)
+			return "N/A";
+		if (amount == 0.0)
+			return "-";
+		if (amount > 0.0)
+			return "+" + String.valueOf(Util.roundDouble(amount));
+		else
+			return String.valueOf(Util.roundDouble(amount));
+	}
+
 	public static void writeTotalsToFile(List<Total> totals) {
 
 		FileWriter fileWriter = null;
@@ -415,6 +426,12 @@ public class Util implements Config {
 			String today = convertDateToStringType1(new Date());
 			message.setSubject("Dashboard on " + today);
 
+			// Preparation
+			List<Transaction> todayTransactions = new ArrayList<Transaction>();
+			for (Total total : totals) {
+				todayTransactions.addAll(total.getTransactions());
+			}
+
 			// Budget
 			// Collecting all categories in transactions
 			String content = "<b>Budget (this month): </b>";
@@ -424,8 +441,10 @@ public class Util implements Config {
 					.sum() / 3;
 			Double totalBudgetFact = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
 					.mapToDouble(Transaction::getAmount).sum();
+			Double totalDiffToday = todayTransactions.stream().mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b>" + amountToString(totalBudgetPlan)
-					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td></td></tr></tfoot><tbody>";
+					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td><b>"
+					+ amountToStringForEmail(totalDiffToday) + "</b></td></tr></tfoot><tbody>";
 			// Grouping by type
 			// - Income
 			Double totalIncomePlan = budgetPlans.stream().filter(b -> b.getCategory().getType() == 1 && b.isActive())
@@ -433,13 +452,18 @@ public class Util implements Config {
 			Double totalIncomeFact = allTransactions.stream()
 					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 1)
 					.mapToDouble(Transaction::getAmount).sum();
+			Double totalIncomeDiffToday = todayTransactions.stream().filter(t -> t.getCategory().getType() == 1)
+					.mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tr><td><b>Income</b></td><td><b>" + amountToString(totalIncomePlan)
-					+ "</b></td><td><b>" + amountToString(totalIncomeFact) + "</b></td><td>" + 0 + "</td></tr>";
+					+ "</b></td><td><b>" + amountToString(totalIncomeFact) + "</b></td><td><b>"
+					+ amountToStringForEmail(totalIncomeDiffToday) + "</b></td></tr>";
 			for (Category category : dataHandler.getCategories()) {
 				if (category.getType() != 1)
 					continue;
 				Double amountFact = allTransactions.stream()
 						.filter(t -> t.getCategory() == category && Util.isDateThisMonth(t.getDate()))
+						.mapToDouble(Transaction::getAmount).sum();
+				Double amountDiffToday = todayTransactions.stream().filter(t -> t.getCategory() == category)
 						.mapToDouble(Transaction::getAmount).sum();
 				BudgetPlan budgetPlan = budgetPlans.stream().filter(b -> b.getCategory() == category).findFirst()
 						.orElse(null);
@@ -450,7 +474,8 @@ public class Util implements Config {
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
 				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
-						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
+						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>"
+						+ amountToStringForEmail(amountDiffToday) + "</td></tr>";
 			}
 
 			// - Outcome
@@ -459,13 +484,18 @@ public class Util implements Config {
 			Double totalOutcomeFact = allTransactions.stream()
 					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 2)
 					.mapToDouble(Transaction::getAmount).sum();
+			Double totalOutcomeDiffToday = todayTransactions.stream().filter(t -> t.getCategory().getType() == 2)
+					.mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tr><td><b>Outcome</b></td><td><b>" + amountToString(totalOutcomePlan)
-					+ "</b></td><td><b>" + amountToString(totalOutcomeFact) + "</b></td><td>" + 0 + "</td></tr>";
+					+ "</b></td><td><b>" + amountToString(totalOutcomeFact) + "</b></td><td><b>"
+					+ amountToStringForEmail(totalOutcomeDiffToday) + "</b></td></tr>";
 			for (Category category : dataHandler.getCategories()) {
 				if (category.getType() != 2)
 					continue;
 				Double amountFact = allTransactions.stream()
 						.filter(t -> t.getCategory() == category && Util.isDateThisMonth(t.getDate()))
+						.mapToDouble(Transaction::getAmount).sum();
+				Double amountDiffToday = todayTransactions.stream().filter(t -> t.getCategory() == category)
 						.mapToDouble(Transaction::getAmount).sum();
 				BudgetPlan budgetPlan = budgetPlans.stream().filter(b -> b.getCategory() == category).findFirst()
 						.orElse(null);
@@ -476,15 +506,19 @@ public class Util implements Config {
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
 				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
-						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>" + 0 + "</td></tr>";
+						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>"
+						+ amountToStringForEmail(amountDiffToday) + "</td></tr>";
 			}
 
 			// - Transfers
 			Double totalTransfer = allTransactions.stream()
 					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 3)
 					.mapToDouble(Transaction::getAmount).sum();
+			Double totalTransferDiffToday = todayTransactions.stream().filter(t -> t.getCategory().getType() == 3)
+					.mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tr><td><b>Transfers</b></td><td><b>N/A</b></td><td><b>"
-					+ amountToString(totalTransfer) + "</b></td><td>" + 0 + "</td></tr>";
+					+ amountToString(totalTransfer) + "</b></td><td>" + amountToStringForEmail(totalTransferDiffToday)
+					+ "</td></tr>";
 			content = content + "</tbody></table>";
 
 			// Totals & transactions
@@ -587,9 +621,14 @@ public class Util implements Config {
 
 			logger.info("Summary sent to {}", summaryReceiver);
 
-		} catch (MessagingException e) {
+		} catch (
+
+		MessagingException e)
+
+		{
 			throw new RuntimeException(e);
 		}
+
 	}
 
 	private static String getStatusColor(Total total) {
