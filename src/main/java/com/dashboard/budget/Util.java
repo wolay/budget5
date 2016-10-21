@@ -436,7 +436,8 @@ public class Util implements Config {
 			// Collecting all categories in transactions
 			String content = "<b>Budget (this month): </b>";
 			content = content + "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'>"
-					+ "<thead><tr><th rowspan='2'>Category</th><th colspan='3'>October</th><th rowspan='2'>November</th><th rowspan='2'>December</th></tr>"
+					+ "<thead><tr><th rowspan='2'>Category</th><th colspan='3'>October</th><th rowspan='2'>"
+					+ "<font color='gray'>November</font></th><th rowspan='2'><font color='gray'>December</font></th></tr>"
 					+ "<tr><th>Plan</th><th>Fact</th><th>Diff</th></tr></thead>";
 			Double totalBudgetPlan = budgetPlans.stream().filter(b -> b.isActive()).mapToDouble(BudgetPlan::getAmount)
 					.sum() / 3;
@@ -445,7 +446,9 @@ public class Util implements Config {
 			Double totalDiffToday = todayTransactions.stream().mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b>" + amountToString(totalBudgetPlan)
 					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td><b>"
-					+ amountToStringForEmail(totalDiffToday) + "</b></td><td><b>-</b></td><td><b>-</b></td></tr></tfoot><tbody>";
+					+ amountToStringForEmail(totalDiffToday) + "</b></td><td><b><font color='gray'>"
+					+ amountToString(totalBudgetPlan) + "</font></b></td><td><b><font color='gray'>"
+					+ amountToString(totalBudgetPlan) + "</font></b></td></tr></tfoot><tbody>";
 			// Grouping by type
 			// - Income
 			Double totalIncomePlan = budgetPlans.stream().filter(b -> b.getCategory().getType() == 1 && b.isActive())
@@ -457,7 +460,9 @@ public class Util implements Config {
 					.mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tr><td><b>Income</b></td><td><b>" + amountToString(totalIncomePlan)
 					+ "</b></td><td><b>" + amountToString(totalIncomeFact) + "</b></td><td><b>"
-					+ amountToStringForEmail(totalIncomeDiffToday) + "</b></td><td><b>-</b></td><td><b>-</b></td></tr>";
+					+ amountToStringForEmail(totalIncomeDiffToday) + "</b></td><td><b><font color='gray'>"
+					+ amountToString(totalIncomePlan) + "</font></b></td><td><b><font color='gray'>"
+					+ amountToString(totalIncomePlan) + "</font></b></td></tr>";
 			for (Category category : dataHandler.getCategories()) {
 				if (category.getType() != 1)
 					continue;
@@ -476,7 +481,8 @@ public class Util implements Config {
 
 				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
 						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>"
-						+ amountToStringForEmail(amountDiffToday) + "</td><td>-</td><td>-</td></tr>";
+						+ amountToStringForEmail(amountDiffToday) + "</td><td><font color='gray'>" + amountPlan
+						+ "</font></td><td><font color='gray'>" + amountPlan + "</font></td></tr>";
 			}
 
 			// - Outcome
@@ -489,8 +495,9 @@ public class Util implements Config {
 					.mapToDouble(Transaction::getAmount).sum();
 			content = content + "<tr><td><b>Outcome</b></td><td><b>" + amountToString(totalOutcomePlan)
 					+ "</b></td><td><b>" + amountToString(totalOutcomeFact) + "</b></td><td><b>"
-					+ amountToStringForEmail(totalOutcomeDiffToday)
-					+ "</b></td><td><b>-</b></td><td><b>-</b></td></tr>";
+					+ amountToStringForEmail(totalOutcomeDiffToday) + "</b></td><td><b><font color='gray'>"
+					+ amountToString(totalOutcomePlan) + "</font></b></td><td><b><font color='gray'>"
+					+ amountToString(totalOutcomePlan) + "</font></b></td></tr>";
 			for (Category category : dataHandler.getCategories()) {
 				if (category.getType() != 2)
 					continue;
@@ -509,7 +516,8 @@ public class Util implements Config {
 
 				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
 						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>"
-						+ amountToStringForEmail(amountDiffToday) + "</td><td>-</td><td>-</td></tr>";
+						+ amountToStringForEmail(amountDiffToday) + "</td><td><font color='gray'>" + amountPlan
+						+ "</font></td><td><font color='gray'>" + amountPlan + "</font></td></tr>";
 			}
 
 			// - Transfers
