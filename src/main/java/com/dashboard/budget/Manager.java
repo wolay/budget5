@@ -78,8 +78,8 @@ public class Manager {
 		
 		// Sending summary to email
 		Credential mailCredentials = dataHandler.getCredentials().stream().filter(c -> c.getName().equals("mailru")).findFirst().get();
-		Util.sendEmailSummary(dataHandler, creditScores, stopWatch.toString(), mailCredentials);
-		
+		Util.sendEmailSummary(dataHandler, stopWatch.toString(), mailCredentials);
+
 		System.exit(0);
 		
 	}

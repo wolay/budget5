@@ -399,11 +399,11 @@ public class Util implements Config {
 		}
 	}
 
-	public static void sendEmailSummary(DataHandler dataHandler, List<CreditScore> creditScores, String spentTime,
-			Credential credentials) {
+	public static void sendEmailSummary(DataHandler dataHandler, String spentTime, Credential credentials) {
 		List<Total> totals = dataHandler.getLastTotals();
 		List<Transaction> allTransactions = dataHandler.getAllTransactions();
 		List<BudgetPlan> budgetPlans = dataHandler.getBudgetPlansList();
+		List<CreditScore> creditScores = dataHandler.getLastCreditScores();
 
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.mail.ru");
