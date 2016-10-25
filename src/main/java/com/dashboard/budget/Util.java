@@ -461,7 +461,10 @@ public class Util implements Config {
 					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td><b>"
 					+ amountToStringForEmail(totalDiffToday) + "</b></td><td><b><font color='gray'>"
 					+ amountToString(totalBudgetPlan) + "</font></b></td><td><b><font color='gray'>"
-					+ amountToString(totalBudgetPlan) + "</font></b></td></tr></tfoot><tbody>";
+					+ amountToString(totalBudgetPlan) + "</font></b></td></tr>"
+					+ "<tr><td rowspan='2'><b>By the end of month</b></td><td colspan='3' align='center'><b><font size='4'>+3400</font></b></td><td align='center'><b><font size='4'>+3432</font></b></td><td align='center'><b><font size='4'>-2312</font></b></td></tr>"
+					+ "<tr><td colspan='3' align='center'><b><font size='4'>18600</b></td><td align='center'><b><font size='4'>25000</font></b></td><td align='center'><b><font size='4'>30000</font></b></td></tr></font>"
+					+ "</tfoot><tbody>";
 			// Grouping by type
 			// - Income
 			Double totalIncomePlan = budgetPlans.stream().filter(b -> b.getCategory().getType() == 1 && b.isActive())
