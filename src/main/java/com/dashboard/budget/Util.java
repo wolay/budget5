@@ -153,6 +153,18 @@ public class Util implements Config {
 		return false;
 	}
 
+	public static boolean checkIfSiteDown(UberWebDriver webDriver) {
+		WebElement text = webDriver.lookupElement(By.xpath("//*[contains(text(),'Our site is down')]"));
+		if (text != null && text.isDisplayed())
+			return true;
+
+		text = webDriver.lookupElement(By.xpath("//*[contains(text(),'Our site is down')]"), 0);
+		if (text != null && text.isDisplayed())
+			return true;
+
+		return false;
+	}
+
 	public static List<Total> getTotalsFromFile(List<Account> accounts) {
 		// open latest file to compare results
 		File filePrevSummary = getLastFileModified(dirOutputTotals);

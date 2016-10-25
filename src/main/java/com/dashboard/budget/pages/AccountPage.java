@@ -78,6 +78,9 @@ public abstract class AccountPage implements Config {
 	}
 
 	public synchronized boolean login() {
+		if(Util.checkIfSiteDown(webDriver))
+			return false;
+		
 		Util.sleep(3000); // for Best Buy card
 		WebElement username = webDriver.findElement(fldUsername);
 		if (username == null)
