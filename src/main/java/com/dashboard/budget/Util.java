@@ -441,7 +441,8 @@ public class Util implements Config {
 			// Preparation
 			List<Transaction> todayTransactions = new ArrayList<Transaction>();
 			for (Total total : totals) {
-				todayTransactions.addAll(total.getTransactions());
+				if (total.getTransactions() != null)
+					todayTransactions.addAll(total.getTransactions());
 			}
 
 			// Budget
@@ -810,4 +811,5 @@ public class Util implements Config {
 		// assuming locator in xpath
 		return we.toString().substring(we.toString().indexOf("->") + 10);
 	}
+
 }

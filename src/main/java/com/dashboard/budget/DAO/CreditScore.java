@@ -64,5 +64,11 @@ public class CreditScore {
 	public Account getAccount(){
 		return this.account;
 	}
+	
+	@Override
+	public String toString() {
+		return "CreditScore [id=" + id + ", date=" + date + ", account=" + account + ", name=" + name + ", score="
+				+ score + ", difference=" + difference + "]";
+	}
 
 }
