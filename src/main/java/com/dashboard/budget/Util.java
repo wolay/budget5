@@ -496,17 +496,21 @@ public class Util implements Config {
 						.mapToDouble(Transaction::getAmount).sum();
 				BudgetPlan budgetPlan = budgetPlans.stream().filter(b -> b.getCategory() == category).findFirst()
 						.orElse(null);
-				String amountPlan = "N/A";
+				Double amountPlan = null;
 				if (budgetPlan == null)
 					logger.info("Category '{}' is not in budget plan", category.getName());
 				else
-					amountPlan = amountToString(budgetPlan.getAmount() / 3);
+					amountPlan = budgetPlan.getAmount() / 3;
+				Double amountOver = 0.0;
+				if (amountPlan != null)
+					amountOver = amountFact - amountPlan;
 
 				content = content + "<tr style='background-color:#D5F5E3'><td><p style='margin-left:10px;'>"
-						+ category.getName() + "</p</td><td>" + amountPlan + "</td><td>" + amountToString(amountFact)
-						+ "</td><td>" + amountToStringForEmail(amountDiffToday)
-						+ "</td><td>0</td><td><font color='gray'>" + amountPlan + "</font></td><td><font color='gray'>"
-						+ amountPlan + "</font></td></tr>";
+						+ category.getName() + "</p</td><td>" + amountToString(amountPlan) + "</td><td>"
+						+ amountToString(amountFact) + "</td><td>" + amountToStringForEmail(amountDiffToday)
+						+ "</td><td>" + ((amountOver > 0) ? amountToString(amountOver) : "0")
+						+ "</td><td><font color='gray'>" + amountToString(amountPlan)
+						+ "</font></td><td><font color='gray'>" + amountToString(amountPlan) + "</font></td></tr>";
 			}
 
 			// - Outcome
@@ -533,17 +537,21 @@ public class Util implements Config {
 						.mapToDouble(Transaction::getAmount).sum();
 				BudgetPlan budgetPlan = budgetPlans.stream().filter(b -> b.getCategory() == category).findFirst()
 						.orElse(null);
-				String amountPlan = "N/A";
+				Double amountPlan = null;
 				if (budgetPlan == null)
 					logger.info("Category '{}' is not in budget plan", category.getName());
 				else
-					amountPlan = amountToString(budgetPlan.getAmount() / 3);
+					amountPlan = budgetPlan.getAmount() / 3;
+				Double amountOver = 0.0;
+				if (amountPlan != null)
+					amountOver = amountPlan - amountFact;
 
 				content = content + "<tr style='background-color:#FADBD8'><td><p style='margin-left:10px;'>"
-						+ category.getName() + "</p</td><td>" + amountPlan + "</td><td>" + amountToString(amountFact)
-						+ "</td><td>" + amountToStringForEmail(amountDiffToday)
-						+ "</td><td>0</td><td><font color='gray'>" + amountPlan + "</font></td><td><font color='gray'>"
-						+ amountPlan + "</font></td></tr>";
+						+ category.getName() + "</p</td><td>" + amountToString(amountPlan) + "</td><td>"
+						+ amountToString(amountFact) + "</td><td>" + amountToStringForEmail(amountDiffToday)
+						+ "</td><td>" + ((amountOver > 0) ? amountToString(amountOver) : "0")
+						+ "</td><td><font color='gray'>" + amountToString(amountPlan)
+						+ "</font></td><td><font color='gray'>" + amountToString(amountPlan) + "</font></td></tr>";
 			}
 
 			// - Transfers
