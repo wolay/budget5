@@ -446,16 +446,18 @@ public class Util implements Config {
 					todayTransactions.addAll(total.getTransactions());
 			}
 			String[] quater = getCurrentQuaterMonths();
+			Double monthBeginBalance = dataHandler.getBalances().stream().filter(b -> Util.isDateThisMonth(b.getDate()))
+					.findAny().orElse(null).getAmount();
 
 			// Budget
 			// Collecting all categories in transactions
 			String content = "<b>Budget (this month): </b>";
 			content = content + "<table border='1' cellpadding='1' cellspacing='1' style='width:550px;'>" + "<thead>"
-					+ "<tr style='color: gray'><th>Beginning balance</th><th colspan='4'>12376</th><th>18920</th><th>21093</th></tr>"
-					+ "<tr><th rowspan='2'>Category</th><th colspan='4'>" + quater[0] + "</th><th rowspan='2'>"
-					+ "<font color='gray'>" + quater[1] + "</font></th><th rowspan='2'><font color='gray'>" + quater[2]
-					+ "</font></th></tr>" + "<tr><th>Plan</th><th>Fact</th><th>Today</th><th>Over</th></tr>"
-					+ "</thead>";
+					+ "<tr style='color: gray'><th>Beginning balance</th><th colspan='4'>" + monthBeginBalance
+					+ "</th><th>18920</th><th>21093</th></tr>" + "<tr><th rowspan='2'>Category</th><th colspan='4'>"
+					+ quater[0] + "</th><th rowspan='2'>" + "<font color='gray'>" + quater[1]
+					+ "</font></th><th rowspan='2'><font color='gray'>" + quater[2] + "</font></th></tr>"
+					+ "<tr><th>Plan</th><th>Fact</th><th>Today</th><th>Over</th></tr>" + "</thead>";
 			Double totalBudgetPlan = budgetPlans.stream().filter(b -> b.isActive()).mapToDouble(BudgetPlan::getAmount)
 					.sum() / 3;
 			Double totalBudgetFact = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
