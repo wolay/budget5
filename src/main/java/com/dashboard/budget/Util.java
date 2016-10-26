@@ -448,10 +448,13 @@ public class Util implements Config {
 			// Budget
 			// Collecting all categories in transactions
 			String content = "<b>Budget (this month): </b>";
-			content = content + "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'>"
-					+ "<thead><tr><th rowspan='2'>Category</th><th colspan='4'>October</th><th rowspan='2'>"
+			content = content + "<table border='1' cellpadding='1' cellspacing='1' style='width:550px;'>"
+					+ "<thead>"
+					+"<tr style='color: gray'><th>Beginning balance</th><th colspan='4'>12376</th><th>18920</th><th>21093</th></tr>"
+					+"<tr><th rowspan='2'>Category</th><th colspan='4'>October</th><th rowspan='2'>"
 					+ "<font color='gray'>November</font></th><th rowspan='2'><font color='gray'>December</font></th></tr>"
-					+ "<tr><th>Plan</th><th>Fact</th><th>Today</th><th>Over</th></tr></thead>";
+					+ "<tr><th>Plan</th><th>Fact</th><th>Today</th><th>Over</th></tr>"
+					+"</thead>";
 			Double totalBudgetPlan = budgetPlans.stream().filter(b -> b.isActive()).mapToDouble(BudgetPlan::getAmount)
 					.sum() / 3;
 			Double totalBudgetFact = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
@@ -474,7 +477,7 @@ public class Util implements Config {
 					.mapToDouble(Transaction::getAmount).sum();
 			Double totalIncomeDiffToday = todayTransactions.stream().filter(t -> t.getCategory().getType() == 1)
 					.mapToDouble(Transaction::getAmount).sum();
-			content = content + "<tr><td><b>Income</b></td><td><b>" + amountToString(totalIncomePlan)
+			content = content + "<tr style='background-color:#27AE60'><td><b>Income</b></td><td><b>" + amountToString(totalIncomePlan)
 					+ "</b></td><td><b>" + amountToString(totalIncomeFact) + "</b></td><td><b>"
 					+ amountToStringForEmail(totalIncomeDiffToday) + "</b></td><td>0</td><td><b><font color='gray'>"
 					+ amountToString(totalIncomePlan) + "</font></b></td><td><b><font color='gray'>"
@@ -495,10 +498,10 @@ public class Util implements Config {
 				else
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
-				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
+				content = content + "<tr style='background-color:#D5F5E3'><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
 						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>"
-						+ amountToStringForEmail(amountDiffToday) + "</td><td>0</td><td><font color='gray'>" + amountPlan
-						+ "</font></td><td><font color='gray'>" + amountPlan + "</font></td></tr>";
+						+ amountToStringForEmail(amountDiffToday) + "</td><td>0</td><td><font color='gray'>"
+						+ amountPlan + "</font></td><td><font color='gray'>" + amountPlan + "</font></td></tr>";
 			}
 
 			// - Outcome
@@ -509,7 +512,7 @@ public class Util implements Config {
 					.mapToDouble(Transaction::getAmount).sum();
 			Double totalOutcomeDiffToday = todayTransactions.stream().filter(t -> t.getCategory().getType() == 2)
 					.mapToDouble(Transaction::getAmount).sum();
-			content = content + "<tr><td><b>Outcome</b></td><td><b>" + amountToString(totalOutcomePlan)
+			content = content + "<tr style='background-color:#EC7063'><td><b>Outcome</b></td><td><b>" + amountToString(totalOutcomePlan)
 					+ "</b></td><td><b>" + amountToString(totalOutcomeFact) + "</b></td><td><b>"
 					+ amountToStringForEmail(totalOutcomeDiffToday) + "</b></td><td>0</td><td><b><font color='gray'>"
 					+ amountToString(totalOutcomePlan) + "</font></b></td><td><b><font color='gray'>"
@@ -530,21 +533,22 @@ public class Util implements Config {
 				else
 					amountPlan = amountToString(budgetPlan.getAmount() / 3);
 
-				content = content + "<tr><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
+				content = content + "<tr style='background-color:#FADBD8'><td><p style='margin-left:10px;'>" + category.getName() + "</p</td><td>"
 						+ amountPlan + "</td><td>" + amountToString(amountFact) + "</td><td>"
-						+ amountToStringForEmail(amountDiffToday) + "</td><td>0</td><td><font color='gray'>" + amountPlan
-						+ "</font></td><td><font color='gray'>" + amountPlan + "</font></td></tr>";
+						+ amountToStringForEmail(amountDiffToday) + "</td><td>0</td><td><font color='gray'>"
+						+ amountPlan + "</font></td><td><font color='gray'>" + amountPlan + "</font></td></tr>";
 			}
 
 			// - Transfers
-			Double totalTransfer = allTransactions.stream()
-					.filter(t -> Util.isDateThisMonth(t.getDate()) && t.getCategory().getType() == 3)
+			Double totalTransfer = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate())
+					&& t.getCategory().getType() == 3 && !t.getIsTransferComplete()).mapToDouble(Transaction::getAmount)
+					.sum();
+			Double totalTransferDiffToday = todayTransactions.stream()
+					.filter(t -> t.getCategory().getType() == 3 && !t.getIsTransferComplete())
 					.mapToDouble(Transaction::getAmount).sum();
-			Double totalTransferDiffToday = todayTransactions.stream().filter(t -> t.getCategory().getType() == 3)
-					.mapToDouble(Transaction::getAmount).sum();
-			content = content + "<tr><td><b>Transfers</b></td><td><b>N/A</b></td><td><b>"
-					+ amountToString(totalTransfer) + "</b></td><td>" + amountToStringForEmail(totalTransferDiffToday)
-					+ "</td><td>0</td><td></td><td></td></tr>";
+			content = content + "<tr style='background-color:#85C1E9'><td><b>Transfers</b></td><td><b>N/A</b></td><td><b>"
+					+ amountToString(totalTransfer) + "</b></td><td><b>"
+					+ amountToStringForEmail(totalTransferDiffToday) + "</b></td><td>0</td><td></td><td></td></tr>";
 			content = content + "</tbody></table>";
 
 			// Totals & transactions
