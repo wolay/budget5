@@ -475,6 +475,7 @@ public class Util implements Config {
 				planFactList.add(new PlanFact(category, today.withDayOfMonth(1), amountPlan, amountFact,
 						amountDiffToday, amountOver));
 			});
+			Collections.sort(planFactList);
 
 			// collecting table of balances (begin & end of the month)
 			String[] quater = getCurrentQuaterMonths();

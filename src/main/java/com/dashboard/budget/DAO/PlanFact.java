@@ -2,7 +2,7 @@ package com.dashboard.budget.DAO;
 
 import java.time.LocalDate;
 
-public class PlanFact {
+public class PlanFact implements Comparable<Object> {
 
 	private Category category;
 	private LocalDate startDate;
@@ -11,8 +11,8 @@ public class PlanFact {
 	private Double amountTodayDiff;
 	private Double amountOver;
 
-	public PlanFact(Category category, LocalDate localDate, Double amountPlan, Double amountFact, Double amountTodayDiff,
-			Double amountOver) {
+	public PlanFact(Category category, LocalDate localDate, Double amountPlan, Double amountFact,
+			Double amountTodayDiff, Double amountOver) {
 		this.category = category;
 		this.startDate = localDate;
 		this.amountPlan = amountPlan;
@@ -50,6 +50,11 @@ public class PlanFact {
 		return "PlanFact [category=" + category + ", startDate=" + startDate + ", amountPlan=" + amountPlan
 				+ ", amountFact=" + amountFact + ", amountTodayDiff=" + amountTodayDiff + ", amountOver=" + amountOver
 				+ "]";
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return this.getCategory().getDisplayOrder() - ((PlanFact) o).getCategory().getDisplayOrder();
 	}
 
 }
