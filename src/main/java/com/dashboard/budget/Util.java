@@ -286,9 +286,9 @@ public class Util implements Config {
 		if (amount == 0.0)
 			return "-";
 		if (amount > 0.0)
-			return "+" + String.valueOf(Util.roundDouble(amount));
+			return "<font color='green'>+" + String.valueOf(Util.roundDouble(amount))+ "</font>";
 		else
-			return String.valueOf(Util.roundDouble(amount));
+			return "<font color='red'>" +String.valueOf(Util.roundDouble(amount))+ "</font>";
 	}
 
 	public static void writeTotalsToFile(List<Total> totals) {
@@ -470,7 +470,7 @@ public class Util implements Config {
 				if (category.getType() == 1 && amountFact - amountPlan > 0)
 					amountOver = amountFact - amountPlan;
 				else if (category.getType() == 2 && amountPlan - amountFact > 0)
-					amountOver = amountPlan - amountFact;
+					amountOver = amountFact - amountPlan;
 
 				planFactList.add(new PlanFact(category, today.withDayOfMonth(1), amountPlan, amountFact,
 						amountDiffToday, amountOver));
@@ -491,18 +491,21 @@ public class Util implements Config {
 					+ quater[0] + "</th><th rowspan='2'>" + "<font color='gray'>" + quater[1]
 					+ "</font></th><th rowspan='2'><font color='gray'>" + quater[2] + "</font></th></tr>"
 					+ "<tr><th>Plan</th><th>Fact</th><th>Today</th><th>Over</th></tr>" + "</thead>";
-			Double totalBudgetPlan = budgetPlans.stream().filter(b -> b.isActive()).mapToDouble(BudgetPlan::getAmount)
-					.sum() / 3;
-			Double totalBudgetFact = allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
-					.mapToDouble(Transaction::getAmount).sum();
-			Double totalDiffToday = todayTransactions.stream().mapToDouble(Transaction::getAmount).sum();
+			Double totalBudgetPlan = planFactList.stream().mapToDouble(PlanFact::getAmountPlan).sum();
+			Double totalBudgetOver = planFactList.stream().mapToDouble(PlanFact::getAmountOver).sum();
+			Double totalDiffToday = planFactList.stream().mapToDouble(PlanFact::getAmountTodayDiff).sum();
+			Double totalMonthDynamic = totalBudgetPlan + totalBudgetOver;
+			Double monthEndBalance = monthBeginBalance + totalMonthDynamic;
 			content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b>" + amountToString(totalBudgetPlan)
-					+ "</b></td><td><b>" + amountToString(totalBudgetFact) + "</b></td><td><b>"
-					+ amountToString(totalDiffToday) + "</b></td><td>0</td><td><b><font color='gray'>"
+					+ "</b></td><td>-</td><td><b>" + amountToString(totalDiffToday) + "</b></td><td>"
+					+ amountToString(totalBudgetOver) + "</td><td><b><font color='gray'>"
 					+ amountToString(totalBudgetPlan) + "</font></b></td><td><b><font color='gray'>"
 					+ amountToString(totalBudgetPlan) + "</font></b></td></tr>"
-					+ "<tr><td rowspan='2'><b>By the end of month</b></td><td colspan='4' align='center'><b><font size='4'>+3400</font></b></td><td align='center'><b><font size='4'>+3432</font></b></td><td align='center'><b><font size='4'>-2312</font></b></td></tr>"
-					+ "<tr><td colspan='4' align='center'><b><font size='4'>18600</b></td><td align='center'><b><font size='4'>25000</font></b></td><td align='center'><b><font size='4'>30000</font></b></td></tr></font>"
+					+ "<tr><td rowspan='2'><b>By the end of month</b></td><td colspan='4' align='center'><b><font size='4'>"
+					+ amountToStringWithSign(totalMonthDynamic)
+					+ "</font></b></td><td align='center'><b><font size='4'>+3432</font></b></td><td align='center'><b><font size='4'>-2312</font></b></td></tr>"
+					+ "<tr><td colspan='4' align='center'><b><font size='4'>" + amountToString(monthEndBalance)
+					+ "</b></td><td align='center'><b><font size='4'>25000</font></b></td><td align='center'><b><font size='4'>30000</font></b></td></tr></font>"
 					+ "</tfoot><tbody>";
 			// Grouping by type
 			// - Income
@@ -517,8 +520,8 @@ public class Util implements Config {
 					.mapToDouble(PlanFact::getAmountOver).sum();
 			content = content + "<tr style='background-color:#27AE60'><td><b>Income</b></td><td><b>"
 					+ amountToString(totalIncomePlan) + "</b></td><td><b>" + amountToString(totalIncomeFact)
-					+ "</b></td><td><b>" + amountToString(totalIncomeDiffToday) + "</b></td><td>"
-					+ amountToString(totalIncomeOver) + "</td><td><b><font color='gray'>"
+					+ "</b></td><td><b>" + amountToString(totalIncomeDiffToday) + "</b></td><td><b>"
+					+ amountToString(totalIncomeOver) + "</b></td><td><b><font color='gray'>"
 					+ amountToString(totalIncomePlan) + "</font></b></td><td><b><font color='gray'>"
 					+ amountToString(totalIncomePlan) + "</font></b></td></tr>";
 			// - table with categories
@@ -546,8 +549,8 @@ public class Util implements Config {
 					.mapToDouble(PlanFact::getAmountOver).sum();
 			content = content + "<tr style='background-color:#EC7063'><td><b>Outcome</b></td><td><b>"
 					+ amountToString(totalOutcomePlan) + "</b></td><td><b>" + amountToString(totalOutcomeFact)
-					+ "</b></td><td><b>" + amountToString(totalOutcomeDiffToday) + "</b></td><td>"
-					+ amountToString(totalOutcomeOver) + "</td><td><b><font color='gray'>"
+					+ "</b></td><td><b>" + amountToString(totalOutcomeDiffToday) + "</b></td><td><b>"
+					+ amountToString(totalOutcomeOver) + "</b></td><td><b><font color='gray'>"
 					+ amountToString(totalOutcomePlan) + "</font></b></td><td><b><font color='gray'>"
 					+ amountToString(totalOutcomePlan) + "</font></b></td></tr>";
 			// - table with categories
@@ -569,7 +572,7 @@ public class Util implements Config {
 					.mapToDouble(PlanFact::getAmountFact).sum();
 			Double totalTransferToday = planFactList.stream().filter(pf -> pf.getCategory().getType() == 3)
 					.mapToDouble(PlanFact::getAmountTodayDiff).sum();
-			content = content + "<tr style='background-color:#85C1E9'><td><b>Transfer</b></td><td><b>-</b></td><td><b>"
+			content = content + "<tr style='background-color:#85C1E9'><td><b>Transfer</b></td><td>-</td><td><b>"
 					+ amountToString(totalTransferFact) + "</b></td><td><b>" + amountToString(totalTransferToday)
 					+ "</b></td><td>-</td><td><b><font color='gray'>-</font></b></td><td><b><font color='gray'>-</font></b></td></tr>";
 
