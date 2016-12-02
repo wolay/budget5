@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -230,6 +231,7 @@ public class UtilDb implements Config{
 			ex.printStackTrace();
 		}
 
+		Collections.sort(entities);
 		return entities;
 	}
 	

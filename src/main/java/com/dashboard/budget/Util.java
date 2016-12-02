@@ -286,9 +286,9 @@ public class Util implements Config {
 		if (amount == 0.0)
 			return "-";
 		if (amount > 0.0)
-			return "<font color='green'>+" + String.valueOf(Util.roundDouble(amount))+ "</font>";
+			return "<font color='green'>+" + String.valueOf(Util.roundDouble(amount)) + "</font>";
 		else
-			return "<font color='red'>" +String.valueOf(Util.roundDouble(amount))+ "</font>";
+			return "<font color='red'>" + String.valueOf(Util.roundDouble(amount)) + "</font>";
 	}
 
 	public static void writeTotalsToFile(List<Total> totals) {
@@ -538,8 +538,8 @@ public class Util implements Config {
 			List<Transaction> uncategorized = new ArrayList<Transaction>();
 			int allTransactionsCounter = (int) allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
 					.count();
-			allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate())).forEach(t -> {
-				if (t.getCategory() == null || t.getCategory().getName().equals("Unrecognized"))
+			allTransactions.stream().forEach(t -> {
+				if (t.getCategory() != null && t.getCategory().getName().equals("Unrecognized"))
 					uncategorized.add(t);
 			});
 			if (uncategorized.isEmpty())
@@ -551,6 +551,7 @@ public class Util implements Config {
 						+ "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
 				for (Transaction transaction : uncategorized) {
 					content = content + "<tr><td><font size='1'>" + transaction.getAccount().getName()
+							+ "</font></td><td><font size='1'>" + Util.convertDateToStringType2(transaction.getDate())
 							+ "</font></td><td><font size='1'>" + transaction.getDecription()
 							+ "</font></td><td width='10'><font size='1'>" + transaction.getCategoryStr()
 							+ "</font></td></tr>";
@@ -560,10 +561,8 @@ public class Util implements Config {
 
 			// Transactions in transfer
 			List<Transaction> transfers = new ArrayList<Transaction>();
-			allTransactions
-					.stream().filter(t -> Util.isDateThisMonth(t.getDate())
-							&& t.getCategory().getName().equals("Transfer") && !t.getIsTransferComplete())
-					.forEach(t -> transfers.add(t));
+			allTransactions.stream().filter(t -> t.getCategory() != null && t.getCategory().getName().equals("Transfer")
+					&& !t.getIsTransferComplete()).forEach(t -> transfers.add(t));
 			if (transfers.isEmpty())
 				content = content + "<P><b>There is no transferring transactions</b>";
 			else {
@@ -572,6 +571,7 @@ public class Util implements Config {
 						+ "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
 				for (Transaction transfer : transfers) {
 					content = content + "<tr><td><font size='1'>" + transfer.getAccount().getName()
+							+ "</font></td><td><font size='1'>" + Util.convertDateToStringType2(transfer.getDate())
 							+ "</font></td><td><font size='1'>" + transfer.getDecription()
 							+ "</font></td><td width='10'><font size='1'>" + transfer.getAmount() + "</font></td></tr>";
 				}
@@ -608,7 +608,6 @@ public class Util implements Config {
 		}
 
 	}
-	
 
 	private static String getBudgetContent1(List<PlanFact> planFactList, Double monthBeginBalance, String[] quater) {
 		String content;
