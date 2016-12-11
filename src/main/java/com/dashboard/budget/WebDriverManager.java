@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,11 @@ import com.dashboard.budget.pages.AccountPage;
 import com.dashboard.budget.pages.AccountPageAmEx;
 import com.dashboard.budget.pages.AccountPageAmazon;
 import com.dashboard.budget.pages.AccountPageBestBuy;
-import com.dashboard.budget.pages.AccountPageMP;
 import com.dashboard.budget.pages.AccountPageCiti;
 import com.dashboard.budget.pages.AccountPageCreditKarma;
 import com.dashboard.budget.pages.AccountPageJCPenney;
 import com.dashboard.budget.pages.AccountPageKohls;
+import com.dashboard.budget.pages.AccountPageMP;
 import com.dashboard.budget.pages.AccountPageMacys;
 import com.dashboard.budget.pages.AccountPageNordstorm;
 import com.dashboard.budget.pages.AccountPagePayPal;
@@ -237,7 +238,14 @@ public class WebDriverManager implements Config {
 	public boolean isOnline() {
 		logger.info("Network check...");
 		WebDriver webDriver = new HtmlUnitDriver();
-		webDriver.get("https://www.google.com");
+		
+		try{
+			webDriver.get("https://www.google.com");
+		}catch(WebDriverException e){
+			logger.error("Connection failed due to WebDriver exception");
+			return false;
+		}
+		
 		try {
 			if (webDriver.findElements(By.cssSelector("#hplogo")).size() > 0) {
 				webDriver.quit();
