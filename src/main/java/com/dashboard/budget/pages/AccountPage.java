@@ -78,9 +78,9 @@ public abstract class AccountPage implements Config {
 	}
 
 	public synchronized boolean login() {
-		if(Util.checkIfSiteDown(webDriver))
+		if (Util.checkIfSiteDown(webDriver))
 			return false;
-		
+
 		Util.sleep(3000); // for Best Buy card
 		WebElement username = webDriver.findElement(fldUsername);
 		if (username == null)
@@ -200,22 +200,24 @@ public abstract class AccountPage implements Config {
 				date = Util.convertStringToDateByType(row.findElement(byDate).getText(), dateFormat);
 
 				double amount;
+				WebElement weByAmount = row.findElement(byAmount);
+				WebElement weByAmountSup = row.findElement(byAmountSup);
 				// Amount consideration got complicated due PayPal
 				if (byAmountSup == null)
 					if (account.getIsMyProtfolio())
-						amount = Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+						amount = Util.convertStringAmountToDouble(weByAmount.getText());
 					else
-						amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+						amount = -Util.convertStringAmountToDouble(weByAmount.getText());
 				else {
-					if ("negative".equals(row.findElement(byAmountSup).getText()))
-						amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+					if ("negative".equals(weByAmountSup.getText()))
+						amount = -Util.convertStringAmountToDouble(weByAmount.getText());
 					else {
-						if (row.findElements(byAmount).isEmpty())
-							amount = -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText());
+						if (weByAmount == null)
+							amount = -Util.convertStringAmountToDouble(weByAmountSup.getText());
 						else
-							amount = (" ".equals(row.findElement(byAmount).getText()))
-									? -Util.convertStringAmountToDouble(row.findElement(byAmountSup).getText())
-									: Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
+							amount = ("".equals(weByAmountSup.getText()))
+									? -Util.convertStringAmountToDouble(weByAmount.getText())
+									: Util.convertStringAmountToDouble(weByAmountSup.getText());
 					}
 
 				}
