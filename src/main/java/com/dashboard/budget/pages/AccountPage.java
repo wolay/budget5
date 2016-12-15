@@ -201,7 +201,7 @@ public abstract class AccountPage implements Config {
 
 				double amount;
 				WebElement weByAmount = row.findElement(byAmount);
-				WebElement weByAmountSup = row.findElement(byAmountSup);
+				WebElement weByAmountSup = (byAmountSup == null) ? null : row.findElement(byAmountSup);
 				// Amount consideration got complicated due PayPal
 				if (byAmountSup == null)
 					if (account.getIsMyProtfolio())
