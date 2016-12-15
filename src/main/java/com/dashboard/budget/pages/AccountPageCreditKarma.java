@@ -13,11 +13,11 @@ public class AccountPageCreditKarma extends AccountPage {
 
 	public int getScore() {
 		int scoreTransUnion = Integer.valueOf(webDriver
-				.findElement(By.xpath("//div[@class='rich-medias-container']/div[1]//span[@class='score-value']"))
-				.getText());
+				.findElement(By.xpath("//div[@class='rich-medias-container']/div[1]//a/div"))
+				.getText().split("\\n")[6]);
 		int scoreEquifax = Integer.valueOf(webDriver
-				.findElement(By.xpath("//div[@class='rich-medias-container']/div[2]//span[@class='score-value']"))
-				.getText());
+				.findElement(By.xpath("//div[@class='rich-medias-container']/div[2]//a/div"))
+				.getText().split("\\n")[6]);
 		return (scoreTransUnion + scoreEquifax) / 2;
 	}
 
