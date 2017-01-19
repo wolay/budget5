@@ -232,7 +232,8 @@ public abstract class AccountPage implements Config {
 				}
 
 				List<Transaction> matchTransactions = prevTransactions.stream()
-						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
+						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount && t.getAccount() == account)
+						.collect(Collectors.toList());
 				if (matchTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;
