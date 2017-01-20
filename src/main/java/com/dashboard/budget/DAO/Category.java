@@ -19,6 +19,7 @@ public class Category implements Comparable<Object>{
 	private String name;
 	private int displayOrder;
 	private int type; // 1 - debit, 2 - credit, 3 - others
+	private boolean isActive;
 	@OneToMany(mappedBy="category")
 	private Set<Transaction> transactions;
 	@OneToMany(mappedBy="category")
@@ -49,6 +50,10 @@ public class Category implements Comparable<Object>{
 		return type;
 	}
 	
+	public boolean getIsActive(){
+		return isActive;
+	}
+	
 	public Set<Transaction> getTransaction(){
 		return transactions;
 	}
@@ -64,7 +69,8 @@ public class Category implements Comparable<Object>{
 	
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", name=" + name + ", type=" + type + "]";
+		return "Category [id=" + id + ", name=" + name + ", displayOrder=" + displayOrder + ", type=" + type
+				+ ", isActive=" + isActive + "]";
 	}
 
 }

@@ -682,7 +682,7 @@ public class Util implements Config {
 				+ amountToString(totalOutcomePlan) + "</font></b></td></tr>";
 		// - table with categories
 		for (PlanFact planFact : planFactList) {
-			if (planFact.getCategory().getType() != 2)
+			if (planFact.getCategory().getType() != 2 || !planFact.getCategory().getIsActive())
 				continue;
 			content = content + "<tr style='background-color:#FADBD8'><td><p style='margin-left:10px;'>"
 					+ planFact.getCategory().getName() + "</p</td><td>" + amountToString(planFact.getAmountPlan())
