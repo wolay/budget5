@@ -107,7 +107,7 @@ public class WebDriverManager implements Config {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
+			logger.error(e.toString());
 		}
 
 	}

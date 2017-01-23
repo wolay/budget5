@@ -204,13 +204,6 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 
-		<!-- Currency converter -->
-		<dependency>
-			<groupId>com.tunyk.currencyconverter</groupId>
-			<artifactId>currency-converter-api</artifactId>
-			<version>1.0</version>
-		</dependency>
-
 		<!-- Webservices -->
 		<dependency>
 			<groupId>com.sun.xml.ws</groupId>

@@ -8,7 +8,7 @@ public interface Config {
 	public String summaryReceiver = "anpilogov.andrei@gmail.com";
 	
 	public int timeout = 30;
-	public int nubmberOfThreads = 3;
+	public int nubmberOfThreads = 1;
 	
 	//runtime
 	public boolean isRunningCreditScores = true;
