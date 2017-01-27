@@ -408,6 +408,7 @@ public abstract class AccountPage implements Config {
 		By secretQuestionLocator = account.getAccountDetailsNavigation().getSecretQuestionLocator();
 		By secretAnswerLocator = account.getAccountDetailsNavigation().getSecretAnswerLocator();
 		By secretSubmitLocator = account.getAccountDetailsNavigation().getSecretSubmitLocator();
+		By secretSubmitSupLocator = account.getAccountDetailsNavigation().getSecretSubmitSupLocator();
 
 		WebElement question = webDriver.lookupElement(secretQuestionLocator);
 		if (question == null)
@@ -429,6 +430,12 @@ public abstract class AccountPage implements Config {
 				WebElement answer = webDriver.lookupElement(secretAnswerLocator);
 				answer.clear();
 				answer.sendKeys(secretAnswer.getAnswer());
+			}
+
+			if (secretSubmitSupLocator != null) {
+				WebElement submitSup = webDriver.findElement(secretSubmitSupLocator);
+				if (submitSup != null)
+					submitSup.click();
 			}
 
 			WebElement submit = webDriver.findElement(secretSubmitLocator);
