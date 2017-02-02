@@ -43,7 +43,8 @@ public class Reporter implements Config {
 		this.allTransactions = dataHandler.getAllTransactions();
 		this.totals = dataHandler.getLastTotals();
 		// populating list of todays transactions
-		totals.stream().forEach(to -> this.todayTransactions.addAll(to.getTransactions()));
+		totals.stream().filter(to -> to.getTransactions() != null)
+				.forEach(to -> this.todayTransactions.addAll(to.getTransactions()));
 		this.budgetPlans = dataHandler.getBudgetPlansList();
 		this.creditScores = dataHandler.getLastCreditScores();
 	}
