@@ -52,11 +52,10 @@ public class AccountPageMP extends AccountPage {
 			if (refreshStatus == null) {
 				logger.error("Cannot find refresh status locator");
 				return null;
-			}
-			while (refreshStatus.getText().startsWith("Refreshing")) {
-				logger.info("Waiting for refreshing accounts table...");		
-				refreshStatus = webDriver.lookupElement(By.xpath("//a[@id='refresh']"), 600);
-			}
+			}			
+			
+			logger.info("Waiting for refreshing accounts table...");		
+			refreshStatus = webDriver.lookupElement(By.xpath("//a[@id='refresh']"), 600);
 			logger.info("All My Portfolio accounts are up to date");	
 
 			// debit accounts
