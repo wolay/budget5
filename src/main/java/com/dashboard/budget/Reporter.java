@@ -453,8 +453,7 @@ public class Reporter implements Config {
 
 	private String getUncategorizedContent() {
 		List<Transaction> uncategorized = new ArrayList<Transaction>();
-		int allTransactionsCounter = (int) allTransactions.stream().filter(t -> Util.isDateThisMonth(t.getDate()))
-				.count();
+		int allTransactionsCounter = (int) allTransactions.stream().count();
 		allTransactions.stream().forEach(t -> {
 			if (t.getCategory() != null && t.getCategory().getName().equals("Unrecognized"))
 				uncategorized.add(t);
