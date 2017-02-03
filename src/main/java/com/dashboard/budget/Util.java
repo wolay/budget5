@@ -85,6 +85,10 @@ public class Util implements Config {
 		return new SimpleDateFormat("MM/dd").format(date);
 	}
 
+	public static String convertDateToStringType3(Date date) {
+		return new SimpleDateFormat("yyyy-MM").format(date);
+	}
+
 	public static java.sql.Timestamp getTimestamp() {
 		return new java.sql.Timestamp(System.currentTimeMillis());
 	}
@@ -555,9 +559,9 @@ public class Util implements Config {
 
 		return result;
 	}
-	
+
 	static String getMonth(int month) {
-	    return new DateFormatSymbols().getMonths()[month-1];
+		return new DateFormatSymbols().getMonths()[month - 1];
 	}
 
 	static int getCurrentMonthInt() {
@@ -590,6 +594,21 @@ public class Util implements Config {
 		cal.setTime(date);
 		cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) / 3 * 3);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
+		return cal.getTime();
+	}
+
+	public static Boolean isDateInBetween(Date date, Date start, Date end) {
+		return (date.getTime() >= start.getTime() && date.getTime() <= end.getTime());
+	}
+
+	public static Date getFirstDayOfYear() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.MONTH, Calendar.JANUARY);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
 		return cal.getTime();
 	}
 
