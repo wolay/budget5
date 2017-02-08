@@ -385,7 +385,6 @@ public class Reporter implements Config {
 			Double plan1 = 0.0;
 			Double plan2 = 0.0;
 			if (!planFact.getCategory().getName().equals("Unrecognized")) {
-				System.out.println(planFact.getCategory());
 				plan1 = planFact1.stream().filter(pf -> pf.getCategory().equals(planFact.getCategory())).findFirst()
 						.get().getAmountPlan();
 				plan2 = planFact2.stream().filter(pf -> pf.getCategory().equals(planFact.getCategory())).findFirst()

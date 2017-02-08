@@ -13,6 +13,9 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Balance;
 import com.dashboard.budget.DAO.Bank;
@@ -27,6 +30,8 @@ import com.dashboard.budget.DAO.Transaction;
 
 
 public class UtilDb implements Config{
+
+	private static Logger logger = LoggerFactory.getLogger(UtilDb.class);
 	private EntityManager em;
 
 	public void dropDb() {
@@ -46,21 +51,21 @@ public class UtilDb implements Config{
 			Class.forName(JDBC_DRIVER);
 
 			// STEP 3: Open a connection
-			System.out.println("Connecting to a selected database...");
+			logger.info("Connecting to a selected database...");
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
-			System.out.println("Connected database successfully...");
+			logger.info("Connected database successfully...");
 
 			// STEP 4: Execute a query
-			System.out.println("Deleting database...");
+			logger.info("Deleting database...");
 			stmt = conn.createStatement();
 
 			String sql = "DROP DATABASE mydb";
 			stmt.executeUpdate(sql);
-			System.out.println("Database deleted successfully...");
+			logger.info("Database deleted successfully...");
 			
 			sql = "CREATE DATABASE mydb";
 			stmt.executeUpdate(sql);
-			System.out.println("Database created successfully...");
+			logger.info("Database created successfully...");
 		} catch (SQLException se) {
 			// Handle errors for JDBC
 			se.printStackTrace();
