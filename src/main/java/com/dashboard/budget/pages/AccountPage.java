@@ -127,7 +127,7 @@ public abstract class AccountPage implements Config {
 			List<WebElement> accounts = webDriver.findElements(By.className(" groupItem"));
 			WebElement weAccount = accounts.stream()
 					.filter(a -> !a.getText().equals("") && a.getText().contains(account.getMyPortfolioId()))
-					.findFirst().get();
+					.findFirst().orElse(null);
 			if (weAccount != null)
 				webDriver.clickElementWithAction(weAccount);
 
