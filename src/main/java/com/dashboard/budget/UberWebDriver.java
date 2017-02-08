@@ -14,11 +14,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dashboard.budget.pages.AccountPage;
-
 public class UberWebDriver implements Config {
 
-	protected static Logger logger = LoggerFactory.getLogger(AccountPage.class);
+	protected static Logger logger = LoggerFactory.getLogger(UberWebDriver.class);
 
 	private WebDriver webDriver;
 	private WebDriverWait wait;
@@ -118,7 +116,6 @@ public class UberWebDriver implements Config {
 	public void waitFrameToBeAvailableAndSwitchToIt(String frame) {
 		try {
 			wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frame));
-			webDriver.switchTo().frame(frame);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}

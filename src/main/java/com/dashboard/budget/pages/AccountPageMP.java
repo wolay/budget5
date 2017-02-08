@@ -24,12 +24,10 @@ public class AccountPageMP extends AccountPage {
 	@Override
 	public Double getTotal() {
 
-		// TODO - DONT FORGET ABOUT RERESHING STATUS
-
 		// first check if table of totals already captured
 		if (totalsList == null) {
 			// secret question
-			if(Util.isSecretQuestionShown(webDriver))
+			if (Util.isSecretQuestionShown(webDriver))
 				if (!super.answerSecretQuestion())
 					return null;
 
