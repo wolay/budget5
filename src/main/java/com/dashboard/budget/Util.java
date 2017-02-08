@@ -5,12 +5,6 @@
  */
 package com.dashboard.budget;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormatSymbols;
@@ -26,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FilenameUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -158,105 +151,6 @@ public class Util implements Config {
 		return false;
 	}
 
-	public static List<Total> getTotalsFromFile(List<Account> accounts) {
-		// open latest file to compare results
-		File filePrevSummary = getLastFileModified(dirOutputTotals);
-
-		// Delimiter used in CSV file
-		final String COMMA_DELIMITER = ",";
-		BufferedReader fileReader = null;
-		List<Total> result = new ArrayList<Total>();
-
-		try {
-			String line = "";
-
-			// Create the file reader
-			fileReader = new BufferedReader(new FileReader(filePrevSummary));
-
-			// Read the CSV file header to skip it
-			fileReader.readLine();
-
-			// Read the file line by line starting from the second line
-			while ((line = fileReader.readLine()) != null) {
-				// Get all tokens available in line
-				String[] tokens = line.split(COMMA_DELIMITER);
-				if (tokens.length > 0) {
-					if (tokens[1].trim().equals(""))
-						continue;
-					Account account = accounts.stream().filter(a -> a.getId() == Integer.valueOf(tokens[1])).findFirst()
-							.orElse(null);
-					if (account == null)
-						continue;
-					if (tokens[3].equals("N/A"))
-						result.add(new Total(account, Util.convertStringToDateByType("2016-07-19", 0), null, null));
-					else
-						result.add(new Total(account, Util.convertStringToDateByType("2016-07-19", 0),
-								Double.valueOf(tokens[3]), null));
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Error in CsvFileReader !!!");
-			e.printStackTrace();
-		} finally {
-			try {
-				fileReader.close();
-			} catch (IOException e) {
-				logger.error("Error while closing fileReader !!!");
-				e.printStackTrace();
-			}
-		}
-
-		return result;
-	}
-
-	public static List<Transaction> getPrevTransactions(List<Account> accounts) {
-		// open latest file to compare results
-		File filePrevSummary = getLastFileModified(dirOutputTransactions);
-
-		// Delimiter used in CSV file
-		final String COMMA_DELIMITER = ",";
-		BufferedReader fileReader = null;
-		List<Transaction> result = new ArrayList<Transaction>();
-
-		try {
-			String line = "";
-
-			// Create the file reader
-			fileReader = new BufferedReader(new FileReader(filePrevSummary));
-
-			// Read the CSV file header to skip it
-			fileReader.readLine();
-
-			// Read the file line by line starting from the second line
-			while ((line = fileReader.readLine()) != null) {
-				// Get all tokens available in line
-				String[] tokens = line.split(COMMA_DELIMITER);
-				if (tokens.length > 0) {
-					System.out.println(line);
-					Account account = accounts.stream().filter(a -> a.getId() == Integer.valueOf(tokens[0])).findFirst()
-							.orElse(null);
-					if (account == null)
-						continue;
-					result.add(new Transaction(account, null, Util.convertStringToDateByType(tokens[1], 0), tokens[2],
-							Double.valueOf(tokens[3]), null, null));
-				}
-			}
-			logger.info("All {} transactions loaded from file", result.size());
-		} catch (Exception e) {
-			logger.error("Error in CsvFileReader !!!");
-			e.printStackTrace();
-		} finally {
-			try {
-				fileReader.close();
-			} catch (IOException e) {
-				logger.error("Error while closing fileReader !!!");
-				e.printStackTrace();
-			}
-		}
-
-		return result;
-	}
-
 	public static List<Account> getAccountsByDriver(List<Account> accounts, String driver) {
 		return accounts.stream().filter(a -> a.getBank() != null && a.getBank().getName().equals(driver))
 				.collect(Collectors.toList());
@@ -281,152 +175,7 @@ public class Util implements Config {
 		else
 			return "<font color='red'>" + String.valueOf(Util.roundDouble(amount)) + "</font>";
 	}
-
-	public static void writeTotalsToFile(List<Total> totals) {
-
-		FileWriter fileWriter = null;
-		// Delimiter used in CSV file
-		final String COMMA_DELIMITER = ",";
-		final String NEW_LINE_SEPARATOR = "\n";
-
-		// CSV file header
-		final String FILE_HEADER = "date,code,account,amount,difference";
-
-		try {
-			String today = convertDateToStringType1(new Date());
-			String fileName = dirOutputTotals + today + ".csv";
-			fileWriter = new FileWriter(fileName);
-
-			// Write the CSV file header
-			fileWriter.append(FILE_HEADER.toString());
-
-			// Add a new line separator after the header
-			fileWriter.append(NEW_LINE_SEPARATOR);
-
-			// Write a new student object list to the CSV file
-			for (Total total : totals) {
-				fileWriter.append(today);
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(total.getAccount().getId()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(total.getAccount().getName());
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(amountToString(total.getAmount()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(amountToString(total.getDifference()));
-				fileWriter.append(NEW_LINE_SEPARATOR);
-
-				// saving to DB
-
-			}
-
-			// Adding total
-			fileWriter.append(today);
-			fileWriter.append(COMMA_DELIMITER);
-			fileWriter.append(" ");
-			fileWriter.append(COMMA_DELIMITER);
-			fileWriter.append("TOTAL");
-			fileWriter.append(COMMA_DELIMITER);
-			fileWriter.append(amountToString(DataHandler.getFullTotal(totals)));
-			fileWriter.append(COMMA_DELIMITER);
-			fileWriter.append(amountToString(DataHandler.getFullDiff(totals)));
-			fileWriter.append(NEW_LINE_SEPARATOR);
-
-			logger.info("File with latest totals created: {}", fileName);
-
-		} catch (Exception e) {
-
-			logger.error("Error in CsvFileWriter !!!");
-			e.printStackTrace();
-
-		} finally {
-			try {
-				fileWriter.flush();
-				fileWriter.close();
-			} catch (IOException e) {
-				logger.info("Error while flushing/closing fileWriter !!!");
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public static void writeTransactionsToFile(List<Transaction> transactions) {
-
-		FileWriter fileWriter = null;
-		// Delimiter used in CSV file
-		final String COMMA_DELIMITER = ",";
-		final String NEW_LINE_SEPARATOR = "\n";
-
-		// CSV file header
-		final String FILE_HEADER = "code,date,description,amount,category";
-
-		try {
-			String today = convertDateToStringType1(new Date());
-			String fileName = dirOutputTransactions + today + ".csv";
-			fileWriter = new FileWriter(fileName);
-
-			// Write the CSV file header
-			fileWriter.append(FILE_HEADER.toString());
-
-			// Add a new line separator after the header
-			fileWriter.append(NEW_LINE_SEPARATOR);
-
-			// Write a new student object list to the CSV file
-			for (Transaction transaction : transactions) {
-				fileWriter.append(String.valueOf(transaction.getAccount().getId()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(Util.convertDateToStringType1(transaction.getDate()));
-				fileWriter.append(COMMA_DELIMITER);
-				String description = transaction.getDecription().replace(",", " ").replace("http://", "");
-				if (description.length() > 50)
-					fileWriter.append(description.substring(0, 50));
-				else
-					fileWriter.append(description);
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(amountToString(transaction.getAmount()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(transaction.getCategory().toString());
-				fileWriter.append(NEW_LINE_SEPARATOR);
-			}
-
-			logger.info("File with transactions created: {}", fileName);
-
-		} catch (Exception e) {
-
-			logger.error("Error in CsvFileWriter !!!");
-			e.printStackTrace();
-
-		} finally {
-			try {
-				fileWriter.flush();
-				fileWriter.close();
-			} catch (IOException e) {
-				logger.info("Error while flushing/closing fileWriter !!!");
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public static File getLastFileModified(String dir) {
-		File fl = new File(dir);
-		File[] files = fl.listFiles(new FileFilter() {
-			public boolean accept(File file) {
-				return file.isFile();
-			}
-		});
-		long lastMod = Long.MIN_VALUE;
-		File choice = null;
-		for (File file : files) {
-			if ("csv".equals(FilenameUtils.getExtension(file.getAbsolutePath()))) {
-				if (file.lastModified() > lastMod) {
-					choice = file;
-					lastMod = file.lastModified();
-				}
-			}
-		}
-		return choice;
-	}
-
+	
 	public static double roundDouble(double input) {
 		return Math.round(input * 100.0) / 100.0;
 	}
@@ -436,13 +185,6 @@ public class Util implements Config {
 		outText = outText.replace("#", "");
 
 		return outText;
-	}
-
-	public static void addTotal(Statement stmt, java.sql.Timestamp timestamp, int account, Double amount) {
-		// addBatch(stmt, "INSERT INTO TotalsBuffer VALUES('" + timestamp + "',"
-		// + account + ", " + amount + ")");
-		// trace("Total added: " + timestamp + "/" + getAccountName(stmt,
-		// account) + "/" + amount, ta);
 	}
 
 	public static boolean isPending(String row) {
