@@ -19,33 +19,25 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dashboard.budget.DAO.BudgetPlan;
+import com.dashboard.budget.DAO.BudgetSummary;
 import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.PlanFact;
-import com.dashboard.budget.DAO.BudgetSummary;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
 public class Reporter implements Config {
 
 	private static Logger logger = LoggerFactory.getLogger(Reporter.class);
-	private DataHandler dataHandler;
 	private List<Transaction> allTransactions;
-	private List<Transaction> todayTransactions = new ArrayList<Transaction>();
 	private List<Total> totals;
-	private List<BudgetPlan> budgetPlans;
-	private List<BudgetSummary> budgetSummary = new ArrayList<BudgetSummary>();
+	private List<BudgetSummary> budgetSummary;
 	private List<CreditScore> creditScores;
 
 	public Reporter(DataHandler dataHandler) {
-		this.dataHandler = dataHandler;
 		this.allTransactions = dataHandler.getAllTransactions();
 		this.totals = dataHandler.getLastTotals();
-		// populating list of todays transactions
-		totals.stream().filter(to -> to.getTransactions() != null)
-				.forEach(to -> this.todayTransactions.addAll(to.getTransactions()));
-		this.budgetPlans = dataHandler.getBudgetPlansList();
+		this.budgetSummary = dataHandler.getBudgetSummary();
 		this.creditScores = dataHandler.getLastCreditScores();
 	}
 
