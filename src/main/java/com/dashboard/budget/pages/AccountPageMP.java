@@ -54,9 +54,13 @@ public class AccountPageMP extends AccountPage {
 				return null;
 			}			
 			
-			logger.info("Waiting for refreshing accounts table...");		
-			refreshStatus = webDriver.lookupElement(By.xpath("//a[@id='refresh']"), 600);
-			logger.info("All My Portfolio accounts are up to date");	
+			logger.info("Waiting for refreshing accounts table...");
+			while (refreshStatus.getText().startsWith("Refreshing")) {
+				Util.sleep(5000);
+				refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
+			}
+			logger.info("All My Portfolio accounts are up to date");
+
 
 			// debit accounts
 			List<WebElement> debitAccounts = webDriver
