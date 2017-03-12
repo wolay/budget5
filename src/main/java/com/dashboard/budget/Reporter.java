@@ -1,12 +1,10 @@
 package com.dashboard.budget;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.IntStream;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -63,8 +61,7 @@ public class Reporter implements Config {
 
 			// Budget
 			// Showing summary (important to see as email short summary)
-			String content = "Overall balance: <b>" + Util.amountToString(DataHandler.getFullTotal(totals))
-					+ " </b>";
+			String content = "Overall balance: <b>" + Util.amountToString(DataHandler.getFullTotal(totals)) + " </b>";
 
 			Double fullDiff = DataHandler.getFullDiff(totals);
 			if (fullDiff > 0)
@@ -225,6 +222,141 @@ public class Reporter implements Config {
 					+ Util.amountToString(planFact.getAmountOver()) + "</td><td><font color='gray'>"
 					+ Util.amountToString(plan1) + "</font></td><td><font color='gray'>" + Util.amountToString(plan2)
 					+ "</font></td></tr>";
+		}
+
+		// - Transfers
+		// - caption with totals
+		Double totalTransferFact = planFact0.stream().filter(pf -> pf.getCategory().getType() == 3)
+				.mapToDouble(PlanFact::getAmountFact).sum();
+		Double totalTransferToday = planFact0.stream().filter(pf -> pf.getCategory().getType() == 3)
+				.mapToDouble(PlanFact::getAmountTodayDiff).sum();
+		content = content + "<tr style='background-color:#85C1E9'><td><b>Transfer</b></td><td>-</td><td><b>"
+				+ Util.amountToString(totalTransferFact) + "</b></td><td><b>" + Util.amountToString(totalTransferToday)
+				+ "</b></td><td>-</td><td><b><font color='gray'>-</font></b></td><td><b><font color='gray'>-</font></b></td></tr>";
+
+		return content;
+	}
+
+	private String getBudgetContentAllYear() {
+
+		String content = "<table border='1' cellpadding='1' cellspacing='1' style='width:550px;'>"
+				+ "<thead><tr style='color: gray'><th>Beginning balance</th>" + "<th>"
+				+ Util.amountToString(budgetSummary.get(0).getAmountBegin()) + "</th><th colspan='4'>"
+				+ Util.amountToString(budgetSummary.get(1).getAmountBegin()) + "</th><th>"
+				+ Util.amountToString(budgetSummary.get(2).getAmountBegin()) + "</th></tr>"
+				+ "<tr><th rowspan='2'>Category</th><th rowspan='2'><font color='gray'>"
+				+ budgetSummary.get(0).getMonthName() + "</font></th><th colspan='4'>"
+				+ budgetSummary.get(1).getMonthName() + "</th><th rowspan='2'><font color='gray'>"
+				+ budgetSummary.get(2).getMonthName() + "</font></th></tr>"
+				+ "<tr><th>Plan</th><th>Fact</th><th>Today</th><th>Over</th></tr>" + "</thead>";
+
+		content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b><font color='gray'>"
+				+ Util.amountToString(budgetSummary.get(0).getTotalMonthDynamic()) + "</font></b></td><td><b>"
+				+ Util.amountToString(budgetSummary.get(1).getTotalBudgetPlan()) + "</b></td><td><b>-</b></td><td><b>"
+				+ Util.amountToString(budgetSummary.get(1).getTotalDiffToday()) + "</b></td><td><b>"
+				+ Util.amountToString(budgetSummary.get(1).getTotalBudgetOver()) + "</b></td><td><b><font color='gray'>"
+				+ Util.amountToString(budgetSummary.get(2).getTotalBudgetPlan()) + "</font></b></td></tr>"
+				+ "<tr><td rowspan='2'><b>By the end of month</b></td><td align='center'><b><font size='4'>"
+				+ Util.amountToStringWithSign(budgetSummary.get(0).getTotalMonthDynamic())
+				+ "</font></b></td><td colspan='4' align='center'><b><font size='4'>"
+				+ Util.amountToStringWithSign(budgetSummary.get(1).getTotalMonthDynamic())
+				+ "</font></b></td><td align='center'><b><font size='4'>"
+				+ Util.amountToStringWithSign(budgetSummary.get(2).getTotalBudgetPlan()) + "</font></b></td></tr>"
+				+ "<tr><td align='center'><b><font size='4'>" + Util.amountToString(budgetSummary.get(0).getAmountEnd())
+				+ "</b></td><td colspan='4' align='center'><b><font size='4'>"
+				+ Util.amountToString(budgetSummary.get(1).getAmountEnd())
+				+ "</font></b></td><td align='center'><b><font size='4'>"
+				+ Util.amountToString(budgetSummary.get(2).getAmountEnd()) + "</font></b></td></tr></font>"
+				+ "</tfoot><tbody>";
+		// Grouping by type
+		// - Income
+		// - caption with totals
+		List<PlanFact> planFact0 = budgetSummary.get(0).getPlanFactList(); // previous
+																			// month
+		List<PlanFact> planFact1 = budgetSummary.get(1).getPlanFactList(); // this
+																			// month
+		List<PlanFact> planFact2 = budgetSummary.get(2).getPlanFactList(); // next
+																			// months
+
+		Double totalIncomeFact0 = planFact0.stream().filter(pf -> pf.getCategory().getType() == 1)
+				.mapToDouble(PlanFact::getAmountFact).sum();
+		Double totalIncomePlan1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 1)
+				.mapToDouble(PlanFact::getAmountPlan).sum();
+		Double totalIncomeFact1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 1)
+				.mapToDouble(PlanFact::getAmountFact).sum();
+		Double totalIncomeDiffToday1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 1)
+				.mapToDouble(PlanFact::getAmountTodayDiff).sum();
+		Double totalIncomeOver1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 1)
+				.mapToDouble(PlanFact::getAmountOver).sum();
+		Double totalIncomePlan2 = planFact2.stream().filter(pf -> pf.getCategory().getType() == 1)
+				.mapToDouble(PlanFact::getAmountPlan).sum();
+		content = content + "<tr style='background-color:#27AE60'><td><b>Income</b></td><td><b><font color='gray'>"
+				+ Util.amountToString(totalIncomeFact0) + "</font></b></td><td><b>"
+				+ Util.amountToString(totalIncomePlan1) + "</b></td><td><b>" + Util.amountToString(totalIncomeFact1)
+				+ "</b></td><td><b>" + Util.amountToString(totalIncomeDiffToday1) + "</b></td><td><b>"
+				+ Util.amountToString(totalIncomeOver1) + "</b></td><td><b><font color='gray'>"
+				+ Util.amountToString(totalIncomePlan2) + "</font></b></td></tr>";
+
+		// - table with income categories
+		Collections.sort(planFact0);
+		for (PlanFact planFact : planFact1) {
+			if (planFact.getCategory().getType() != 1)
+				continue;
+			Double incomeFact0 = planFact0.stream().filter(pf -> pf.getCategory() == planFact.getCategory())
+					.mapToDouble(PlanFact::getAmountFact).sum();
+			Double incomePlan2 = planFact2.stream().filter(pf -> pf.getCategory() == planFact.getCategory())
+					.mapToDouble(PlanFact::getAmountPlan).sum();
+			content = content + "<tr style='background-color:#D5F5E3'><td><p style='margin-left:10px;'>"
+					+ planFact.getCategory().getName() + "</p</td><td><font color='gray'>"
+					+ Util.amountToString(incomeFact0) + "</font></td><td>"
+					+ Util.amountToString(planFact.getAmountPlan()) + "</td><td>"
+					+ Util.amountToString(planFact.getAmountFact()) + "</td><td>"
+					+ Util.amountToString(planFact.getAmountTodayDiff()) + "</td><td>"
+					+ Util.amountToString(planFact.getAmountOver()) + "</td><td><font color='gray'>"
+					+ Util.amountToString(incomePlan2) + "</font></td></tr>";
+		}
+
+		// - Outcome
+		// - caption with totals
+		Double totalOutcomeFact0 = planFact0.stream().filter(pf -> pf.getCategory().getType() == 2)
+				.mapToDouble(PlanFact::getAmountFact).sum();
+		Double totalOutcomePlan1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 2)
+				.mapToDouble(PlanFact::getAmountPlan).sum();
+		Double totalOutcomeFact1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 2)
+				.mapToDouble(PlanFact::getAmountFact).sum();
+		Double totalOutcomeDiffToday1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 2)
+				.mapToDouble(PlanFact::getAmountTodayDiff).sum();
+		Double totalOutcomeOver1 = planFact1.stream().filter(pf -> pf.getCategory().getType() == 2)
+				.mapToDouble(PlanFact::getAmountOver).sum();
+		Double totalOutcomePlan2 = planFact2.stream().filter(pf -> pf.getCategory().getType() == 2)
+				.mapToDouble(PlanFact::getAmountPlan).sum();
+		content = content + "<tr style='background-color:#EC7063'><td><b>Outcome</b></td><td><b><font color='gray'>"
+				+ Util.amountToString(totalOutcomeFact0) + "</font></b></td><td><b>"
+				+ Util.amountToString(totalOutcomePlan1) + "</b></td><td><b>" + Util.amountToString(totalOutcomeFact1)
+				+ "</b></td><td><b>" + Util.amountToString(totalOutcomeDiffToday1) + "</b></td><td><b>"
+				+ Util.amountToString(totalOutcomeOver1) + "</b></td><td><b><font color='gray'>"
+				+ Util.amountToString(totalOutcomePlan2) + "</font></b></td></tr>";
+		// - table with categories
+		for (PlanFact planFact : planFact1) {
+			if (planFact.getCategory().getType() != 2 || !planFact.getCategory().getIsActive())
+				continue;
+			Double outcomeFact0 = 0.0;
+			Double outcomePlan2 = 0.0;
+			if (!planFact.getCategory().getName().equals("Unrecognized")) {
+				outcomeFact0 = planFact0.stream().filter(pf -> pf.getCategory().equals(planFact.getCategory()))
+						.mapToDouble(PlanFact::getAmountFact).sum();
+				outcomePlan2 = planFact2.stream().filter(pf -> pf.getCategory().equals(planFact.getCategory()))
+						.mapToDouble(PlanFact::getAmountPlan).sum();
+			}
+
+			content = content + "<tr style='background-color:#FADBD8'><td><p style='margin-left:10px;'>"
+					+ planFact.getCategory().getName() + "</p</td><td><font color='gray'>"
+					+ Util.amountToString(outcomeFact0) + "</font></td><td>"
+					+ Util.amountToString(planFact.getAmountPlan()) + "</td><td>"
+					+ Util.amountToString(planFact.getAmountFact()) + "</td><td>"
+					+ Util.amountToString(planFact.getAmountTodayDiff()) + "</td><td>"
+					+ Util.amountToString(planFact.getAmountOver()) + "</td><td><font color='gray'>"
+					+ Util.amountToString(outcomePlan2) + "</font></td></tr>";
 		}
 
 		// - Transfers
