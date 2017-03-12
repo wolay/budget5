@@ -347,9 +347,11 @@ public abstract class AccountPage implements Config {
 				double amount = -Util.convertStringAmountToDouble(row.findElement(byAmount).getText());
 				Date date = Util.convertStringToDateByType(row.findElement(byDate).getText().trim(), dateFormat);
 				String description = row.findElement(byDescription).getText().trim().replace("\n", "-");
-				List<Transaction> matchTransactions = prevTransactions.stream()
+				List<Transaction> matchPrevTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
-				if (matchTransactions.isEmpty()) {
+				List<Transaction> matchCurrentTransactions = result.stream()
+						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());				
+				if (matchPrevTransactions.isEmpty() && matchCurrentTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;
 					if (byCategoryNav != null && row.findElements(byCategoryNav).size() > 0) {

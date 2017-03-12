@@ -98,7 +98,7 @@ public class WebDriverManager implements Config {
 			List<Transaction> newTransactions;
 			newTransactions = accountPage.getTransactions(total, prevTransactions);
 			if (newTransactions.isEmpty()) {
-				logger.error("No transactions found for difference");
+				logger.info("No transactions found for difference");
 			} else {
 				for (Transaction newTransaction : newTransactions) {
 					logger.info("{}, transaction: {}, {}, {}, {} ({})", accountPage.getAccount().getName(),
