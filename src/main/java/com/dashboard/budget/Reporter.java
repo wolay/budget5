@@ -43,7 +43,7 @@ public class Reporter implements Config {
 
 	public void sendEmailSummary(String spentTime, Credential credentials) {
 		Properties props = new Properties();
-		props.put("mail.smtp.host", "smtp.mail.ru");
+		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
 		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		props.put("mail.smtp.auth", "true");
@@ -57,13 +57,15 @@ public class Reporter implements Config {
 
 		try {
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("aianitro@mail.ru"));
+			message.setFrom(new InternetAddress("aianitro@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(summaryReceiver));
 			message.setSubject("Dashboard on " + Util.convertDateToStringType1(new Date()));
 
 			// Budget
 			// Showing summary (important to see as email short summary)
-			String content = "Overall balance: <b>" + Util.amountToString(DataHandler.getFullTotal(totals)) + " </b>";
+			String content = "Overall balance: <b>" + Util.amountToString(DataHandler.getFullTotal(totals))
+					+ " </b>";
+
 			Double fullDiff = DataHandler.getFullDiff(totals);
 			if (fullDiff > 0)
 				content = content + "(<font color='green'>+" + Util.amountToString(DataHandler.getFullDiff(totals))
@@ -75,18 +77,18 @@ public class Reporter implements Config {
 				content = content + "(+0)";
 			content = content + "<br><br>";
 
-			generateDataSet();
-
-			content = content + getBudgetContent();
+			if (Util.getCurrentMonthInt() == 1)
+				content = content + getBudgetContentJanuary();
+			else
+				content = content + getBudgetContentAllYear();
 
 			content = content + "</tbody></table>";
 
 			// Annual target balance
-			content = content + "<p>Annual target balance: <b>"
-					+ Util.amountToString(budgetSummary.get(11).getAmountEnd()) + "</b>";
+			Double annualTarget = budgetSummary.get(11).getAmountEnd();
+			content = content + "<p>Annual target balance: <b>" + Util.amountToString(annualTarget) + "</b>";
 			content = content + "(<font color='green'>+"
-					+ Util.amountToString(budgetSummary.get(11).getAmountEnd() - budgetSummary.get(0).getAmountBegin())
-					+ "</font>)<tr><tr>";
+					+ Util.amountToString(annualTarget - budgetSummary.get(0).getAmountBegin()) + "</font>)<tr><tr>";
 
 			content = content + getTransactionsContent();
 
@@ -135,9 +137,9 @@ public class Reporter implements Config {
 				+ "<tr><td rowspan='2'><b>By the end of month</b></td><td colspan='4' align='center'><b><font size='4'>"
 				+ Util.amountToStringWithSign(budgetSummary.get(0).getTotalMonthDynamic())
 				+ "</font></b></td><td align='center'><b><font size='4'>"
-				+ Util.amountToStringWithSign(budgetSummary.get(1).getTotalMonthDynamic())
+				+ Util.amountToStringWithSign(budgetSummary.get(1).getTotalBudgetPlan())
 				+ "</font></b></td><td align='center'><b><font size='4'>"
-				+ Util.amountToStringWithSign(budgetSummary.get(2).getTotalMonthDynamic()) + "</font></b></td></tr>"
+				+ Util.amountToStringWithSign(budgetSummary.get(2).getTotalBudgetPlan()) + "</font></b></td></tr>"
 				+ "<tr><td colspan='4' align='center'><b><font size='4'>"
 				+ Util.amountToString(budgetSummary.get(0).getAmountEnd())
 				+ "</b></td><td align='center'><b><font size='4'>"

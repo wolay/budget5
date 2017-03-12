@@ -70,6 +70,7 @@ public abstract class AccountPage implements Config {
 	}
 
 	public void setAccount(Account account) {
+		logger.info("Setting account.. {}", account.getName());
 		this.account = account;
 		this.accountLoginDetails = account.getAccountDetailsLogin();
 		this.accountNavigationDetails = account.getAccountDetailsNavigation();
