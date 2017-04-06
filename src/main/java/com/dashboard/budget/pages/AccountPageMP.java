@@ -33,15 +33,8 @@ public class AccountPageMP extends AccountPage {
 
 			// navigate to MyPortfolio page if it's not there yet
 			if (!webDriver.getWebDriver().getTitle().contains("My Portfolio")) {
-				Actions action = new Actions(webDriver.getWebDriver());
-				WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
-				if (we != null)
-					action.moveToElement(we).build().perform();
-				WebElement submit1 = webDriver.findElement(By.name("onh_tools_and_investing_my_portfolio"));
-				if (submit1 != null)
-					submit1.click();
+				gotoMyPortfolioPage();
 			}
-			webDriver.waitFrameToBeAvailableAndSwitchToIt("htmlhelp");
 
 			totalsList = new ArrayList<mpTotal>();
 
@@ -57,6 +50,9 @@ public class AccountPageMP extends AccountPage {
 				Util.sleep(5000);
 				refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
 			}
+			// Needs to come again on 'My Portfolio' page
+			// otherwise updated totals not reflected in table
+			gotoMyPortfolioPage();
 			logger.info("All My Portfolio accounts are up to date");
 
 
@@ -118,6 +114,7 @@ public class AccountPageMP extends AccountPage {
 						new mpTotal(weId.getText(), totalLocator, -convertStringAmountToDouble(weAmount.getText())));
 			}
 
+			logger.info("Totals for credit accounts:");
 			totalsList.stream().forEach(t -> logger.info(t.toString()));
 
 			// return to the main page (from where Transactions will be opened)
@@ -134,6 +131,19 @@ public class AccountPageMP extends AccountPage {
 			return null;
 		}
 	}
+	
+	private void gotoMyPortfolioPage(){
+		logger.info("Navigating to 'My Portfolio' page...");
+		Actions action = new Actions(webDriver.getWebDriver());
+		WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
+		if (we != null)
+			action.moveToElement(we).build().perform();
+		WebElement submit1 = webDriver.findElement(By.name("onh_tools_and_investing_my_portfolio"));
+		if (submit1 != null)
+			submit1.click();
+		webDriver.waitFrameToBeAvailableAndSwitchToIt("htmlhelp");
+	}
+
 
 	class mpTotal {
 		private String id;

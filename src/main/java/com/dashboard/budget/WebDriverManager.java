@@ -129,6 +129,7 @@ public class WebDriverManager implements Config {
 		List<Total> result = new ArrayList<Total>();
 
 		logger.info("Number of accounts to run: {}", accounts.size());
+		accounts.stream().forEach(a -> logger.info(a.toString()));
 
 		// Extract list of drivers
 		List<List<String>> drivers = new ArrayList<List<String>>();
