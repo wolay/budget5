@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.BudgetSummary;
+import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.PlanFact;
@@ -92,6 +93,8 @@ public class Reporter implements Config {
 			content = content + getUncategorizedContent();
 
 			content = content + getTransfersContent();
+
+			content = content + getYearPictureContent();
 
 			content = content + getCreditScoresContent();
 
@@ -455,6 +458,57 @@ public class Reporter implements Config {
 			}
 			return content + "</tbody></table>";
 		}
+	}
+
+	private String getYearPictureContent() {
+
+		String content = "<P><b>Whole year: </b>";
+		content = content + "<br><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><tbody>";
+		// caption
+		content = content + "<tr><td></td>";
+		for (BudgetSummary oneMonthBudget : budgetSummary)
+			content = content + "<td><font size='1'>" + oneMonthBudget.getMonthName() + "</font></td>";
+		content = content + "</tr>";
+
+		// rows
+		// beginning balance
+		content = content + "<tr><td>Begining</td>";
+		for (BudgetSummary oneMonthBudget : budgetSummary)
+			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountBegin()) + "</font></td>";
+		content = content + "</tr>";
+		// income
+		for (PlanFact planFact : budgetSummary.get(0).getPlanFactList()) {
+			Category curCategory = planFact.getCategory();
+			if(curCategory.getType()!=1)
+				continue;
+			content = content + "<tr><td><font size='1'>"+curCategory.getName()+"</font></td>";
+			for (BudgetSummary oneMonthBudget : budgetSummary) {
+				Double amountFact = oneMonthBudget.getPlanFactList().stream().filter(pf -> pf.getCategory() == curCategory)
+						.mapToDouble(PlanFact::getAmountFact).sum();
+				content = content + "<td><font size='1'>" + Util.amountToString(amountFact) + "</font></td>";
+			}
+			content = content + "</tr>";
+		}
+		// outcome
+		for (PlanFact planFact : budgetSummary.get(0).getPlanFactList()) {
+			Category curCategory = planFact.getCategory();
+			if(curCategory.getType()!=2)
+				continue;
+			content = content + "<tr><td><font size='1'>"+curCategory.getName()+"</font></td>";
+			for (BudgetSummary oneMonthBudget : budgetSummary) {
+				Double amountFact = oneMonthBudget.getPlanFactList().stream().filter(pf -> pf.getCategory() == curCategory)
+						.mapToDouble(PlanFact::getAmountFact).sum();
+				content = content + "<td><font size='1'>" + Util.amountToString(amountFact) + "</font></td>";
+			}
+			content = content + "</tr>";
+		}
+		// ending balance
+		content = content + "<tr><td>Ending</td>";
+		for (BudgetSummary oneMonthBudget : budgetSummary)
+			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountEnd()) + "</font></td>";
+		content = content + "</tr>";
+
+		return content + "</tbody></table>";
 	}
 
 	private String getCreditScoresContent() {
