@@ -74,11 +74,11 @@ public class Reporter implements Config {
 				content = content + "(+0)";
 			content = content + "<br><br>";
 
-			if (Util.getCurrentMonthInt() == 1)
+			int currentMonth = Util.getCurrentMonthInt();
+			if (currentMonth == 1)
 				content = content + getBudgetContentJanuary();
 			else
-				content = content + getBudgetContentAllYear();
-
+				content = content + getBudgetContentAllYear(currentMonth - 1);
 			content = content + "</tbody></table>";
 
 			// Annual target balance
@@ -237,46 +237,50 @@ public class Reporter implements Config {
 		return content;
 	}
 
-	private String getBudgetContentAllYear() {
+	private String getBudgetContentAllYear(int currentMonth) {
 
 		String content = "<table border='1' cellpadding='1' cellspacing='1' style='width:550px;'>"
 				+ "<thead><tr style='color: gray'><th>Beginning balance</th>" + "<th>"
-				+ Util.amountToString(budgetSummary.get(0).getAmountBegin()) + "</th><th colspan='4'>"
-				+ Util.amountToString(budgetSummary.get(1).getAmountBegin()) + "</th><th>"
-				+ Util.amountToString(budgetSummary.get(2).getAmountBegin()) + "</th></tr>"
+				+ Util.amountToString(budgetSummary.get(currentMonth - 1).getAmountBegin()) + "</th><th colspan='4'>"
+				+ Util.amountToString(budgetSummary.get(currentMonth).getAmountBegin()) + "</th><th>"
+				+ Util.amountToString(budgetSummary.get(currentMonth + 1).getAmountBegin()) + "</th></tr>"
 				+ "<tr><th rowspan='2'>Category</th><th rowspan='2'><font color='gray'>"
-				+ budgetSummary.get(0).getMonthName() + "</font></th><th colspan='4'>"
-				+ budgetSummary.get(1).getMonthName() + "</th><th rowspan='2'><font color='gray'>"
-				+ budgetSummary.get(2).getMonthName() + "</font></th></tr>"
+				+ budgetSummary.get(currentMonth - 1).getMonthName() + "</font></th><th colspan='4'>"
+				+ budgetSummary.get(currentMonth).getMonthName() + "</th><th rowspan='2'><font color='gray'>"
+				+ budgetSummary.get(currentMonth + 1).getMonthName() + "</font></th></tr>"
 				+ "<tr><th>Plan</th><th>Fact</th><th>Today</th><th>Over</th></tr>" + "</thead>";
 
 		content = content + "<tfoot><tr><td><b>TOTAL</b></td><td><b><font color='gray'>"
-				+ Util.amountToString(budgetSummary.get(0).getTotalMonthDynamic()) + "</font></b></td><td><b>"
-				+ Util.amountToString(budgetSummary.get(1).getTotalBudgetPlan()) + "</b></td><td><b>-</b></td><td><b>"
-				+ Util.amountToString(budgetSummary.get(1).getTotalDiffToday()) + "</b></td><td><b>"
-				+ Util.amountToString(budgetSummary.get(1).getTotalBudgetOver()) + "</b></td><td><b><font color='gray'>"
-				+ Util.amountToString(budgetSummary.get(2).getTotalBudgetPlan()) + "</font></b></td></tr>"
+				+ Util.amountToString(budgetSummary.get(currentMonth - 1).getTotalMonthDynamic())
+				+ "</font></b></td><td><b>" + Util.amountToString(budgetSummary.get(currentMonth).getTotalBudgetPlan())
+				+ "</b></td><td><b>-</b></td><td><b>"
+				+ Util.amountToString(budgetSummary.get(currentMonth).getTotalDiffToday()) + "</b></td><td><b>"
+				+ Util.amountToString(budgetSummary.get(currentMonth).getTotalBudgetOver())
+				+ "</b></td><td><b><font color='gray'>"
+				+ Util.amountToString(budgetSummary.get(currentMonth + 1).getTotalBudgetPlan())
+				+ "</font></b></td></tr>"
 				+ "<tr><td rowspan='2'><b>By the end of month</b></td><td align='center'><b><font size='4'>"
-				+ Util.amountToStringWithSign(budgetSummary.get(0).getTotalMonthDynamic())
+				+ Util.amountToStringWithSign(budgetSummary.get(currentMonth - 1).getTotalMonthDynamic())
 				+ "</font></b></td><td colspan='4' align='center'><b><font size='4'>"
-				+ Util.amountToStringWithSign(budgetSummary.get(1).getTotalMonthDynamic())
+				+ Util.amountToStringWithSign(budgetSummary.get(currentMonth).getTotalMonthDynamic())
 				+ "</font></b></td><td align='center'><b><font size='4'>"
-				+ Util.amountToStringWithSign(budgetSummary.get(2).getTotalBudgetPlan()) + "</font></b></td></tr>"
-				+ "<tr><td align='center'><b><font size='4'>" + Util.amountToString(budgetSummary.get(0).getAmountEnd())
+				+ Util.amountToStringWithSign(budgetSummary.get(currentMonth + 1).getTotalBudgetPlan())
+				+ "</font></b></td></tr>" + "<tr><td align='center'><b><font size='4'>"
+				+ Util.amountToString(budgetSummary.get(currentMonth - 1).getAmountEnd())
 				+ "</b></td><td colspan='4' align='center'><b><font size='4'>"
-				+ Util.amountToString(budgetSummary.get(1).getAmountEnd())
+				+ Util.amountToString(budgetSummary.get(currentMonth).getAmountEnd())
 				+ "</font></b></td><td align='center'><b><font size='4'>"
-				+ Util.amountToString(budgetSummary.get(2).getAmountEnd()) + "</font></b></td></tr></font>"
-				+ "</tfoot><tbody>";
+				+ Util.amountToString(budgetSummary.get(currentMonth + 1).getAmountEnd())
+				+ "</font></b></td></tr></font>" + "</tfoot><tbody>";
 		// Grouping by type
 		// - Income
 		// - caption with totals
-		List<PlanFact> planFact0 = budgetSummary.get(0).getPlanFactList(); // previous
-																			// month
-		List<PlanFact> planFact1 = budgetSummary.get(1).getPlanFactList(); // this
-																			// month
-		List<PlanFact> planFact2 = budgetSummary.get(2).getPlanFactList(); // next
-																			// months
+		List<PlanFact> planFact0 = budgetSummary.get(currentMonth - 1).getPlanFactList(); // previous
+		// month
+		List<PlanFact> planFact1 = budgetSummary.get(currentMonth).getPlanFactList(); // this
+		// month
+		List<PlanFact> planFact2 = budgetSummary.get(currentMonth + 1).getPlanFactList(); // next
+		// months
 
 		Double totalIncomeFact0 = planFact0.stream().filter(pf -> pf.getCategory().getType() == 1)
 				.mapToDouble(PlanFact::getAmountFact).sum();
