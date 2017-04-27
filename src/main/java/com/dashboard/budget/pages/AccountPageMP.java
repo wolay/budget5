@@ -26,6 +26,7 @@ public class AccountPageMP extends AccountPage {
 
 		// first check if table of totals already captured
 		if (totalsList == null) {
+			logger.info("Capturing all totals on 'My Portfolio' page...");
 			// secret question
 			if (Util.isSecretQuestionShown(webDriver))
 				if (!super.answerSecretQuestion())
@@ -38,23 +39,27 @@ public class AccountPageMP extends AccountPage {
 
 			totalsList = new ArrayList<mpTotal>();
 
-			// Waiting for table to refresh			
+			// Waiting for table to refresh
 			WebElement refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
 			if (refreshStatus == null) {
 				logger.error("Cannot find refresh status locator");
 				return null;
-			}			
-			
-			logger.info("Waiting for refreshing accounts table...");
-			while (refreshStatus.getText().startsWith("Refreshing")) {
-				Util.sleep(5000);
-				refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
 			}
-			// Needs to come again on 'My Portfolio' page
-			// otherwise updated totals not reflected in table
-			gotoMyPortfolioPage();
-			logger.info("All My Portfolio accounts are up to date");
 
+			if (refreshStatus.getText().startsWith("Refreshing")) {
+				logger.info("Waiting for refreshing accounts table...");
+				while (refreshStatus.getText().startsWith("Refreshing")) {
+					Util.sleep(5000);
+					refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
+				}
+				
+				// Needs to come again on 'My Portfolio' page
+				// otherwise updated totals not reflected in table				
+				webDriver.getWebDriver().navigate().back();
+				Util.sleep(3000);
+				gotoMyPortfolioPage();
+				logger.info("All My Portfolio accounts are up to date");
+			}
 
 			// debit accounts
 			List<WebElement> debitAccounts = webDriver
@@ -114,26 +119,26 @@ public class AccountPageMP extends AccountPage {
 						new mpTotal(weId.getText(), totalLocator, -convertStringAmountToDouble(weAmount.getText())));
 			}
 
-			logger.info("Totals for credit accounts:");
+			logger.info("Accounts total (parsed on page):");
 			totalsList.stream().forEach(t -> logger.info(t.toString()));
 
 			// return to the main page (from where Transactions will be opened)
 			webDriver.getWebDriver().navigate().back();
 		}
 
-		mpTotal totalRow = totalsList.stream().filter(t -> t.getId().contains(account.getMyPortfolioId())).findFirst()
-				.get();
+		mpTotal totalRow = totalsList.stream().filter(t -> t.getId().contains(account.getMyPortfolioId())).findFirst().orElse(null);
 
 		if (totalRow != null)
 			return totalRow.getAmount();
 		else {
-			logger.error("Unable to fint total for {} by locator {}", account.getName(), account.getIsMyProtfolio());
+			logger.error("Unable to find total for {} by locator {}", account.getName(), account.getIsMyProtfolio());
 			return null;
 		}
 	}
-	
-	private void gotoMyPortfolioPage(){
+
+	private void gotoMyPortfolioPage() {
 		logger.info("Navigating to 'My Portfolio' page...");
+		webDriver.switchTo().defaultContent();
 		Actions action = new Actions(webDriver.getWebDriver());
 		WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
 		if (we != null)
@@ -143,7 +148,6 @@ public class AccountPageMP extends AccountPage {
 			submit1.click();
 		webDriver.waitFrameToBeAvailableAndSwitchToIt("htmlhelp");
 	}
-
 
 	class mpTotal {
 		private String id;
