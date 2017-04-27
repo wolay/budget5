@@ -175,7 +175,7 @@ public class Util implements Config {
 		else
 			return "<font color='red'>" + String.valueOf(Util.roundDouble(amount)) + "</font>";
 	}
-	
+
 	public static double roundDouble(double input) {
 		return Math.round(input * 100.0) / 100.0;
 	}
@@ -294,7 +294,7 @@ public class Util implements Config {
 	public static List<Account> skipUpdatedBankAccounts(List<Account> accounts, List<Total> prevTotals) {
 		List<Account> result = new ArrayList<Account>();
 
-		prevTotals.stream().filter(t -> !isDateToday(t.getDate())).forEach(t -> {
+		prevTotals.stream().filter(t -> !isDateToday(t.getDate()) && t.getAccount().getBank() != null).forEach(t -> {
 			if (accounts.contains(t.getAccount()))
 				result.add(t.getAccount());
 		});

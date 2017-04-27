@@ -75,6 +75,8 @@ public class Manager {
 		logger.info("Saving new data to DB...");
 		dataHandler.saveNewTotalsWithTransactionsToDb(newTotals);
 		dataHandler.saveCreditScoresToDb(creditScores);
+		dataHandler.calculateBudgetSummary();
+		dataHandler.saveAnnualTarget();
 		
 		// Sending summary to email
 		Credential mailCredentials = dataHandler.getCredentials().stream().filter(c -> c.getName().equals("mailru")).findFirst().get();
