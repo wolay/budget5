@@ -96,6 +96,8 @@ public class Reporter implements Config {
 
 			content = content + getYearPictureContent();
 
+			content = content + getStatisticContent();
+
 			content = content + getCreditScoresContent();
 
 			// Time spent for retrieving
@@ -507,6 +509,52 @@ public class Reporter implements Config {
 		for (BudgetSummary oneMonthBudget : budgetSummary)
 			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountEnd()) + "</font></td>";
 		content = content + "</tr>";
+
+		return content + "</tbody></table>";
+	}
+
+	private String getStatisticContent() {
+
+		String content = "<P><b>Statistic (last 100 transactions): </b>";
+
+		// Retrieving last 100 transactions
+		List<Transaction> lastHundredTransactions = allTransactions.stream()
+				.sorted((t1, t2) -> t2.getDate().compareTo(t1.getDate())).filter(t -> t.getCategorizationRule() != null)
+				.limit(100).collect(Collectors.toList());
+
+		// Showing failing categorization rules
+		content = content + "<p><font size='1'>Failing rules:</font>"
+				+ "<br><table border='0' cellpadding='1' cellspacing='1' style='width:200px;'>"
+				+ "<thead><tr><th><font size='1'>Rule id</font></th><th><font size='1'># of transactions</font></th>"
+				+ "</tr></thead><tbody>";
+		Map<Integer, Long> failingCategorizationRules = lastHundredTransactions.stream()
+				.filter(t -> t.getCategory() != t.getCategorizationRule().getTargetCategory())
+				.collect(Collectors.groupingBy(t -> t.getCategorizationRule().getId(),
+						Collectors.mapping(t -> t, Collectors.counting())));
+		for (Map.Entry<Integer, Long> entry : failingCategorizationRules.entrySet()) {
+			content = content + "<tr><td><font size='1'>" + entry.getKey() + "</font></td><td><font size='1'>"
+					+ entry.getValue() + "</font></td></tr>";
+		}
+		content = content + "</tbody></table>";
+
+		// Categories as in rule
+		int categoriesAsInRule = (int) lastHundredTransactions.stream()
+				.filter(t -> t.getCategory() == t.getCategorizationRule().getTargetCategory()).count();
+		content = content + "<p><font size='1'>Categories as in rule: <b>" + categoriesAsInRule + "%</b></font>";
+
+		content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:600px;'>"
+				+ "<thead><tr><th><font size='1'>Date</font></th><th><font size='1'>Amount</font></th>"
+				+ "<th><font size='1'>Description</font></th><th><font size='1'>Category (rule)</font></th>"
+				+ "<th><font size='1'>Rule</font></th><th><font size='1'>Category (fact)</font></th></tr></thead><tbody>";
+		for (Transaction t : lastHundredTransactions) {
+			content = content + "<tr><td><font size='1'>" + t.getDate() + "</font></td><td><font size='1'>"
+					+ t.getAmount() + "</font></td><td><font size='1'>" + t.getDecription()
+					+ "</font></td><td><font size='1'>"
+					+ ((t.getCategorizationRule() == null) ? ""
+							: t.getCategorizationRule().getTargetCategory().getName())
+					+ "</font></td><td><font size='1'>" + t.getCategorizationRule().getId()
+					+ "</font></td><td><font size='1'>" + t.getCategory().getName() + "</font></td></tr>";
+		}
 
 		return content + "</tbody></table>";
 	}
