@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -82,11 +84,7 @@ public class Reporter implements Config {
 				content = content + getBudgetContentAllYear(currentMonth - 1);
 			content = content + "</tbody></table>";
 
-			// Annual target balance
-			Double annualTarget = budgetSummary.get(11).getAmountEnd();
-			content = content + "<p>Annual target balance: <b>" + Util.amountToString(annualTarget) + "</b>";
-			content = content + "(<font color='green'>+"
-					+ Util.amountToString(annualTarget - budgetSummary.get(0).getAmountBegin()) + "</font>)<tr><tr>";
+			content = content + getAnnualTargetBalanceContent();
 
 			content = content + getTransactionsContent();
 
@@ -381,6 +379,23 @@ public class Reporter implements Config {
 		return content;
 	}
 
+	// Annual target balance
+	private String getAnnualTargetBalanceContent() {
+
+		Double annualTarget = budgetSummary.get(11).getAmountEnd();
+		boolean isPresentUncategorizedTransaction = allTransactions.stream().filter(t -> t.getCategory().getId() == 19)
+				.findAny().isPresent();
+
+		String content = "<p>Annual target balance: <b>";
+		if (isPresentUncategorizedTransaction)
+			content = content + "N/A</b> (uncategorized)";
+		else
+			content = content + Util.amountToString(annualTarget) + "</b>(<font color='green'>+"
+					+ Util.amountToString(annualTarget - budgetSummary.get(0).getAmountBegin()) + "</font>)<tr><tr>";
+
+		return content;
+	}
+
 	private String getTransactionsContent() {
 
 		String content = "<P><b>Totals & transactions: </b>";
@@ -476,17 +491,18 @@ public class Reporter implements Config {
 		// beginning balance
 		content = content + "<tr><td>Begining</td>";
 		for (BudgetSummary oneMonthBudget : budgetSummary)
-			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountBegin()) + "</font></td>";
+			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountBegin())
+					+ "</font></td>";
 		content = content + "</tr>";
 		// income
 		for (PlanFact planFact : budgetSummary.get(0).getPlanFactList()) {
 			Category curCategory = planFact.getCategory();
-			if(curCategory.getType()!=1)
+			if (curCategory.getType() != 1)
 				continue;
-			content = content + "<tr><td><font size='1'>"+curCategory.getName()+"</font></td>";
+			content = content + "<tr><td><font size='1'>" + curCategory.getName() + "</font></td>";
 			for (BudgetSummary oneMonthBudget : budgetSummary) {
-				Double amountFact = oneMonthBudget.getPlanFactList().stream().filter(pf -> pf.getCategory() == curCategory)
-						.mapToDouble(PlanFact::getAmountFact).sum();
+				Double amountFact = oneMonthBudget.getPlanFactList().stream()
+						.filter(pf -> pf.getCategory() == curCategory).mapToDouble(PlanFact::getAmountFact).sum();
 				content = content + "<td><font size='1'>" + Util.amountToString(amountFact) + "</font></td>";
 			}
 			content = content + "</tr>";
@@ -494,12 +510,12 @@ public class Reporter implements Config {
 		// outcome
 		for (PlanFact planFact : budgetSummary.get(0).getPlanFactList()) {
 			Category curCategory = planFact.getCategory();
-			if(curCategory.getType()!=2)
+			if (curCategory.getType() != 2)
 				continue;
-			content = content + "<tr><td><font size='1'>"+curCategory.getName()+"</font></td>";
+			content = content + "<tr><td><font size='1'>" + curCategory.getName() + "</font></td>";
 			for (BudgetSummary oneMonthBudget : budgetSummary) {
-				Double amountFact = oneMonthBudget.getPlanFactList().stream().filter(pf -> pf.getCategory() == curCategory)
-						.mapToDouble(PlanFact::getAmountFact).sum();
+				Double amountFact = oneMonthBudget.getPlanFactList().stream()
+						.filter(pf -> pf.getCategory() == curCategory).mapToDouble(PlanFact::getAmountFact).sum();
 				content = content + "<td><font size='1'>" + Util.amountToString(amountFact) + "</font></td>";
 			}
 			content = content + "</tr>";
@@ -507,7 +523,8 @@ public class Reporter implements Config {
 		// ending balance
 		content = content + "<tr><td>Ending</td>";
 		for (BudgetSummary oneMonthBudget : budgetSummary)
-			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountEnd()) + "</font></td>";
+			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountEnd())
+					+ "</font></td>";
 		content = content + "</tr>";
 
 		return content + "</tbody></table>";
