@@ -383,7 +383,7 @@ public class Reporter implements Config {
 	private String getAnnualTargetBalanceContent() {
 
 		Double annualTarget = budgetSummary.get(11).getAmountEnd();
-		boolean isPresentUncategorizedTransaction = allTransactions.stream().filter(t -> t.getCategory().getId() == 19)
+		boolean isPresentUncategorizedTransaction = allTransactions.stream().filter(t -> t.getCategory()!=null && t.getCategory().getId() == 19)
 				.findAny().isPresent();
 
 		String content = "<p>Annual target balance: <b>";

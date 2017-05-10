@@ -34,7 +34,10 @@ public class AccountPageMP extends AccountPage {
 
 			// navigate to MyPortfolio page if it's not there yet
 			if (!webDriver.getWebDriver().getTitle().contains("My Portfolio")) {
-				gotoMyPortfolioPage();
+				if (!gotoMyPortfolioPage()){
+					logger.error("Cannot navigate to 'My Portfolio' page");
+					return null;
+				}					
 			}
 
 			totalsList = new ArrayList<mpTotal>();
@@ -57,7 +60,10 @@ public class AccountPageMP extends AccountPage {
 				// otherwise updated totals not reflected in table				
 				webDriver.getWebDriver().navigate().back();
 				Util.sleep(3000);
-				gotoMyPortfolioPage();
+				if (!gotoMyPortfolioPage()){
+					logger.error("Cannot navigate to 'My Portfolio' page");
+					return null;
+				}			
 				logger.info("All My Portfolio accounts are up to date");
 			}
 
@@ -136,17 +142,25 @@ public class AccountPageMP extends AccountPage {
 		}
 	}
 
-	private void gotoMyPortfolioPage() {
+	private boolean gotoMyPortfolioPage() {
 		logger.info("Navigating to 'My Portfolio' page...");
 		webDriver.switchTo().defaultContent();
 		Actions action = new Actions(webDriver.getWebDriver());
+		
 		WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
-		if (we != null)
+		if (we == null)
+			return false;
+		else
 			action.moveToElement(we).build().perform();
+		
 		WebElement submit1 = webDriver.findElement(By.name("onh_tools_and_investing_my_portfolio"));
-		if (submit1 != null)
+		if (submit1 == null)
+			return false;
+		else
 			submit1.click();
 		webDriver.waitFrameToBeAvailableAndSwitchToIt("htmlhelp");
+		
+		return true;
 	}
 
 	class mpTotal {
