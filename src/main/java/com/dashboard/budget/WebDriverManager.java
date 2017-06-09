@@ -18,20 +18,7 @@ import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
-import com.dashboard.budget.pages.AccountPage;
-import com.dashboard.budget.pages.AccountPageAmEx;
-import com.dashboard.budget.pages.AccountPageAmazon;
-import com.dashboard.budget.pages.AccountPageBestBuy;
-import com.dashboard.budget.pages.AccountPageCiti;
-import com.dashboard.budget.pages.AccountPageCreditKarma;
-import com.dashboard.budget.pages.AccountPageJCPenney;
-import com.dashboard.budget.pages.AccountPageKohls;
-import com.dashboard.budget.pages.AccountPageMP;
-import com.dashboard.budget.pages.AccountPageMacys;
-import com.dashboard.budget.pages.AccountPageNordstorm;
-import com.dashboard.budget.pages.AccountPagePayPal;
-import com.dashboard.budget.pages.AccountPageSaks;
-import com.dashboard.budget.pages.AccountPageTjMaxx;
+import com.dashboard.budget.pages.*;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
@@ -74,7 +61,8 @@ public class WebDriverManager implements Config {
 			return new AccountPageKohls(account, dataHandler);
 		case "jcp":
 			return new AccountPageJCPenney(account, dataHandler);
-
+		case "nm":
+			return new AccountPageNeimanMarcus(account, dataHandler);
 		default:
 			return null;
 		}
