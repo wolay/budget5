@@ -136,7 +136,7 @@ public class WebDriverManager implements Config {
 
 		for (List<String> driver : drivers) {
 			executor.submit(() -> {
-				accounts.stream().filter(a -> a.getBank()!=null && a.getBank().getName().equals(driver.get(0))
+				accounts.stream().filter(a -> a.getBank() != null && a.getBank().getName().equals(driver.get(0))
 						&& a.getOwner().equals(driver.get(1)) && a.getIsEnabled()).forEach(account -> {
 					Thread.currentThread().setName("Bank accounts ("
 							+ Util.getThreadNumber(Thread.currentThread().getName()) + "): " + account.getName());
@@ -227,14 +227,14 @@ public class WebDriverManager implements Config {
 	public boolean isOnline() {
 		logger.info("Network check...");
 		WebDriver webDriver = new HtmlUnitDriver();
-		
-		try{
+
+		try {
 			webDriver.get("https://www.google.com");
-		}catch(WebDriverException e){
+		} catch (WebDriverException e) {
 			logger.error("Connection failed due to WebDriver exception");
 			return false;
 		}
-		
+
 		try {
 			if (webDriver.findElements(By.cssSelector("#hplogo")).size() > 0) {
 				webDriver.quit();

@@ -104,8 +104,10 @@ public abstract class AccountPage implements Config {
 
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) throws Exception {
 		// check if getting transactions is enabled for account
-		if (accountTransactionDetails == null)
+		if (accountTransactionDetails == null) {
+			logger.info("Getting transactions is not enabled for account '{}'", total.getAccount().getName());
 			return new ArrayList<Transaction>();
+		}
 
 		List<Transaction> result = new ArrayList<Transaction>();
 
@@ -152,8 +154,11 @@ public abstract class AccountPage implements Config {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else
+			} else {
+				logger.error("Details (transaction) locator '{}' not found on the page",
+						accountNavigationDetails.getDetailsLinkLocator());
 				return result;
+			}
 		} else if (accountNavigationDetails != null && accountNavigationDetails.getTransactionsPageUrl() != null) {
 			webDriver.get(accountNavigationDetails.getTransactionsPageUrl());
 			webDriver.switchTo().defaultContent();

@@ -510,7 +510,7 @@ public class Reporter implements Config {
 		// outcome
 		for (PlanFact planFact : budgetSummary.get(0).getPlanFactList()) {
 			Category curCategory = planFact.getCategory();
-			if (curCategory.getType() != 2)
+			if (curCategory.getType() != 2 || !curCategory.getIsActive())
 				continue;
 			content = content + "<tr><td><font size='1'>" + curCategory.getName() + "</font></td>";
 			for (BudgetSummary oneMonthBudget : budgetSummary) {

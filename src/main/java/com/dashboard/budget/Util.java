@@ -194,7 +194,7 @@ public class Util implements Config {
 				|| row.startsWith("No activity posted")
 				|| row.equals("You've reached the end of the statement cycle account activity.")
 				|| row.equals("In Progress and Cleared Transactions") || row.contains("Pending*")
-				|| row.contains("Total for"))
+				|| row.contains("Total for")|| row.contains("Transaction Detail"))
 			return true;
 		else
 			return false;
@@ -245,6 +245,10 @@ public class Util implements Config {
 	public static By getByLocator(String string) {
 		if (string == null)
 			return null;
+		if (!string.contains(":")){
+			logger.error("Locator '{}' cannot be initialized", string);
+			return null;
+		}			
 		if (string.startsWith("id"))
 			return By.id(string.replace("id:", ""));
 		if (string.startsWith("css"))
