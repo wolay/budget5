@@ -11,39 +11,8 @@ import com.dashboard.budget.DAO.Account;
 
 public class AccountPageTjMaxx extends AccountPage {
 
-	private By btnLoginConfirmation = By.cssSelector("a.RegisterNextBtnleft > span");
-
 	public AccountPageTjMaxx(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
-	}
-
-	@Override
-	public boolean login() {
-		WebElement username = webDriver.findElement(fldUsername);
-		if (username == null)
-			return false;
-		username.sendKeys(accountLoginDetails.getUsernameValue());
-		WebElement login = webDriver.findElement(btnLogin);
-		if (login == null)
-			return false;	
-		login.click();
-
-		// Account blocked
-		if(Util.isProblemWithLogin(webDriver)){
-			logger.error("There is a problem with login: {}", account.getName());
-			return false;
-		}
-		// secret question
-		if(Util.isSecretQuestionShown(webDriver))
-			if (!super.answerSecretQuestion())
-				return false;
-
-		WebElement password = webDriver.findElement(fldPassword);
-		if (password == null)
-			return false;		
-		password.sendKeys(accountLoginDetails.getPasswordValue());
-		webDriver.findElement(btnLoginConfirmation).click();
-		return true;
 	}
 
 	@Override

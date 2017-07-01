@@ -22,13 +22,14 @@ import com.dashboard.budget.DAO.AccountDetailsLogin;
 import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
-import com.dashboard.budget.DAO.SecretQuestion;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
 public abstract class AccountPage implements Config {
 
 	protected static Logger logger = LoggerFactory.getLogger(AccountPage.class);
+	
+	private AccountPageLogin pageLogin;
 
 	protected Account account;
 	protected AccountDetailsLogin accountLoginDetails;
@@ -40,11 +41,6 @@ public abstract class AccountPage implements Config {
 	protected UberWebDriver webDriver;
 	protected WebDriverWait wait;
 
-	protected By fldUsername;
-	protected By fldPassword;
-	protected By btnLogin;
-	protected By btnLogout;
-	protected By btnPostLogout;
 	protected WebElement amount;
 
 	public AccountPage(Account account, DataHandler dataHandler) {
@@ -54,15 +50,12 @@ public abstract class AccountPage implements Config {
 		this.accountNavigationDetails = account.getAccountDetailsNavigation();
 		this.accountTotalDetails = account.getAccountDetailsTotal();
 		this.accountTransactionDetails = account.getAccountDetailsTransaction();
-		fldUsername = accountLoginDetails.getUsernameLocator();
-		fldPassword = accountLoginDetails.getPasswordLocator();
-		btnLogin = accountLoginDetails.getLoginLocator();
-		btnLogout = accountLoginDetails.getLogoutLocator();
-		btnPostLogout = accountLoginDetails.getLogoutPostLocator();
 
 		this.webDriver = new UberWebDriver();
 		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+		
+		pageLogin = new AccountPageLogin(account, webDriver, dataHandler);
 	}
 
 	public Account getAccount() {
@@ -78,22 +71,8 @@ public abstract class AccountPage implements Config {
 		this.accountTransactionDetails = account.getAccountDetailsTransaction();
 	}
 
-	public synchronized boolean login() {
-		if (Util.checkIfSiteDown(webDriver))
-			return false;
-
-		Util.sleep(3000); // for Best Buy card
-		WebElement username = webDriver.findElement(fldUsername);
-		if (username == null)
-			return false;
-		username.sendKeys(accountLoginDetails.getUsernameValue());
-		WebElement password = webDriver.findElement(fldPassword);
-		if (password == null)
-			return false;
-		password.sendKeys(accountLoginDetails.getPasswordValue());
-
-		webDriver.findElement(btnLogin).click();
-		return true;
+	public boolean login() {
+		return pageLogin.login();	
 	}
 
 	public void gotoHomePage() {
@@ -413,73 +392,15 @@ public abstract class AccountPage implements Config {
 	}
 
 	protected boolean answerSecretQuestion() {
-		By secretQuestionLocator = account.getAccountDetailsNavigation().getSecretQuestionLocator();
-		By secretAnswerLocator = account.getAccountDetailsNavigation().getSecretAnswerLocator();
-		By secretSubmitLocator = account.getAccountDetailsNavigation().getSecretSubmitLocator();
-		By secretSubmitSupLocator = account.getAccountDetailsNavigation().getSecretSubmitSupLocator();
-
-		WebElement question = webDriver.lookupElement(secretQuestionLocator);
-		if (question == null)
-			return false;
-		else {
-			String secretQuestion = question.getText().trim();
-			// first trying to find answer by account
-			SecretQuestion secretAnswer = dataHandler.getSecretQuestions().stream()
-					.filter(sq -> sq.getAccount() == account && sq.getQuestion().equals(secretQuestion)).findFirst()
-					.orElse(null);
-			// if answer not found by account trying to find answer by bank
-			if (secretAnswer == null)
-				secretAnswer = dataHandler.getSecretQuestions().stream()
-						.filter(sq -> sq.getBank() == account.getBank() && sq.getQuestion().equals(secretQuestion))
-						.findFirst().orElse(null);
-			if (secretAnswer == null)
-				logger.error("Cannot find answer for question {}", secretQuestion);
-			else {
-				WebElement answer = webDriver.lookupElement(secretAnswerLocator);
-				answer.clear();
-				answer.sendKeys(secretAnswer.getAnswer());
-			}
-
-			if (secretSubmitSupLocator != null) {
-				WebElement submitSup = webDriver.findElement(secretSubmitSupLocator);
-				if (submitSup != null)
-					submitSup.click();
-			}
-
-			WebElement submit = webDriver.findElement(secretSubmitLocator);
-			if (submit != null)
-				submit.click();
-
-			/*
-			 * WebElement cont = webDriver.findElement(By.cssSelector(
-			 * "#verify-cq-submit > span")); if (cont != null) cont.click();
-			 * else return false;
-			 */
-
-			return true;
-		}
-
+		return pageLogin.answerSecretQuestion();
+	}
+	
+	public boolean quit() {
+		return pageLogin.quit();	
 	}
 
 	public UberWebDriver getWebDriver() {
 		return webDriver;
 	}
-
-	public void quit() {
-		WebElement logout = webDriver.findElement(btnLogout);
-		if (logout != null) {
-			logout.click();
-
-			// For Macys: there is log out confirmation window
-			if (btnPostLogout != null) {
-				WebElement postLogout = webDriver.findElement(btnPostLogout);
-				if (postLogout != null)
-					postLogout.click();
-			}
-
-			logger.info("Account page {} was closed", account.getName());
-		} else
-			logger.error("Account page {} was not closed properly", account.getName());
-		webDriver.quit();
-	}
+	
 }

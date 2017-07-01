@@ -13,30 +13,6 @@ public class AccountPageJCPenney extends AccountPage {
 	public AccountPageJCPenney(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
 	}
-	
-	@Override
-	public boolean login() {
-		fldUsername = accountLoginDetails.getUsernameLocator();
-		fldPassword = accountLoginDetails.getPasswordLocator();
-		
-		webDriver.findElement(fldUsername).sendKeys(accountLoginDetails.getUsernameValue());
-		webDriver.findElement(By.name("button")).click();
-		
-		// Account blocked
-		if(Util.isProblemWithLogin(webDriver)){
-			logger.error("There is a problem with login: {}", account.getName());
-			return false;
-		}
-		// secret question
-		if(Util.isSecretQuestionShown(webDriver))
-			if (!super.answerSecretQuestion())
-				return false;	
-		
-		webDriver.findElement(fldPassword).sendKeys(accountLoginDetails.getPasswordValue());		
-		webDriver.findElement(btnLogin).click();
-		return true;
-		
-	}
 
 	@Override
 	public Double getTotal() {
