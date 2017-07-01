@@ -1,5 +1,7 @@
 package com.dashboard.budget.pages;
 
+import static com.dashboard.budget.Util.convertStringAmountToDouble;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,14 +74,36 @@ public abstract class AccountPage implements Config {
 	}
 
 	public boolean login() {
-		return pageLogin.login();	
+		return pageLogin.login();
 	}
 
 	public void gotoHomePage() {
 		webDriver.get(account.getUrl());
 	}
 
-	public abstract Double getTotal();
+	public Double getTotal() {		
+		if(accountTotalDetails.isSecretQuestionPossible()){
+			// secret question
+			if(Util.isSecretQuestionShown(webDriver))
+				if (!answerSecretQuestion())
+					return null;	
+
+			// secret question could be asked one more time
+			if(Util.isSecretQuestionShown(webDriver))
+				if (!answerSecretQuestion())
+					return null;	
+		}
+		
+		if (accountTotalDetails.getBalanceLocator() != null) {
+			amount = webDriver.findElement(accountTotalDetails.getBalanceLocator());
+			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
+		} else {
+			String balanceStrDol = webDriver.findElement(accountTotalDetails.getBalanceDolLocator()).getText();
+			String balanceStrCen = webDriver.findElement(accountTotalDetails.getBalanceCenLocator()).getText()
+					.replace("·", ".").replace("*", "");
+			return Util.wrapAmount(-convertStringAmountToDouble(balanceStrDol + balanceStrCen));
+		}
+	}
 
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) throws Exception {
 		// check if getting transactions is enabled for account
@@ -334,7 +358,7 @@ public abstract class AccountPage implements Config {
 				List<Transaction> matchPrevTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				List<Transaction> matchCurrentTransactions = result.stream()
-						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());				
+						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount).collect(Collectors.toList());
 				if (matchPrevTransactions.isEmpty() && matchCurrentTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;

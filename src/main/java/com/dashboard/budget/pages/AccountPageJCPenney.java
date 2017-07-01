@@ -14,9 +14,4 @@ public class AccountPageJCPenney extends AccountPage {
 		super(account, dataHandler);
 	}
 
-	@Override
-	public Double getTotal() {
-		amount = webDriver.findElement(By.id("currentBalance"));
-		return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
-	}
 }

@@ -14,10 +14,4 @@ public class AccountPageSaks extends AccountPage {
 		super(account, dataHandler);
 	}
 
-	@Override
-	public Double getTotal() {
-		amount = webDriver.findElement(By.cssSelector("td.last.amount"));
-		return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
-	}
-
 }
