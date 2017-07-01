@@ -30,8 +30,9 @@ import com.dashboard.budget.DAO.Transaction;
 public abstract class AccountPage implements Config {
 
 	protected static Logger logger = LoggerFactory.getLogger(AccountPage.class);
-	
+
 	private AccountPageLogin pageLogin;
+	private AccountPageSecretQuestions pageQuestions;
 
 	protected Account account;
 	protected AccountDetailsLogin accountLoginDetails;
@@ -56,8 +57,9 @@ public abstract class AccountPage implements Config {
 		this.webDriver = new UberWebDriver();
 		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
-		
+
 		pageLogin = new AccountPageLogin(account, webDriver, dataHandler);
+		pageQuestions = new AccountPageSecretQuestions(account, webDriver, dataHandler);
 	}
 
 	public Account getAccount() {
@@ -416,15 +418,15 @@ public abstract class AccountPage implements Config {
 	}
 
 	protected boolean answerSecretQuestion() {
-		return pageLogin.answerSecretQuestion();
+		return pageQuestions.answerSecretQuestion();
 	}
-	
-	public boolean quit() {
-		return pageLogin.quit();	
+
+	public void quit() {
+		pageLogin.quit();
 	}
 
 	public UberWebDriver getWebDriver() {
 		return webDriver;
 	}
-	
+
 }

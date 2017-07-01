@@ -28,10 +28,9 @@ public class AccountPageCreditKarma extends AccountPage {
 
 	
 	@Override
-	public boolean quit() {
+	public void quit() {
 		webDriver.get("https://www.creditkarma.com/auth/logout/lockdown");
 		webDriver.quit();
-		return true;
 	}
 	
 
