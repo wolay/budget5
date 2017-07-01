@@ -131,19 +131,16 @@ public class AccountPageLogin implements Page {
 		return true;
 	}
 
-	public boolean quit() {
-
+	public void quit() {
 		try {
 			btnLogout.click();
-			btnPostLogout.click();
+			btnPostLogout.clickIfAvailable();
+			logger.info("Account page {} was closed", account.getName());
 		} catch (PageElementNotFoundException e) {
 			logger.error("Account page {} was not closed properly", account.getName());
-			return true;
 		}
 
-		webDriver.quit();
-		logger.info("Account page {} was closed", account.getName());
-		return true;
+		webDriver.quit();		
 	}
 
 	@Override
