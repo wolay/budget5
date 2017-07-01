@@ -39,12 +39,6 @@ public class WebDriverManager implements Config {
 		switch (account.getBank().getName()) {
 		case "mp":
 			return new AccountPageMP(account, dataHandler);
-		case "citi":
-			return new AccountPageCiti(account, dataHandler);
-		case "amex":
-			return new AccountPageAmEx(account, dataHandler);
-		case "pp":
-			return new AccountPagePayPal(account, dataHandler);
 		case "amz":
 			return new AccountPageAmazon(account, dataHandler);
 		case "nrd":
