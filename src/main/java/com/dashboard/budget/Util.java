@@ -69,6 +69,10 @@ public class Util implements Config {
 		}
 		return null;
 	}
+	
+	public static boolean isNumeric(String s) {  
+	    return s != null && s.matches("[-+]?\\d*\\.?\\d+");  
+	}  
 
 	public static String convertDateToStringType1(Date date) {
 		return new SimpleDateFormat("yyyy-MM-dd").format(date);
