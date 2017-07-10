@@ -12,16 +12,33 @@ import org.openqa.selenium.interactions.Actions;
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.Field;
+import com.dashboard.budget.DAO.PageElementNotFoundException;
 
 public class AccountPageMP extends AccountPage {
 
 	private List<mpTotal> totalsList;
+	private Field fldRefreshStatus;
 
 	public AccountPageMP(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
+
+		fldRefreshStatus = new Field("refresh statu", By.xpath("//a[@id='refresh']"), getWebdriver());
 	}
 
-	@Override
+	public boolean login() {
+		if (Util.checkIfSiteDown(webDriver))
+			return false;
+		try {
+			fldUsername.setText(valUsername);
+			fldPassword.setText(valPassword);
+			btnLogin.click();
+			return true;
+		} catch (PageElementNotFoundException e) {
+			return false;
+		}
+	}
+
 	public Double getTotal() {
 
 		// first check if table of totals already captured
@@ -34,36 +51,31 @@ public class AccountPageMP extends AccountPage {
 
 			// navigate to MyPortfolio page if it's not there yet
 			if (!webDriver.getWebDriver().getTitle().contains("My Portfolio")) {
-				if (!gotoMyPortfolioPage()){
+				if (!gotoMyPortfolioPage()) {
 					logger.error("Cannot navigate to 'My Portfolio' page");
 					return null;
-				}					
+				}
 			}
 
 			totalsList = new ArrayList<mpTotal>();
 
+			try{
 			// Waiting for table to refresh
-			WebElement refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
-			if (refreshStatus == null) {
-				logger.error("Cannot find refresh status locator");
-				return null;
-			}
-
-			if (refreshStatus.getText().startsWith("Refreshing")) {
+			if (fldRefreshStatus.getText().startsWith("Refreshing")) {
 				logger.info("Waiting for refreshing accounts table...");
-				while (refreshStatus.getText().startsWith("Refreshing")) {
+				while (fldRefreshStatus.getText().startsWith("Refreshing")) {
 					Util.sleep(5000);
-					refreshStatus = webDriver.findElement(By.xpath("//a[@id='refresh']"));
+					fldRefreshStatus.setWebElement(null);
 				}
-				
+
 				// Needs to come again on 'My Portfolio' page
-				// otherwise updated totals not reflected in table				
+				// otherwise updated totals not reflected in table
 				webDriver.getWebDriver().navigate().back();
 				Util.sleep(3000);
-				if (!gotoMyPortfolioPage()){
+				if (!gotoMyPortfolioPage()) {
 					logger.error("Cannot navigate to 'My Portfolio' page");
 					return null;
-				}			
+				}
 				logger.info("All My Portfolio accounts are up to date");
 			}
 
@@ -130,9 +142,14 @@ public class AccountPageMP extends AccountPage {
 
 			// return to the main page (from where Transactions will be opened)
 			webDriver.getWebDriver().navigate().back();
+			
+			} catch (PageElementNotFoundException e) {
+				return null;
+			}
 		}
 
-		mpTotal totalRow = totalsList.stream().filter(t -> t.getId().contains(account.getMyPortfolioId())).findFirst().orElse(null);
+		mpTotal totalRow = totalsList.stream().filter(t -> t.getId().contains(account.getMyPortfolioId())).findFirst()
+				.orElse(null);
 
 		if (totalRow != null)
 			return totalRow.getAmount();
@@ -146,20 +163,20 @@ public class AccountPageMP extends AccountPage {
 		logger.info("Navigating to 'My Portfolio' page...");
 		webDriver.switchTo().defaultContent();
 		Actions action = new Actions(webDriver.getWebDriver());
-		
+
 		WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
 		if (we == null)
 			return false;
 		else
 			action.moveToElement(we).build().perform();
-		
+
 		WebElement submit1 = webDriver.findElement(By.name("onh_tools_and_investing_my_portfolio"));
 		if (submit1 == null)
 			return false;
 		else
 			submit1.click();
 		webDriver.waitFrameToBeAvailableAndSwitchToIt("htmlhelp");
-		
+
 		return true;
 	}
 
@@ -192,4 +209,14 @@ public class AccountPageMP extends AccountPage {
 		}
 	}
 
+	public void quit() {
+		try {
+			btnLogout.click();
+			logger.info("Account page {} was closed", account.getName());
+		} catch (PageElementNotFoundException e) {
+			logger.error("Account page {} was not closed properly", account.getName());
+		}
+
+		webDriver.quit();
+	}
 }
