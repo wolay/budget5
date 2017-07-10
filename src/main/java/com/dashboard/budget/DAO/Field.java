@@ -1,30 +1,29 @@
 package com.dashboard.budget.DAO;
 
 import org.openqa.selenium.By;
-
-import com.dashboard.budget.pages.Page;
+import org.openqa.selenium.SearchContext;
 
 public class Field extends PageElement {
 
-	public Field(String name, By locator, Page accountPage) {
-		super(name, locator, accountPage);
+	public Field(String name, By locator, SearchContext searchContext) {
+		super(name, locator, searchContext);
 	}
 
 	public String getText() throws PageElementNotFoundException {
-		if(locator==null)
+		if (locator == null)
 			return null;
 		if (webElement == null)
-			webElement = accountPage.getWebdriver().findElement(locator);
+			webElement = searchContext.findElement(locator);
 		if (webElement == null)
 			throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
 		return webElement.getText().trim();
 	}
 
 	public void setText(String text) throws PageElementNotFoundException {
-		if(locator==null)
+		if (locator == null)
 			return;
 		if (webElement == null)
-			webElement = accountPage.getWebdriver().findElement(locator);
+			webElement = searchContext.findElement(locator);
 		if (webElement == null)
 			throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
 		webElement.sendKeys(text);
@@ -32,8 +31,7 @@ public class Field extends PageElement {
 
 	@Override
 	public String toString() {
-		return "Field [name=" + name + ", locator=" + locator + ", accountPage=" + accountPage + ", webElement="
-				+ webElement + "]";
+		return "Field [name=" + name + ", locator=" + locator + ", webElement=" + webElement + "]";
 	}
 
 }

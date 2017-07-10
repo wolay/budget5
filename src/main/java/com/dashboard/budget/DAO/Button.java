@@ -1,18 +1,30 @@
 package com.dashboard.budget.DAO;
 
 import org.openqa.selenium.By;
-
-import com.dashboard.budget.pages.Page;
+import org.openqa.selenium.SearchContext;
 
 public class Button extends PageElement {
 	
-	public Button(String name, By locator, Page accountPage) {
-		super(name, locator, accountPage);
+	public Button(String name, By locator, SearchContext searchContext) {
+		super(name, locator, searchContext);
 	}
+	
+	/*
+	// More complicated scenario for click
+	WebElement weDetails = webDriver.lookupElement(accountNavigationDetails.getDetailsLinkLocator());
+	if (weDetails != null) {
+		webDriver.waitToBeClickable(accountNavigationDetails.getDetailsLinkLocator());
+		try {
+			weDetails.click();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	*/
 	
 	public void click() throws PageElementNotFoundException{
 		if (webElement == null)
-			webElement = accountPage.getWebdriver().findElement(locator);
+			webElement = searchContext.findElement(locator);
 		if (webElement == null)
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
 		webElement.click();
@@ -22,7 +34,7 @@ public class Button extends PageElement {
 		if(locator==null)
 			return;
 		if (webElement == null)
-			webElement = accountPage.getWebdriver().findElement(locator);
+			webElement = searchContext.findElement(locator);
 		if (webElement == null)
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
 		webElement.click();
@@ -30,8 +42,7 @@ public class Button extends PageElement {
 
 	@Override
 	public String toString() {
-		return "Button [name=" + name + ", locator=" + locator + ", accountPage=" + accountPage + ", webElement="
-				+ webElement + "]";
+		return "Button [name=" + name + ", locator=" + locator  + ", webElement=" + webElement + "]";
 	}
 
 }

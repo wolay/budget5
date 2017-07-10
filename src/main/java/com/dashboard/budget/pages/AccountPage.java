@@ -1,7 +1,5 @@
 package com.dashboard.budget.pages;
 
-import static com.dashboard.budget.Util.convertStringAmountToDouble;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,14 +22,18 @@ import com.dashboard.budget.DAO.AccountDetailsLogin;
 import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
+import com.dashboard.budget.DAO.Button;
+import com.dashboard.budget.DAO.Field;
+import com.dashboard.budget.DAO.PageElementNotFoundException;
+import com.dashboard.budget.DAO.Switch;
+import com.dashboard.budget.DAO.TableRow;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
-public abstract class AccountPage implements Config {
+public abstract class AccountPage implements Config, Page {
 
 	protected static Logger logger = LoggerFactory.getLogger(AccountPage.class);
 
-	private AccountPageLogin pageLogin;
 	private AccountPageSecretQuestions pageQuestions;
 
 	protected Account account;
@@ -44,7 +46,22 @@ public abstract class AccountPage implements Config {
 	protected UberWebDriver webDriver;
 	protected WebDriverWait wait;
 
-	protected WebElement amount;
+	// Login
+	protected Field fldUsername;
+	protected String valUsername;
+	protected Field fldPassword;
+	protected String valPassword;
+	protected Button btnLogin;
+	protected Button btnLogout;
+	protected Button btnPostLogout;
+
+	// Total
+	protected Field fldBalance;
+
+	// Transactions
+	protected Button btnTransactionsPage;
+	protected TableRow trTransaction;
+	protected Switch swtPeriod;
 
 	public AccountPage(Account account, DataHandler dataHandler) {
 		this.account = account;
@@ -58,8 +75,31 @@ public abstract class AccountPage implements Config {
 		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
 
-		pageLogin = new AccountPageLogin(account, webDriver, dataHandler);
 		pageQuestions = new AccountPageSecretQuestions(account, webDriver, dataHandler);
+
+		// Login
+		fldUsername = new Field("username", accountLoginDetails.getUsernameLocator(), getWebdriver());
+		valUsername = accountLoginDetails.getUsernameValue();
+		fldPassword = new Field("password", accountLoginDetails.getPasswordLocator(), getWebdriver());
+		valPassword = accountLoginDetails.getPasswordValue();
+		btnLogin = new Button("login", accountLoginDetails.getLoginLocator(), getWebdriver());
+		btnLogout = new Button("logout", accountLoginDetails.getLogoutLocator(), getWebdriver());
+		btnPostLogout = new Button("post logout", accountLoginDetails.getLogoutPostLocator(), getWebdriver());
+
+		// Total
+		if (accountTotalDetails != null) {
+			fldBalance = new Field("balance", accountTotalDetails.getBalanceLocator(), getWebdriver());
+		}
+
+		// Transactions
+		if (accountNavigationDetails != null) {
+			btnTransactionsPage = new Button("transactions page link", accountNavigationDetails.getDetailsLinkLocator(),
+					getWebdriver());
+			swtPeriod = new Switch("period switch", accountNavigationDetails.getPeriodSwitchLocator(),
+					accountNavigationDetails.getActionToSwitchPeriod(), getWebdriver());
+
+		}
+
 	}
 
 	public Account getAccount() {
@@ -75,39 +115,17 @@ public abstract class AccountPage implements Config {
 		this.accountTransactionDetails = account.getAccountDetailsTransaction();
 	}
 
-	public boolean login() {
-		return pageLogin.login();
-	}
-
 	public void gotoHomePage() {
 		webDriver.get(account.getUrl());
 	}
 
-	public Double getTotal() {		
-		if(accountTotalDetails.isSecretQuestionPossible()){
-			// secret question
-			if(Util.isSecretQuestionShown(webDriver))
-				if (!answerSecretQuestion())
-					return null;	
+	public abstract boolean login();
 
-			// secret question could be asked one more time
-			if(Util.isSecretQuestionShown(webDriver))
-				if (!answerSecretQuestion())
-					return null;	
-		}
-		
-		if (accountTotalDetails.getBalanceLocator() != null) {
-			amount = webDriver.findElement(accountTotalDetails.getBalanceLocator());
-			return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
-		} else {
-			String balanceStrDol = webDriver.findElement(accountTotalDetails.getBalanceDolLocator()).getText();
-			String balanceStrCen = webDriver.findElement(accountTotalDetails.getBalanceCenLocator()).getText()
-					.replace("·", ".").replace("*", "");
-			return Util.wrapAmount(-convertStringAmountToDouble(balanceStrDol + balanceStrCen));
-		}
-	}
+	public abstract Double getTotal();
 
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) throws Exception {
+		// if(1==1)
+		// return null;
 		// check if getting transactions is enabled for account
 		if (accountTransactionDetails == null) {
 			logger.info("Getting transactions is not enabled for account '{}'", total.getAccount().getName());
@@ -321,10 +339,15 @@ public abstract class AccountPage implements Config {
 			return result;
 		else
 			return new ArrayList<Transaction>();
-
 	}
 
-	public int getScore() {
+	protected boolean isTransactionExist(List<Transaction> prevTransactions, Date trDate, Double trAmount) {
+		return prevTransactions.stream()
+				.filter(t -> t.getDate().equals(trDate) && t.getAmount() == trAmount && t.getAccount() == account)
+				.count() > 0;
+	}
+
+	public int getScore() throws PageElementNotFoundException {
 		return 0;
 	}
 
@@ -332,12 +355,10 @@ public abstract class AccountPage implements Config {
 		return pageQuestions.answerSecretQuestion();
 	}
 
-	public void quit() {
-		pageLogin.quit();
-	}
-
-	public UberWebDriver getWebDriver() {
+	@Override
+	public UberWebDriver getWebdriver() {
 		return webDriver;
 	}
 
+	public abstract void quit();
 }

@@ -22,9 +22,9 @@ public class AccountPageCreditKarma extends AccountPage {
 		super(account, dataHandler);
 
 		lblTransUnion = new Label("TransUnion score", By.xpath("//div[contains(@class, 'dashboard-score-dials')]/a"),
-				this);
+				getWebdriver());
 		lblEquifax = new Label("TransUnion score", By.xpath("//div[contains(@class, 'dashboard-score-dials')]/a[2]"),
-				this);
+				getWebdriver());
 	}
 
 	public boolean login() {

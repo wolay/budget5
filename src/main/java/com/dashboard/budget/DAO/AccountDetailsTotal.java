@@ -22,6 +22,8 @@ public class AccountDetailsTotal {
 	private Account account;
 	private String dueDateLocator;
 	private String dueAmountLocator;
+	private String preBalanceLocator;
+	private Boolean switchingWindows;
 	private String balanceLocator;
 	private String balanceDolLocator;
 	private String balanceCenLocator;
@@ -30,12 +32,15 @@ public class AccountDetailsTotal {
 	public AccountDetailsTotal() {
 	}
 
-	public AccountDetailsTotal(Account account, String dueDateLocator, String dueAmountLocator, String balanceLocator,
-			String balanceDolLocator, String balanceCenLocator, Boolean secretQuestionPossible) {
+	public AccountDetailsTotal(Account account, String dueDateLocator, String dueAmountLocator,
+			String preBalanceLocator, Boolean switchingWindows, String balanceLocator, String balanceDolLocator,
+			String balanceCenLocator, Boolean secretQuestionPossible) {
 		super();
 		this.account = account;
 		this.dueDateLocator = dueDateLocator;
 		this.dueAmountLocator = dueAmountLocator;
+		this.preBalanceLocator = preBalanceLocator;
+		this.switchingWindows = switchingWindows;
 		this.balanceLocator = balanceLocator;
 		this.balanceDolLocator = balanceDolLocator;
 		this.balanceCenLocator = balanceCenLocator;
@@ -60,6 +65,14 @@ public class AccountDetailsTotal {
 		return Util.getByLocator(dueAmountLocator);
 	}
 
+	public By getPreBalanceLocator() {
+		return Util.getByLocator(preBalanceLocator);
+	}
+
+	public Boolean isSwitchingWindows() {
+		return (switchingWindows == null) ? false : switchingWindows;
+	}
+
 	public By getBalanceLocator() {
 		return Util.getByLocator(balanceLocator);
 	}
@@ -71,7 +84,7 @@ public class AccountDetailsTotal {
 	public By getBalanceCenLocator() {
 		return Util.getByLocator(balanceCenLocator);
 	}
-	
+
 	public Boolean isSecretQuestionPossible() {
 		return secretQuestionPossible;
 	}

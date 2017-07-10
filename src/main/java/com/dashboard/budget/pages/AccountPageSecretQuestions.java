@@ -32,12 +32,14 @@ public class AccountPageSecretQuestions implements Page {
 		this.webDriver = webDriver;
 		this.dataHandler = dataHandler;
 
-			fldSecretQuestion = new Field("secret question", accountDetailsNavigation.getSecretQuestionLocator(), this);
-			fldSecretAnswer = new Field("secret answer", accountDetailsNavigation.getSecretAnswerLocator(), this);
+		if(accountDetailsNavigation!=null){
+			fldSecretQuestion = new Field("secret question", accountDetailsNavigation.getSecretQuestionLocator(), getWebdriver());
+			fldSecretAnswer = new Field("secret answer", accountDetailsNavigation.getSecretAnswerLocator(), getWebdriver());
 			btnSecretSubmit = new Button("submit secret answer", accountDetailsNavigation.getSecretSubmitLocator(),
-					this);
+					getWebdriver());
 			btnSecretPreSubmit = new Button("pre submit secret answer",
-					accountDetailsNavigation.getSecretSubmitSupLocator(), this);
+					accountDetailsNavigation.getSecretSubmitSupLocator(), getWebdriver());
+		}
 	}
 
 	protected boolean answerSecretQuestion() {
@@ -76,4 +78,5 @@ public class AccountPageSecretQuestions implements Page {
 		return webDriver;
 	}
 
+	
 }

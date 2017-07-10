@@ -83,13 +83,15 @@ public class WebDriverManager implements Config {
 				logger.info("No transactions found for difference");
 			} else {
 				for (Transaction newTransaction : newTransactions) {
+					dataHandler.recognizeCategoryInTransaction(newTransaction);
 					logger.info("{}, transaction: {}, {}, {}, {} ({})", accountPage.getAccount().getName(),
 							newTransaction.getDate(), newTransaction.getDecription(), newTransaction.getAmount(),
 							newTransaction.getCategory(), newTransaction.getCategoryStr());
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e.toString());
+			logger.error(e.getLocalizedMessage());
+			e.printStackTrace();			
 		}
 
 	}
@@ -207,11 +209,16 @@ public class WebDriverManager implements Config {
 				accountPage.gotoHomePage();
 				accountPage.login();
 
-				int score = accountPage.getScore();
+				try {
+					int score = accountPage.getScore();
+					result.add(new CreditScore(account, account.getOwner(), score, score - s.getScore()));
+					logger.info("New credit score {}: {}", account.getOwner(), score);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				accountPage.quit();
 
-				result.add(new CreditScore(account, account.getOwner(), score, score - s.getScore()));
-				logger.info("New credit score {}: {}", account.getOwner(), score);
 			}
 		});
 

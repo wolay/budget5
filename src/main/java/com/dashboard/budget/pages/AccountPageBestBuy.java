@@ -2,12 +2,10 @@ package com.dashboard.budget.pages;
 
 import static com.dashboard.budget.Util.convertStringAmountToDouble;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.PageElementNotFoundException;
 
 public class AccountPageBestBuy extends AccountPage {
 
@@ -15,15 +13,41 @@ public class AccountPageBestBuy extends AccountPage {
 		super(account, dataHandler);
 	}
 
-	@Override
-	public Double getTotal() {
-		amount = webDriver.findElement(By.xpath("//div[@id='skip_target']/section[2]/section/article/div/dl[2]/dd"));
-		WebElement signoff = webDriver.findElement(By.linkText("Sign Off"));
-		if (signoff != null)
-			signoff.click();
-		else
-			return null;		
-		return amount == null ? null : Util.wrapAmount(-convertStringAmountToDouble(amount.getText()));
+	public boolean login() {
+		if (Util.checkIfSiteDown(webDriver))
+			return false;
+
+		Util.sleep(3000);
+
+		try {
+			fldUsername.setText(valUsername);
+			fldPassword.setText(valPassword);
+			btnLogin.click();
+			return true;
+		} catch (PageElementNotFoundException e) {
+			return false;
+		}
 	}
 
+	public Double getTotal() {
+		try {
+			Double amount = Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
+			btnPostLogout.click();
+			return amount;
+		} catch (PageElementNotFoundException e) {
+			return null;
+		}
+	}
+	
+	public void quit() {
+		try {
+			btnLogout.click();
+			btnPostLogout.clickIfAvailable();
+			logger.info("Account page {} was closed", account.getName());
+		} catch (PageElementNotFoundException e) {
+			logger.error("Account page {} was not closed properly", account.getName());
+		}
+
+		webDriver.quit();		
+	}
 }

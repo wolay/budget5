@@ -1,21 +1,20 @@
 package com.dashboard.budget.DAO;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
-
-import com.dashboard.budget.pages.Page;
 
 public class PageElement {
 
 	protected String name;
 	protected By locator;
-	protected Page accountPage;
+	protected SearchContext searchContext;
 	protected WebElement webElement;
 	
-	public PageElement(String name, By locator, Page accountPage) {
+	public PageElement(String name, By locator, SearchContext searchContext) {
 		this.name = name;
 		this.locator = locator;
-		this.accountPage = accountPage;
+		this.searchContext = searchContext;
 	}
 
 	public String getName() {
@@ -26,8 +25,12 @@ public class PageElement {
 		return locator;
 	}
 
-	public Page getAccountPage() {
-		return accountPage;
+	public SearchContext getSearchContext() {
+		return searchContext;
+	}
+
+	public void setSearchContext(SearchContext searchContext) {
+		this.searchContext = searchContext;
 	}
 
 	public WebElement getWebElement() {
