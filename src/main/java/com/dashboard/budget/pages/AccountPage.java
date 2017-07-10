@@ -169,8 +169,6 @@ public abstract class AccountPage implements Config {
 		Double difference = total.getDifference();
 		By byDate = By.xpath(accountTransactionDetails.getTransDateLocator());
 		By byAmount = By.xpath(accountTransactionDetails.getTransAmountLocator());
-		By byAmountSup = (accountTransactionDetails.getTransAmountSupLocator() == null) ? null
-				: By.xpath(accountTransactionDetails.getTransAmountSupLocator());
 		By byDescription = By.xpath(accountTransactionDetails.getTransDescriptionLocator());
 		By byCategory = (accountTransactionDetails.getTransCategoryLocator() == null) ? null
 				: By.xpath(accountTransactionDetails.getTransCategoryLocator());
@@ -196,26 +194,11 @@ public abstract class AccountPage implements Config {
 
 				double amount;
 				WebElement weByAmount = row.findElement(byAmount);
-				WebElement weByAmountSup = (byAmountSup == null) ? null : row.findElement(byAmountSup);
 				// Amount consideration got complicated due PayPal
-				if (byAmountSup == null)
-					if (account.getIsMyProtfolio())
-						amount = Util.convertStringAmountToDouble(weByAmount.getText());
-					else
-						amount = -Util.convertStringAmountToDouble(weByAmount.getText());
-				else {
-					if ("negative".equals(weByAmountSup.getText()))
-						amount = -Util.convertStringAmountToDouble(weByAmount.getText());
-					else {
-						if (weByAmount == null)
-							amount = -Util.convertStringAmountToDouble(weByAmountSup.getText());
-						else
-							amount = ("".equals(weByAmountSup.getText()))
-									? -Util.convertStringAmountToDouble(weByAmount.getText())
-									: Util.convertStringAmountToDouble(weByAmountSup.getText());
-					}
-
-				}
+				if (account.getIsMyProtfolio())
+					amount = Util.convertStringAmountToDouble(weByAmount.getText());
+				else
+					amount = -Util.convertStringAmountToDouble(weByAmount.getText());
 
 				String description = row.findElement(byDescription).getText().trim().replace("\n", "-");
 
@@ -305,7 +288,7 @@ public abstract class AccountPage implements Config {
 			Util.sleep(5000);
 			previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
 			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
-			
+
 			for (WebElement row : previousPeriodRows) {
 				// logger.info("Row in the previous period table: {}",
 				// row.getText());

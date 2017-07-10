@@ -25,7 +25,6 @@ public class AccountDetailsTransaction {
 	private Integer transDateFormat;
 	private String transDescriptionLocator;
 	private String transAmountLocator;
-	private String transAmountSupLocator;
 	private String transCategoryLocator;
 
 	public AccountDetailsTransaction() {
@@ -33,7 +32,7 @@ public class AccountDetailsTransaction {
 
 	public AccountDetailsTransaction(Account account, String transTableLocator, String transDateLocator,
 			Integer transDateFormat, String transDescriptionLocator, String transAmountLocator,
-			String transAmountSupLocator, String transCategoryLocator) {
+			String transCategoryLocator) {
 		super();
 		this.account = account;
 		this.transTableLocator = transTableLocator;
@@ -41,7 +40,6 @@ public class AccountDetailsTransaction {
 		this.transDateFormat = transDateFormat;
 		this.transDescriptionLocator = transDescriptionLocator;
 		this.transAmountLocator = transAmountLocator;
-		this.transAmountSupLocator = transAmountSupLocator;
 		this.transCategoryLocator = transCategoryLocator;
 
 		this.account.setAccountDetailsTransaction(this);
@@ -74,11 +72,7 @@ public class AccountDetailsTransaction {
 	public String getTransAmountLocator() {
 		return transAmountLocator;
 	}
-
-	public String getTransAmountSupLocator() {
-		return transAmountSupLocator;
-	}
-
+	
 	public String getTransCategoryLocator() {
 		return transCategoryLocator;
 	}
