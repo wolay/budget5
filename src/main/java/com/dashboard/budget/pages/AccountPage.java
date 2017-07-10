@@ -267,15 +267,6 @@ public abstract class AccountPage implements Config {
 			} else
 				return new ArrayList<Transaction>();
 
-			//
-			if (accountNavigationDetails.getPeriodSwitchPostLocator() != null) {
-				WebElement periods = webDriver.findElement(accountNavigationDetails.getPeriodSwitchPostLocator());
-				if (periods != null)
-					periods.click();
-				else
-					return new ArrayList<Transaction>();
-			}
-
 			// Wait for previous transactions table to be loaded
 			Util.sleep(5000);
 			previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());

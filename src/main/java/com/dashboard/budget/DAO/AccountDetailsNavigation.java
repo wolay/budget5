@@ -21,12 +21,10 @@ public class AccountDetailsNavigation {
 	@OneToOne(mappedBy = "accountDetailsNavigation")
 	private Account account;
 	private String detailsLinkLocator;
-	private String detailsLinkSupLocator;
 	private boolean switchWindowFotTransactions;
 	private String actionToSwitchPeriod;
 	private String periodSwitchLocator;
 	private String periodSwitchPreLocator;
-	private String periodSwitchPostLocator;
 	private String secretQuestionLocator;
 	private String secretAnswerLocator;
 	private String secretSubmitLocator;
@@ -37,14 +35,13 @@ public class AccountDetailsNavigation {
 
 	public AccountDetailsNavigation(Account account, 
 			String detailsLinkLocator, String actionToSwitchPeriod, String periodSwitchLocator,
-			String periodSwitchPreLocator, String periodSwitchPostLocator, String secretQuestionLocator,
+			String periodSwitchPreLocator, String secretQuestionLocator,
 			String secretAnswerLocator, String secretSubmitLocator, String secretSubmitSupLocator) {
 		this.account = account;
 		this.detailsLinkLocator = detailsLinkLocator;
 		this.actionToSwitchPeriod = actionToSwitchPeriod;
 		this.periodSwitchLocator = periodSwitchLocator;
 		this.periodSwitchPreLocator = periodSwitchPreLocator;
-		this.periodSwitchPostLocator = periodSwitchPostLocator;
 		this.secretQuestionLocator = secretQuestionLocator;
 		this.secretAnswerLocator = secretAnswerLocator;
 		this.secretSubmitLocator = secretSubmitLocator;
@@ -64,11 +61,7 @@ public class AccountDetailsNavigation {
 	public By getDetailsLinkLocator() {
 		return Util.getByLocator(detailsLinkLocator);
 	}
-
-	public By getDetailsLinkSupLocator() {
-		return Util.getByLocator(detailsLinkSupLocator);
-	}
-
+	
 	public boolean getSwitchWindowForTransactions() {
 		return switchWindowFotTransactions;
 	}
@@ -83,10 +76,6 @@ public class AccountDetailsNavigation {
 
 	public By getPeriodSwitchPreLocator() {
 		return Util.getByLocator(periodSwitchPreLocator);
-	}
-
-	public By getPeriodSwitchPostLocator() {
-		return Util.getByLocator(periodSwitchPostLocator);
 	}
 
 	public By getSecretQuestionLocator() {
