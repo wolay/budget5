@@ -231,14 +231,6 @@ public abstract class AccountPage implements Config {
 						// be opened)
 						if (account.getIsMyProtfolio())
 							webDriver.getWebDriver().navigate().back();
-						else if (accountNavigationDetails != null
-								&& accountNavigationDetails.getAllAccountsLinkLocator() != null) {
-							WebElement accounts = webDriver
-									.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
-							if (accounts != null)
-								accounts.click();
-							Util.sleep(3000);
-						}
 						result.stream().forEach(t -> total.addTransactions(t));
 						return result;
 					}
@@ -327,13 +319,6 @@ public abstract class AccountPage implements Config {
 						// be opened)
 						if (account.getIsMyProtfolio())
 							webDriver.getWebDriver().navigate().back();
-						else if (accountNavigationDetails.getAllAccountsLinkLocator() != null) {
-							WebElement accounts = webDriver
-									.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
-							if (accounts != null)
-								accounts.click();
-							Util.sleep(3000);
-						}
 						result.stream().forEach(t -> total.addTransactions(t));
 						return result;
 					}
@@ -341,12 +326,6 @@ public abstract class AccountPage implements Config {
 			}
 		}
 
-		if (accountNavigationDetails.getAllAccountsLinkLocator() != null) {
-			WebElement accounts = webDriver.findElement(accountNavigationDetails.getAllAccountsLinkLocator());
-			if (accounts != null)
-				accounts.click();
-			Util.sleep(3000);
-		}
 		if (difference == 0.0)
 			return result;
 		else
