@@ -164,9 +164,6 @@ public abstract class AccountPage implements Config {
 						accountNavigationDetails.getDetailsLinkLocator());
 				return result;
 			}
-		} else if (accountNavigationDetails != null && accountNavigationDetails.getTransactionsPageUrl() != null) {
-			webDriver.get(accountNavigationDetails.getTransactionsPageUrl());
-			webDriver.switchTo().defaultContent();
 		}
 
 		Double difference = total.getDifference();
@@ -175,25 +172,12 @@ public abstract class AccountPage implements Config {
 		By byAmountSup = (accountTransactionDetails.getTransAmountSupLocator() == null) ? null
 				: By.xpath(accountTransactionDetails.getTransAmountSupLocator());
 		By byDescription = By.xpath(accountTransactionDetails.getTransDescriptionLocator());
-		By byDescriptionSup = (accountTransactionDetails.getTransDescriptionSupLocator() == null) ? null
-				: By.xpath(accountTransactionDetails.getTransDescriptionSupLocator());
-		By byCategoryNav = (accountTransactionDetails.getTransCategoryNavLocator() == null) ? null
-				: By.xpath(accountTransactionDetails.getTransCategoryNavLocator());
 		By byCategory = (accountTransactionDetails.getTransCategoryLocator() == null) ? null
 				: By.xpath(accountTransactionDetails.getTransCategoryLocator());
-		By byCategorySup = (accountTransactionDetails.getTransCategorySupLocator() == null) ? null
-				: By.xpath(accountTransactionDetails.getTransCategorySupLocator());
 		Integer dateFormat = accountTransactionDetails.getTransDateFormat();
 
 		// CURRENT PERIOD TRANSACTIONS
-		List<WebElement> currentPeriodRows;
-		if (webDriver.lookupElement(accountTransactionDetails.getTransTableLocator()) == null)
-			if (accountTransactionDetails.getTransTableSupLocator() == null)
-				currentPeriodRows = null;
-			else
-				currentPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableSupLocator());
-		else
-			currentPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
+		List<WebElement> currentPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
 		if (currentPeriodRows == null)
 			logger.info("No rows found in the current period table");
 		else {
@@ -233,14 +217,7 @@ public abstract class AccountPage implements Config {
 
 				}
 
-				String description = "";
-				if (byDescriptionSup == null || row.findElements(byDescriptionSup).size() == 0)
-					description = row.findElement(byDescription).getText().trim().replace("\n", "-");
-				else {
-					description = row.findElement(byDescriptionSup).getText().trim().replace("\n", "-");
-					if ("".equals(description))
-						description = row.findElement(byDescription).getText().trim().replace("\n", "-");
-				}
+				String description = row.findElement(byDescription).getText().trim().replace("\n", "-");
 
 				List<Transaction> matchTransactions = prevTransactions.stream()
 						.filter(t -> t.getDate().equals(date) && t.getAmount() == amount && t.getAccount() == account)
@@ -248,29 +225,11 @@ public abstract class AccountPage implements Config {
 				if (matchTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;
-					if (byCategoryNav != null) {
-						WebElement weCategoryNav = webDriver.findElementInRow(row, byCategoryNav);
-						if (weCategoryNav == null)
-							logger.error("Cannot find category navigation locatore");
-						else {
-							webDriver.clickElementWithAction(weCategoryNav);
-							if (accountTransactionDetails.getTransCategoryLocator().startsWith(".")) {
-								WebElement weCategory = webDriver.findElementInRow(row, byCategory);
-								if (weCategory != null)
-									categoryStr = weCategory.getText();
-								else
-									categoryStr = row.findElement(byCategorySup).getText();
-							} else // absolute path
-								categoryStr = webDriver.findElement(byCategory).getText();
-							// weCategoryNav.click();
-						}
-					} else if (byCategory != null) {
+					if (byCategory != null) {
 						if (accountTransactionDetails.getTransCategoryLocator().startsWith(".")) {
 							WebElement weCategory = webDriver.findElementInRow(row, byCategory);
 							if (weCategory != null)
 								categoryStr = weCategory.getText();
-							else
-								categoryStr = row.findElement(byCategorySup).getText();
 						} else // absolute path
 							categoryStr = webDriver.findElement(byCategory).getText();
 					} else {
@@ -345,10 +304,8 @@ public abstract class AccountPage implements Config {
 			// Wait for previous transactions table to be loaded
 			Util.sleep(5000);
 			previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
-			if (previousPeriodRows == null)
-				previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableSupLocator());
-
 			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
+			
 			for (WebElement row : previousPeriodRows) {
 				// logger.info("Row in the previous period table: {}",
 				// row.getText());
@@ -364,15 +321,16 @@ public abstract class AccountPage implements Config {
 				if (matchPrevTransactions.isEmpty() && matchCurrentTransactions.isEmpty()) {
 					// trying to get Category
 					String categoryStr = null;
-					if (byCategoryNav != null && row.findElements(byCategoryNav).size() > 0) {
-						row.findElement(byCategoryNav).click();
-						Util.sleep(2000);
-						if (accountTransactionDetails.getTransCategoryLocator().startsWith("."))
-							categoryStr = row.findElement(byCategory).getText();
-						else // absolute path
+					if (byCategory != null) {
+						if (accountTransactionDetails.getTransCategoryLocator().startsWith(".")) {
+							WebElement weCategory = webDriver.findElementInRow(row, byCategory);
+							if (weCategory != null)
+								categoryStr = weCategory.getText();
+						} else // absolute path
 							categoryStr = webDriver.findElement(byCategory).getText();
-					} else
+					} else {
 						categoryStr = "";
+					}
 					Transaction newTransaction = new Transaction(account, total, date, description, amount, categoryStr,
 							null);
 					logger.info("Category in current row: {}", categoryStr);

@@ -21,7 +21,6 @@ public class AccountDetailsNavigation {
 	@OneToOne(mappedBy = "accountDetailsNavigation")
 	private Account account;
 	private String allAccountsLinkLocator;
-	private String transactionsPageUrl;
 	private String detailsLinkLocator;
 	private String detailsLinkSupLocator;
 	private boolean switchWindowFotTransactions;
@@ -37,13 +36,12 @@ public class AccountDetailsNavigation {
 	public AccountDetailsNavigation() {
 	}
 
-	public AccountDetailsNavigation(Account account, String allAccountsLinkLocator, String transactionsPageUrl,
+	public AccountDetailsNavigation(Account account, String allAccountsLinkLocator,
 			String detailsLinkLocator, String actionToSwitchPeriod, String periodSwitchLocator,
 			String periodSwitchPreLocator, String periodSwitchPostLocator, String secretQuestionLocator,
 			String secretAnswerLocator, String secretSubmitLocator, String secretSubmitSupLocator) {
 		this.account = account;
 		this.allAccountsLinkLocator = allAccountsLinkLocator;
-		this.transactionsPageUrl = transactionsPageUrl;
 		this.detailsLinkLocator = detailsLinkLocator;
 		this.actionToSwitchPeriod = actionToSwitchPeriod;
 		this.periodSwitchLocator = periodSwitchLocator;
@@ -67,10 +65,6 @@ public class AccountDetailsNavigation {
 
 	public By getAllAccountsLinkLocator() {
 		return Util.getByLocator(allAccountsLinkLocator);
-	}
-
-	public String getTransactionsPageUrl() {
-		return transactionsPageUrl;
 	}
 
 	public By getDetailsLinkLocator() {
