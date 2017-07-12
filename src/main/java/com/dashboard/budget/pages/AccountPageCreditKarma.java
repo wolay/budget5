@@ -1,7 +1,11 @@
 package com.dashboard.budget.pages;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openqa.selenium.By;
 
@@ -10,6 +14,8 @@ import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Label;
 import com.dashboard.budget.DAO.PageElementNotFoundException;
+import com.dashboard.budget.DAO.Total;
+import com.dashboard.budget.DAO.Transaction;
 import com.google.common.collect.Sets;
 
 public class AccountPageCreditKarma extends AccountPage {
@@ -60,20 +66,29 @@ public class AccountPageCreditKarma extends AccountPage {
 	}
 
 	private Integer identifyScore(String rawData) {
-		Set<Integer> staticScores = new HashSet<Integer>(staticCreditScores);
+		// Creating a subset of potential credit scores
+		List<Integer> candScore = new CopyOnWriteArrayList<Integer>();
 		for (String csStr : rawData.split("\\n")) {
 			if (!Util.isNumeric(csStr))
 				continue;
 			Integer csInt = Integer.valueOf(csStr);
 			if (csInt < 300 || csInt > 850)
 				continue;
-			if (staticScores.contains(csInt)){
-				staticScores.remove(csInt);
+			candScore.add(csInt);
+		}		
+		
+		// Determining the credit score
+		Set<Integer> staticScores = new HashSet<Integer>(staticCreditScores);
+		Iterator<Integer> it = candScore.iterator();
+		while(it.hasNext()){
+			Integer i = it.next();
+			if (staticScores.contains(i) && candScore.size()>1){
+				candScore.remove(i);
 				continue;
 			}
-			return csInt;
 		}
-		return null;
+	
+		return candScore.iterator().next();
 	}
 
 	public Double getTotal() {
@@ -83,6 +98,13 @@ public class AccountPageCreditKarma extends AccountPage {
 	public void quit() {
 		webDriver.get("https://www.creditkarma.com/auth/logout/lockdown");
 		webDriver.quit();
+	}
+
+	@Override
+	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
+			throws PageElementNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
