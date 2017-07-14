@@ -14,6 +14,9 @@ import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Field;
 import com.dashboard.budget.DAO.PageElementNotFoundException;
+import com.dashboard.budget.DAO.TableRow;
+import com.dashboard.budget.DAO.Total;
+import com.dashboard.budget.DAO.Transaction;
 
 public class AccountPageMP extends AccountPage {
 
@@ -23,7 +26,7 @@ public class AccountPageMP extends AccountPage {
 	public AccountPageMP(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
 
-		fldRefreshStatus = new Field("refresh statu", By.xpath("//a[@id='refresh']"), getWebdriver());
+		fldRefreshStatus = new Field("refresh status", By.xpath("//a[@id='refresh']"), getWebdriver());
 	}
 
 	public boolean login() {
@@ -157,6 +160,141 @@ public class AccountPageMP extends AccountPage {
 			logger.error("Unable to find total for {} by locator {}", account.getName(), account.getIsMyProtfolio());
 			return null;
 		}
+	}
+	
+	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) throws PageElementNotFoundException {
+
+		List<Transaction> result = new ArrayList<Transaction>();
+
+			if (!webDriver.getWebDriver().getTitle().contains("Transaction")) {
+				Actions action = new Actions(webDriver.getWebDriver());
+				WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
+				if (we != null)
+					action.moveToElement(we).build().perform();
+				WebElement submit1 = webDriver.findElement(By.linkText("Transactions"));
+				if (submit1 != null)
+					submit1.click();
+			}
+
+			// select account from dropdown list
+			WebElement accountsLink = webDriver.findElement(By.id("dropdown_itemAccountId"));
+			if (accountsLink != null)
+				accountsLink.click();
+
+			List<WebElement> accounts = webDriver.findElements(By.className(" groupItem"));
+			WebElement weAccount = accounts.stream()
+					.filter(a -> !a.getText().equals("") && a.getText().contains(account.getMyPortfolioId()))
+					.findFirst().orElse(null);
+			if (weAccount != null)
+				webDriver.clickElementWithAction(weAccount);
+
+			// select period for 1 month
+			WebElement periodList = webDriver.findElement(By.id("dropdown_dateRangeId"));
+			if (periodList != null) {
+				if (!periodList.getText().equals("1 month")) {
+					periodList.click();
+					WebElement periodItem = webDriver.findElement(By.id("custom_multi_select_2_dateRangeId"));
+					if (periodItem != null)
+						periodItem.click();
+				}
+			}
+
+		Double difference = total.getDifference();
+
+		// CURRENT PERIOD TRANSACTIONS
+		List<WebElement> currentPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
+		if (currentPeriodRows == null)
+			logger.info("No rows found in the current period table");
+		else {
+			logger.info("Rows in the current period table: {}", currentPeriodRows.size());
+			for (WebElement row : currentPeriodRows) {
+				logger.info("Row in the current period table: {}", row.getText());
+				if (Util.isPending(row.getText()))
+					continue;
+
+				// Parsing row
+				TableRow tr = new TableRow("transaction row", By.xpath(accountTransactionDetails.getTransDateLocator()),
+						accountTransactionDetails.getTransDateFormat(),
+						By.xpath(accountTransactionDetails.getTransAmountLocator()),
+						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
+						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
+								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
+						row);
+
+				if (!isTransactionExist(prevTransactions, tr.getDate(), tr.getAmount())) {
+					
+					result.add(new Transaction(account, total, tr.getDate(), tr.getDescription(), tr.getAmount(),
+							tr.getCategory(), null));
+
+					// Refreshing remaining difference
+					difference = Util.roundDouble(difference - tr.getAmount());
+					logger.info("Amount: {}, diff: {}", tr.getAmount(), difference);
+					if (difference == 0.0) {
+						if (account.getIsMyProtfolio())
+							webDriver.getWebDriver().navigate().back();
+
+						result.stream().forEach(t -> total.addTransactions(t));
+						return result;
+					}
+				}
+			}
+		}
+
+		// PREVIOUS PERIOD TRANSACTIONS
+		List<WebElement> previousPeriodRows;
+		// lets see how it will go... not many accounts reach that point
+		// for some accounts previous period transactions are not considered
+		// (i.e. WF)
+		if (accountNavigationDetails == null || accountNavigationDetails.getPeriodSwitchLocator() == null) {
+			if (account.getIsMyProtfolio())
+				webDriver.getWebDriver().navigate().back();
+			return new ArrayList<Transaction>();
+		} else {
+			swtPeriod.perform();
+
+			// Wait for previous transactions table to be loaded
+			Util.sleep(5000);
+			
+			previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
+			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
+
+			for (WebElement row : previousPeriodRows) {
+				if (Util.isPending(row.getText()))
+					continue;
+
+				// Parsing row
+				TableRow tr = new TableRow("transaction row", By.xpath(accountTransactionDetails.getTransDateLocator()),
+						accountTransactionDetails.getTransDateFormat(),
+						By.xpath(accountTransactionDetails.getTransAmountLocator()),
+						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
+						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
+								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
+						row);
+
+				if (!isTransactionExist(prevTransactions, tr.getDate(), tr.getAmount())
+						&& !isTransactionExist(result, tr.getDate(), tr.getAmount())) {
+					
+					result.add(new Transaction(account, total, tr.getDate(), tr.getDescription(), tr.getAmount(),
+							tr.getCategory(), null));
+
+					// Refreshing remaining difference
+					difference = Util.roundDouble(difference - tr.getAmount());
+					logger.info("Amount: {}, diff: {}", tr.getAmount(), difference);
+					if (difference == 0.0) {
+						if (account.getIsMyProtfolio())
+							webDriver.getWebDriver().navigate().back();
+
+						result.stream().forEach(t -> total.addTransactions(t));
+						return result;
+					}
+				}
+			}
+		}
+
+		if (difference == 0.0)
+			return result;
+		else
+			return new ArrayList<Transaction>();
 	}
 
 	private boolean gotoMyPortfolioPage() {
