@@ -2,11 +2,15 @@ package com.dashboard.budget.pages;
 
 import static com.dashboard.budget.Util.convertStringAmountToDouble;
 
+import java.util.List;
+
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Button;
 import com.dashboard.budget.DAO.PageElementNotFoundException;
+import com.dashboard.budget.DAO.Total;
+import com.dashboard.budget.DAO.Transaction;
 
 public class AccountPageTjMaxx extends AccountPage {
 
@@ -58,5 +62,12 @@ public class AccountPageTjMaxx extends AccountPage {
 		}
 
 		webDriver.quit();		
+	}
+
+	@Override
+	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
+			throws PageElementNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

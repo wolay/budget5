@@ -120,15 +120,15 @@ public class AccountPageSaks extends AccountPage {
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
 						row);
 
-				if (!isTransactionExist(prevTransactions, tr.getDate(), tr.getAmount())
-						&& !isTransactionExist(result, tr.getDate(), tr.getAmount())) {
+				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())
+						&& !isTransactionExist(result, tr.getDate(), -tr.getAmount())) {
 
-					result.add(new Transaction(account, total, tr.getDate(), tr.getDescription(), tr.getAmount(),
+					result.add(new Transaction(account, total, tr.getDate(), tr.getDescription(), -tr.getAmount(),
 							tr.getCategory(), null));
 
 					// Refreshing remaining difference
-					difference = Util.roundDouble(difference - tr.getAmount());
-					logger.info("Amount: {}, diff: {}", tr.getAmount(), difference);
+					difference = Util.roundDouble(difference + tr.getAmount());
+					logger.info("Amount: {}, diff: {}", -tr.getAmount(), difference);
 					if (difference == 0.0) {
 						result.stream().forEach(t -> total.addTransactions(t));
 						return result;
