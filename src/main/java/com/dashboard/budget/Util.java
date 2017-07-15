@@ -143,8 +143,12 @@ public class Util implements Config {
 		return false;
 	}
 
-	public static boolean checkIfSiteDown(UberWebDriver webDriver) {
-		WebElement text = webDriver.lookupElement(By.xpath("//*[contains(text(),'Our site is down')]"));
+	public static boolean checkIfSiteDown(UberWebDriver webDriver) {	
+		WebElement text = webDriver.lookupElement(By.xpath("//*[contains(text(),'This site can’t be reached')]"), 0);
+		if (text != null && text.isDisplayed())
+			return true;
+		
+		text = webDriver.lookupElement(By.xpath("//*[contains(text(),'Our site is down')]"));
 		if (text != null && text.isDisplayed())
 			return true;
 
