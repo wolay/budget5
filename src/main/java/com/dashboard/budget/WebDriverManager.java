@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.CreditScore;
+import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 import com.dashboard.budget.pages.*;
@@ -91,7 +92,7 @@ public class WebDriverManager implements Config {
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage());
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 
 	}
@@ -146,10 +147,15 @@ public class WebDriverManager implements Config {
 						if (accountPage == null) {
 							accountPage = getAccountPage(account);
 							accountPage.gotoHomePage();
-							if (!accountPage.login()) {
+							DataRetrievalStatus loginStatus = accountPage.login();
+							if (loginStatus != DataRetrievalStatus.SUCCESS) {
+								Double prevTotal = prevTotals.stream().filter(t -> t.getAccount() == account)
+										.findFirst().get().getAmount();
+								total = new Total(account, prevTotal, 0.0, loginStatus);
 								logger.error("Unsuccessful login to: {}", account.getName());
 								accountPage.quit();
 								accountPage = null;
+								isDownloaded = true; // no need to try more - smth too wrong
 								continue;
 							}
 						} else
@@ -158,7 +164,7 @@ public class WebDriverManager implements Config {
 						amount = accountPage.getTotal();
 						if (amount != null) {
 							difference = getDifference(account, amount, prevTotals);
-							total = new Total(account, amount, difference, DataRetrievalStatus.OK);
+							total = new Total(account, amount, difference, DataRetrievalStatus.SUCCESS);
 							logger.info("{}, total: {}", account.getName(), amount);
 							if (difference != null && difference != 0.00) {
 								logger.info("{}, difference: {}", account.getName(), difference);

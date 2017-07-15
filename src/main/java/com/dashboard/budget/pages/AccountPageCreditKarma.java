@@ -11,6 +11,7 @@ import org.openqa.selenium.By;
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Label;
 import com.dashboard.budget.DAO.PageElementNotFoundException;
 import com.dashboard.budget.DAO.Total;
@@ -32,16 +33,16 @@ public class AccountPageCreditKarma extends AccountPage {
 				getWebdriver());
 	}
 
-	public boolean login() {
+	public DataRetrievalStatus login() {
 		if (Util.checkIfSiteDown(webDriver))
-			return false;
+			return DataRetrievalStatus.SERVICE_UNAVAILABLE;
 		try {
 			fldUsername.setText(valUsername);
 			fldPassword.setText(valPassword);
 			btnLogin.click();
-			return true;
+			return DataRetrievalStatus.SUCCESS;
 		} catch (PageElementNotFoundException e) {
-			return false;
+			return DataRetrievalStatus.NAVIGATION_BROKEN;
 		}
 	}
 

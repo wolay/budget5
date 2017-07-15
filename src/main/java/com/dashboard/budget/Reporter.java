@@ -23,6 +23,7 @@ import com.dashboard.budget.DAO.BudgetSummary;
 import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
+import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.PlanFact;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
@@ -383,8 +384,8 @@ public class Reporter implements Config {
 	private String getAnnualTargetBalanceContent() {
 
 		Double annualTarget = budgetSummary.get(11).getAmountEnd();
-		boolean isPresentUncategorizedTransaction = allTransactions.stream().filter(t -> t.getCategory()!=null && t.getCategory().getId() == 19)
-				.findAny().isPresent();
+		boolean isPresentUncategorizedTransaction = allTransactions.stream()
+				.filter(t -> t.getCategory() != null && t.getCategory().getId() == 19).findAny().isPresent();
 
 		String content = "<p>Annual target balance: <b>";
 		if (isPresentUncategorizedTransaction)
@@ -400,10 +401,10 @@ public class Reporter implements Config {
 
 		String content = "<P><b>Totals & transactions: </b>";
 		content = content
-				+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><thead><tr><th>Date</th><th>Account</th><th>Amount</th><th>Diff</th></tr></thead>";
+				+ "<tr><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><thead><tr><th>Date</th><th>Account</th><th>Amount</th><th>Diff</th><th>?</th></tr></thead>";
 		content = content + "<tfoot><tr><td></td><td><b>TOTAL</b></td><td><b>"
 				+ Util.amountToString(DataHandler.getFullTotal(totals)) + "</b></td><td><b>"
-				+ Util.amountToString(DataHandler.getFullDiff(totals)) + "</b></td></tr></tfoot><tbody>";
+				+ Util.amountToString(DataHandler.getFullDiff(totals)) + "</b></td><td></td></tr></tfoot><tbody>";
 		Collections.sort(totals);
 		for (Total total : totals) {
 			if (!total.getAccount().getIsEnabled())
@@ -427,7 +428,8 @@ public class Reporter implements Config {
 				content = content + "</table>";
 			}
 			content = content + "</td><td>" + Util.amountToString(total.getAmount()) + "</td><td>"
-					+ Util.amountToString(total.getDifference()) + "</td></tr>";
+					+ Util.amountToString(total.getDifference()) + "</td><td>"
+					+ ((total.getStatus() == null) ? "!" : total.getStatus().getAbbr()) + "</td></tr>";
 		}
 
 		return content + "</tbody></table>";
@@ -591,14 +593,18 @@ public class Reporter implements Config {
 	}
 
 	private String getStatusColor(Total total) {
-		if (Util.isDateToday(total.getDate()))
+		if (total.getStatus() == DataRetrievalStatus.SUCCESS)
 			return "#BCE954";
-		// else if (status == DataRetrievalStatus.FAILED)
-		// return "#FF7F50";
-		else // if (status == DataRetrievalStatus.SKIPPED)
+		else if (total.getStatus() == DataRetrievalStatus.NO_MATCH_FOR_TOTAL)
+			return "#E6FFAA";
+		else if (total.getStatus() == DataRetrievalStatus.NAVIGATION_BROKEN)
+			return "#FF7F50";
+		else if (total.getStatus() == DataRetrievalStatus.SERVICE_UNAVAILABLE)
+			return "#FFBDBD";
+		else if (total.getStatus() == DataRetrievalStatus.UNKNOWN)
 			return "#FFE87C";
-		// else
-		// return "white";
+		else
+			return "white";
 	}
 
 }

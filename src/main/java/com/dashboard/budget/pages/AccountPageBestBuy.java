@@ -11,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
+import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.PageElementNotFoundException;
 import com.dashboard.budget.DAO.TableRow;
 import com.dashboard.budget.DAO.Total;
@@ -22,9 +23,9 @@ public class AccountPageBestBuy extends AccountPage {
 		super(account, dataHandler);
 	}
 
-	public boolean login() {
+	public DataRetrievalStatus login() {
 		if (Util.checkIfSiteDown(webDriver))
-			return false;
+			return DataRetrievalStatus.SERVICE_UNAVAILABLE;
 
 		Util.sleep(3000);
 
@@ -32,9 +33,9 @@ public class AccountPageBestBuy extends AccountPage {
 			fldUsername.setText(valUsername);
 			fldPassword.setText(valPassword);
 			btnLogin.click();
-			return true;
+			return DataRetrievalStatus.SUCCESS;
 		} catch (PageElementNotFoundException e) {
-			return false;
+			return DataRetrievalStatus.NAVIGATION_BROKEN;
 		}
 	}
 

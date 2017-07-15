@@ -16,6 +16,7 @@ import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
 import com.dashboard.budget.DAO.Button;
+import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Field;
 import com.dashboard.budget.DAO.PageElementNotFoundException;
 import com.dashboard.budget.DAO.Switch;
@@ -112,7 +113,7 @@ public abstract class AccountPage implements Config, Page {
 		webDriver.get(account.getUrl());
 	}
 
-	public abstract boolean login();
+	public abstract DataRetrievalStatus login();
 
 	public abstract Double getTotal();
 

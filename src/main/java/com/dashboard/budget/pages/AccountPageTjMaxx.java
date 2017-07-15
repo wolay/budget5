@@ -8,6 +8,7 @@ import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Button;
+import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.PageElementNotFoundException;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
@@ -20,9 +21,9 @@ public class AccountPageTjMaxx extends AccountPage {
 		super(account, dataHandler);
 	}
 
-	public synchronized boolean login() {
+	public DataRetrievalStatus login() {
 		if (Util.checkIfSiteDown(webDriver))
-			return false;
+			return DataRetrievalStatus.SERVICE_UNAVAILABLE;
 
 		try {
 			fldUsername.setText(valUsername);
@@ -30,17 +31,17 @@ public class AccountPageTjMaxx extends AccountPage {
 			// Account blocked
 			if (Util.isProblemWithLogin(webDriver)) {
 				logger.error("There is a problem with login: {}", account.getName());
-				return false;
+				return DataRetrievalStatus.SERVICE_UNAVAILABLE;
 			}
 			// Secret question
 			if (Util.isSecretQuestionShown(webDriver))
 				if (!answerSecretQuestion())
-					return false;
+					return DataRetrievalStatus.SERVICE_UNAVAILABLE;
 			fldPassword.setText(valPassword);
 			btnLogin.click();
-			return true;
+			return DataRetrievalStatus.SUCCESS;
 		} catch (PageElementNotFoundException e) {
-			return false;
+			return DataRetrievalStatus.NAVIGATION_BROKEN;
 		}
 	}
 
