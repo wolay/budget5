@@ -1,12 +1,15 @@
-package com.dashboard.budget.DAO;
+package com.dashboard.budget.UI;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+
+import com.dashboard.budget.Util;
 
 public class Button extends PageElement {
 	
-	public Button(String name, By locator, SearchContext searchContext) {
-		super(name, locator, searchContext);
+	public Button(String name, By locator, SearchContext searchContext, WebDriver webdriver) {
+		super(name, locator, searchContext, webdriver);
 	}
 	
 	/*
@@ -25,8 +28,10 @@ public class Button extends PageElement {
 	public void click() throws PageElementNotFoundException{
 		if (webElement == null)
 			webElement = searchContext.findElement(locator);
-		if (webElement == null)
+		if (webElement == null){
+			Util.takeScreenshot(webdriver);
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
+		}
 		webElement.click();
 	}
 	

@@ -1,4 +1,4 @@
-package com.dashboard.budget.DAO;
+package com.dashboard.budget.UI;
 
 public class PageElementNotFoundException extends Exception {
 
