@@ -107,6 +107,12 @@ public class Total implements Comparable<Object> {
 	public void setStatus(DataRetrievalStatus status) {
 		this.status = status;
 	}
+	
+	public void setError(Double amount, DataRetrievalStatus status) {
+		this.amount = amount;
+		this.difference = 0.0;
+		this.status = status;
+	}
 
 	public List<Transaction> getTransactions() {
 		return transactions;

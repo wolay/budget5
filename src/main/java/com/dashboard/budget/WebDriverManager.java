@@ -75,13 +75,14 @@ public class WebDriverManager implements Config {
 
 	}
 
-	private void addTransactionsForDifference(Total total, AccountPage accountPage, Double difference,
+	private void addTransactionsForDifference(Total total, AccountPage accountPage, Double difference, Double prevTotal,
 			List<Transaction> prevTransactions) {
 		try {
 			List<Transaction> newTransactions;
 			newTransactions = accountPage.getTransactions(total, prevTransactions);
 			if (newTransactions.isEmpty()) {
 				logger.info("No transactions found for difference");
+				total.setError(prevTotal, DataRetrievalStatus.NO_MATCH_FOR_TOTAL);
 			} else {
 				for (Transaction newTransaction : newTransactions) {
 					dataHandler.recognizeCategoryInTransaction(newTransaction);
@@ -93,6 +94,7 @@ public class WebDriverManager implements Config {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage());
 			e.printStackTrace();
+			total.setError(prevTotal, DataRetrievalStatus.NAVIGATION_BROKEN);
 		}
 
 	}
@@ -140,6 +142,8 @@ public class WebDriverManager implements Config {
 					int attempt = 0;
 					Double amount = null;
 					Total total = null;
+					Double prevTotal = prevTotals.stream().filter(t -> t.getAccount() == account)
+							.findFirst().get().getAmount();
 					Double difference = null;
 					boolean isDownloaded = false;
 					while (!isDownloaded && attempt < maxAttemptsToDownloadData) {
@@ -149,8 +153,6 @@ public class WebDriverManager implements Config {
 							accountPage.gotoHomePage();
 							DataRetrievalStatus loginStatus = accountPage.login();
 							if (loginStatus != DataRetrievalStatus.SUCCESS) {
-								Double prevTotal = prevTotals.stream().filter(t -> t.getAccount() == account)
-										.findFirst().get().getAmount();
 								total = new Total(account, prevTotal, 0.0, loginStatus);
 								logger.error("Unsuccessful login to: {}", account.getName());
 								accountPage.quit();
@@ -168,11 +170,7 @@ public class WebDriverManager implements Config {
 							logger.info("{}, total: {}", account.getName(), amount);
 							if (difference != null && difference != 0.00) {
 								logger.info("{}, difference: {}", account.getName(), difference);
-								addTransactionsForDifference(total, accountPage, difference, prevTransactions);
-								// if no transactions found for difference
-								// better not to save it but to wait next day
-								if (total.getTransactions() == null)
-									total = null;
+								addTransactionsForDifference(total, accountPage, difference, prevTotal, prevTransactions);
 							}
 						} else {
 							logger.error("Error while getting total for: {}", account.getName());
