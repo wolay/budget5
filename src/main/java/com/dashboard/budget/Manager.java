@@ -42,8 +42,6 @@ public class Manager {
 						
 				// New balances & transactions
 				newTotals = webDriverManager.getNewTotals(accounts, prevTotals, prevTransactions);
-				logger.info("automation total: {}", Util.roundDouble(DataHandler.getFullTotal(newTotals)));
-
 			}
 		};
 		t1.start();
