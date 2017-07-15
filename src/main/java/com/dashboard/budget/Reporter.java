@@ -428,8 +428,17 @@ public class Reporter implements Config {
 				content = content + "</table>";
 			}
 			content = content + "</td><td>" + Util.amountToString(total.getAmount()) + "</td><td>"
-					+ Util.amountToString(total.getDifference()) + "</td><td>"
-					+ ((total.getStatus() == null) ? "!" : total.getStatus().getAbbr()) + "</td></tr>";
+					+ Util.amountToString(total.getDifference()) + "</td>";
+
+			// Status column
+			if (total.getStatus() == null)
+				content = content + "<td title='Status is 'null''>!</td>";
+			else
+				content = content + "<td title='" + total.getStatus()
+						+ ((total.getErrorMessage() == null) ? "" : (": " + total.getErrorMessage())) + "'>"
+						+ total.getStatus().getAbbr() + "</td></tr>";
+
+			content = content + "</tr>";
 		}
 
 		return content + "</tbody></table>";

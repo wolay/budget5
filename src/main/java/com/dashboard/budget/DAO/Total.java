@@ -36,6 +36,7 @@ public class Total implements Comparable<Object> {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private DataRetrievalStatus status;
+	private String errorMessage;
 	@OneToMany(mappedBy = "total")
 	private List<Transaction> transactions;
 
@@ -108,10 +109,19 @@ public class Total implements Comparable<Object> {
 		this.status = status;
 	}
 	
-	public void setError(Double amount, DataRetrievalStatus status) {
+	public void setErrorStatus(Double amount, DataRetrievalStatus status, String errorMessage) {
 		this.amount = amount;
 		this.difference = 0.0;
 		this.status = status;
+		this.errorMessage = errorMessage;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 
 	public List<Transaction> getTransactions() {
@@ -179,7 +189,7 @@ public class Total implements Comparable<Object> {
 	@Override
 	public String toString() {
 		return "Total [id=" + id + ", date=" + date + ", account=" + account + ", amount=" + amount + ", difference="
-				+ difference + ", status=" + status + "]";
+				+ difference + ", status=" + status + ", errorMessage=" + errorMessage + "]";
 	}
 
 }

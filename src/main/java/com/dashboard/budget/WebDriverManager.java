@@ -82,7 +82,7 @@ public class WebDriverManager implements Config {
 			newTransactions = accountPage.getTransactions(total, prevTransactions);
 			if (newTransactions.isEmpty()) {
 				logger.info("No transactions found for difference");
-				total.setError(prevTotal, DataRetrievalStatus.NO_MATCH_FOR_TOTAL);
+				total.setErrorStatus(prevTotal, DataRetrievalStatus.NO_MATCH_FOR_TOTAL, null);
 			} else {
 				for (Transaction newTransaction : newTransactions) {
 					dataHandler.recognizeCategoryInTransaction(newTransaction);
@@ -94,7 +94,7 @@ public class WebDriverManager implements Config {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage());
 			e.printStackTrace();
-			total.setError(prevTotal, DataRetrievalStatus.NAVIGATION_BROKEN);
+			total.setErrorStatus(prevTotal, DataRetrievalStatus.NAVIGATION_BROKEN, e.getLocalizedMessage());
 		}
 
 	}
