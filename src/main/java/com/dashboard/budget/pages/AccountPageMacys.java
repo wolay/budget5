@@ -11,16 +11,16 @@ import org.openqa.selenium.WebElement;
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
-import com.dashboard.budget.DAO.Button;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
-import com.dashboard.budget.DAO.PageElementNotFoundException;
-import com.dashboard.budget.DAO.TableRow;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.Button;
+import com.dashboard.budget.UI.PageElementNotFoundException;
+import com.dashboard.budget.UI.TableRow;
 
 public class AccountPageMacys extends AccountPage {
 
-	private Button btnCreditSummary = new Button("credit summary", By.linkText("Credit Summary"), getWebdriver());
+	private Button btnCreditSummary = new Button("credit summary", By.linkText("Credit Summary"), getWebdriver(), getWebdriver().getWebDriver());
 
 	public AccountPageMacys(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
@@ -105,7 +105,7 @@ public class AccountPageMacys extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row);
+						row, getWebdriver().getWebDriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())) {
 
@@ -152,7 +152,7 @@ public class AccountPageMacys extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row);
+						row, getWebdriver().getWebDriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())
 						&& !isTransactionExist(result, tr.getDate(), -tr.getAmount())) {

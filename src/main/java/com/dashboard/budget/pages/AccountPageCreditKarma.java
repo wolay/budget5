@@ -12,10 +12,10 @@ import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
-import com.dashboard.budget.DAO.Label;
-import com.dashboard.budget.DAO.PageElementNotFoundException;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.Label;
+import com.dashboard.budget.UI.PageElementNotFoundException;
 import com.google.common.collect.Sets;
 
 public class AccountPageCreditKarma extends AccountPage {
@@ -28,9 +28,9 @@ public class AccountPageCreditKarma extends AccountPage {
 		super(account, dataHandler);
 
 		lblTransUnion = new Label("TransUnion score", By.xpath("//div[contains(@class, 'dashboard-score-dials')]/a"),
-				getWebdriver());
+				getWebdriver(), getWebdriver().getWebDriver());
 		lblEquifax = new Label("TransUnion score", By.xpath("//div[contains(@class, 'dashboard-score-dials')]/a[2]"),
-				getWebdriver());
+				getWebdriver(), getWebdriver().getWebDriver());
 	}
 
 	public DataRetrievalStatus login() {

@@ -24,7 +24,11 @@ public class UberWebDriver implements Config, SearchContext {
 
 	public UberWebDriver() {
 		System.setProperty("webdriver.chrome.driver", "chromedriver");
-		this.webDriver = new ChromeDriver();
+		try {
+			this.webDriver = new ChromeDriver();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.wait = new WebDriverWait(this.webDriver, timeout);
 	}
 

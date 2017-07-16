@@ -15,14 +15,14 @@ import com.dashboard.budget.DAO.AccountDetailsLogin;
 import com.dashboard.budget.DAO.AccountDetailsNavigation;
 import com.dashboard.budget.DAO.AccountDetailsTotal;
 import com.dashboard.budget.DAO.AccountDetailsTransaction;
-import com.dashboard.budget.DAO.Button;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
-import com.dashboard.budget.DAO.Field;
-import com.dashboard.budget.DAO.PageElementNotFoundException;
-import com.dashboard.budget.DAO.Switch;
-import com.dashboard.budget.DAO.TableRow;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.Button;
+import com.dashboard.budget.UI.Field;
+import com.dashboard.budget.UI.PageElementNotFoundException;
+import com.dashboard.budget.UI.Switch;
+import com.dashboard.budget.UI.TableRow;
 
 public abstract class AccountPage implements Config, Page {
 
@@ -72,25 +72,25 @@ public abstract class AccountPage implements Config, Page {
 		pageQuestions = new AccountPageSecretQuestions(account, webDriver, dataHandler);
 
 		// Login
-		fldUsername = new Field("username", accountLoginDetails.getUsernameLocator(), getWebdriver());
+		fldUsername = new Field("username", accountLoginDetails.getUsernameLocator(), getWebdriver(), getWebdriver().getWebDriver());
 		valUsername = accountLoginDetails.getUsernameValue();
-		fldPassword = new Field("password", accountLoginDetails.getPasswordLocator(), getWebdriver());
+		fldPassword = new Field("password", accountLoginDetails.getPasswordLocator(), getWebdriver(), getWebdriver().getWebDriver());
 		valPassword = accountLoginDetails.getPasswordValue();
-		btnLogin = new Button("login", accountLoginDetails.getLoginLocator(), getWebdriver());
-		btnLogout = new Button("logout", accountLoginDetails.getLogoutLocator(), getWebdriver());
-		btnPostLogout = new Button("post logout", accountLoginDetails.getLogoutPostLocator(), getWebdriver());
+		btnLogin = new Button("login", accountLoginDetails.getLoginLocator(), getWebdriver(), getWebdriver().getWebDriver());
+		btnLogout = new Button("logout", accountLoginDetails.getLogoutLocator(), getWebdriver(), getWebdriver().getWebDriver());
+		btnPostLogout = new Button("post logout", accountLoginDetails.getLogoutPostLocator(), getWebdriver(), getWebdriver().getWebDriver());
 
 		// Total
 		if (accountTotalDetails != null) {
-			fldBalance = new Field("balance", accountTotalDetails.getBalanceLocator(), getWebdriver());
+			fldBalance = new Field("balance", accountTotalDetails.getBalanceLocator(), getWebdriver(), getWebdriver().getWebDriver());
 		}
 
 		// Transactions
 		if (accountNavigationDetails != null) {
 			btnTransactionsPage = new Button("transactions page link", accountNavigationDetails.getDetailsLinkLocator(),
-					getWebdriver());
+					getWebdriver(), getWebdriver().getWebDriver());
 			swtPeriod = new Switch("period switch", accountNavigationDetails.getPeriodSwitchLocator(),
-					accountNavigationDetails.getActionToSwitchPeriod(), getWebdriver());
+					accountNavigationDetails.getActionToSwitchPeriod(), getWebdriver(), getWebdriver().getWebDriver());
 
 		}
 

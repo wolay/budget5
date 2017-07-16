@@ -12,10 +12,10 @@ import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
-import com.dashboard.budget.DAO.PageElementNotFoundException;
-import com.dashboard.budget.DAO.TableRow;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.PageElementNotFoundException;
+import com.dashboard.budget.UI.TableRow;
 
 public class AccountPageNeimanMarcus extends AccountPage {
 
@@ -72,7 +72,7 @@ public class AccountPageNeimanMarcus extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row);
+						row, getWebdriver().getWebDriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())) {
 					
@@ -119,7 +119,7 @@ public class AccountPageNeimanMarcus extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row);
+						row, getWebdriver().getWebDriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())
 						&& !isTransactionExist(result, tr.getDate(), -tr.getAmount())) {

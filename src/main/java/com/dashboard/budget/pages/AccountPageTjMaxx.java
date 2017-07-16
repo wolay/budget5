@@ -7,15 +7,15 @@ import java.util.List;
 import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
-import com.dashboard.budget.DAO.Button;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
-import com.dashboard.budget.DAO.PageElementNotFoundException;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.Button;
+import com.dashboard.budget.UI.PageElementNotFoundException;
 
 public class AccountPageTjMaxx extends AccountPage {
 
-	private Button btnPreBalance = new Button("user check button", accountTotalDetails.getPreBalanceLocator(), getWebdriver());
+	private Button btnPreBalance = new Button("user check button", accountTotalDetails.getPreBalanceLocator(), getWebdriver(), getWebdriver().getWebDriver());
 
 	public AccountPageTjMaxx(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);

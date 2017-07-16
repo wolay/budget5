@@ -12,11 +12,11 @@ import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.Util;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
-import com.dashboard.budget.DAO.Field;
-import com.dashboard.budget.DAO.PageElementNotFoundException;
-import com.dashboard.budget.DAO.TableRow;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.Field;
+import com.dashboard.budget.UI.PageElementNotFoundException;
+import com.dashboard.budget.UI.TableRow;
 
 public class AccountPageAmazon extends AccountPage {
 
@@ -26,8 +26,8 @@ public class AccountPageAmazon extends AccountPage {
 	public AccountPageAmazon(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
 
-		balanceStrDol = new Field("amount dollars", accountTotalDetails.getBalanceDolLocator(), getWebdriver());
-		balanceStrCen = new Field("amount cents", accountTotalDetails.getBalanceCenLocator(), getWebdriver());
+		balanceStrDol = new Field("amount dollars", accountTotalDetails.getBalanceDolLocator(), getWebdriver(), getWebdriver().getWebDriver());
+		balanceStrCen = new Field("amount cents", accountTotalDetails.getBalanceCenLocator(), getWebdriver(), getWebdriver().getWebDriver());
 	}
 
 
@@ -81,7 +81,7 @@ public class AccountPageAmazon extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row);
+						row, getWebdriver().getWebDriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())) {
 
@@ -128,7 +128,7 @@ public class AccountPageAmazon extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row);
+						row, getWebdriver().getWebDriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())
 						&& !isTransactionExist(result, tr.getDate(), -tr.getAmount())) {

@@ -5,6 +5,8 @@
  */
 package com.dashboard.budget;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormatSymbols;
@@ -20,7 +22,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,10 +75,10 @@ public class Util implements Config {
 		}
 		return null;
 	}
-	
-	public static boolean isNumeric(String s) {  
-	    return s != null && s.matches("[-+]?\\d*\\.?\\d+");  
-	}  
+
+	public static boolean isNumeric(String s) {
+		return s != null && s.matches("[-+]?\\d*\\.?\\d+");
+	}
 
 	public static String convertDateToStringType1(Date date) {
 		return new SimpleDateFormat("yyyy-MM-dd").format(date);
@@ -143,11 +149,11 @@ public class Util implements Config {
 		return false;
 	}
 
-	public static boolean checkIfSiteDown(UberWebDriver webDriver) {	
+	public static boolean checkIfSiteDown(UberWebDriver webDriver) {
 		WebElement text = webDriver.lookupElement(By.xpath("//*[contains(text(),'This site can’t be reached')]"), 0);
 		if (text != null && text.isDisplayed())
 			return true;
-		
+
 		text = webDriver.lookupElement(By.xpath("//*[contains(text(),'Our site is down')]"));
 		if (text != null && text.isDisplayed())
 			return true;
@@ -202,7 +208,7 @@ public class Util implements Config {
 				|| row.startsWith("No activity posted")
 				|| row.equals("You've reached the end of the statement cycle account activity.")
 				|| row.equals("In Progress and Cleared Transactions") || row.contains("Pending*")
-				|| row.contains("Total for")|| row.contains("Transaction Detail"))
+				|| row.contains("Total for") || row.contains("Transaction Detail"))
 			return true;
 		else
 			return false;
@@ -253,10 +259,10 @@ public class Util implements Config {
 	public static By getByLocator(String string) {
 		if (string == null)
 			return null;
-		if (!string.contains(":")){
+		if (!string.contains(":")) {
 			logger.error("Locator '{}' cannot be initialized", string);
 			return null;
-		}			
+		}
 		if (string.startsWith("id"))
 			return By.id(string.replace("id:", ""));
 		if (string.startsWith("css"))
@@ -395,6 +401,15 @@ public class Util implements Config {
 	public static String getLocatorForWebElement(WebElement we) {
 		// assuming locator in xpath
 		return we.toString().substring(we.toString().indexOf("->") + 10);
+	}
+
+	public static void takeScreenshot(WebDriver webdriver) {
+		File scrFile = ((TakesScreenshot) webdriver).getScreenshotAs(OutputType.FILE);
+		try {
+			FileUtils.copyFile(scrFile, new File("screenshot.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

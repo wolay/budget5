@@ -7,10 +7,10 @@ import com.dashboard.budget.DataHandler;
 import com.dashboard.budget.UberWebDriver;
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.AccountDetailsNavigation;
-import com.dashboard.budget.DAO.Button;
-import com.dashboard.budget.DAO.Field;
-import com.dashboard.budget.DAO.PageElementNotFoundException;
 import com.dashboard.budget.DAO.SecretQuestion;
+import com.dashboard.budget.UI.Button;
+import com.dashboard.budget.UI.Field;
+import com.dashboard.budget.UI.PageElementNotFoundException;
 
 public class AccountPageSecretQuestions implements Page {
 
@@ -33,12 +33,12 @@ public class AccountPageSecretQuestions implements Page {
 		this.dataHandler = dataHandler;
 
 		if(accountDetailsNavigation!=null){
-			fldSecretQuestion = new Field("secret question", accountDetailsNavigation.getSecretQuestionLocator(), getWebdriver());
-			fldSecretAnswer = new Field("secret answer", accountDetailsNavigation.getSecretAnswerLocator(), getWebdriver());
+			fldSecretQuestion = new Field("secret question", accountDetailsNavigation.getSecretQuestionLocator(), getWebdriver(), getWebdriver().getWebDriver());
+			fldSecretAnswer = new Field("secret answer", accountDetailsNavigation.getSecretAnswerLocator(), getWebdriver(), getWebdriver().getWebDriver());
 			btnSecretSubmit = new Button("submit secret answer", accountDetailsNavigation.getSecretSubmitLocator(),
-					getWebdriver());
+					getWebdriver(), getWebdriver().getWebDriver());
 			btnSecretPreSubmit = new Button("pre submit secret answer",
-					accountDetailsNavigation.getSecretSubmitSupLocator(), getWebdriver());
+					accountDetailsNavigation.getSecretSubmitSupLocator(), getWebdriver(), getWebdriver().getWebDriver());
 		}
 	}
 
