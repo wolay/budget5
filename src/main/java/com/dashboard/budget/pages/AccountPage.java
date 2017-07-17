@@ -70,7 +70,26 @@ public abstract class AccountPage implements Config, Page {
 		java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
 
 		pageQuestions = new AccountPageSecretQuestions(account, webDriver, dataHandler);
+		
+		refreshLocators();
+	}
 
+	public Account getAccount() {
+		return this.account;
+	}
+
+	public void setAccount(Account account) {
+		logger.info("Setting account.. {}", account.getName());
+		this.account = account;
+		this.accountLoginDetails = account.getAccountDetailsLogin();
+		this.accountNavigationDetails = account.getAccountDetailsNavigation();
+		this.accountTotalDetails = account.getAccountDetailsTotal();
+		this.accountTransactionDetails = account.getAccountDetailsTransaction();
+		
+		refreshLocators();
+	}
+	
+	public void refreshLocators(){		
 		// Login
 		fldUsername = new Field("username", accountLoginDetails.getUsernameLocator(), getWebdriver(), getWebdriver().getWebDriver());
 		valUsername = accountLoginDetails.getUsernameValue();
@@ -91,22 +110,7 @@ public abstract class AccountPage implements Config, Page {
 					getWebdriver(), getWebdriver().getWebDriver());
 			swtPeriod = new Switch("period switch", accountNavigationDetails.getPeriodSwitchLocator(),
 					accountNavigationDetails.getActionToSwitchPeriod(), getWebdriver(), getWebdriver().getWebDriver());
-
-		}
-
-	}
-
-	public Account getAccount() {
-		return this.account;
-	}
-
-	public void setAccount(Account account) {
-		logger.info("Setting account.. {}", account.getName());
-		this.account = account;
-		this.accountLoginDetails = account.getAccountDetailsLogin();
-		this.accountNavigationDetails = account.getAccountDetailsNavigation();
-		this.accountTotalDetails = account.getAccountDetailsTotal();
-		this.accountTransactionDetails = account.getAccountDetailsTransaction();
+		}		
 	}
 
 	public void gotoHomePage() {

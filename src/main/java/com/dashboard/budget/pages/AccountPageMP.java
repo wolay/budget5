@@ -15,6 +15,7 @@ import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.Button;
 import com.dashboard.budget.UI.Field;
 import com.dashboard.budget.UI.PageElementNotFoundException;
 import com.dashboard.budget.UI.TableRow;
@@ -23,11 +24,21 @@ public class AccountPageMP extends AccountPage {
 
 	private List<mpTotal> totalsList;
 	private Field fldRefreshStatus;
+	private Button btnToolsAndTransactions;
+	private Button btnTransactions;
+	private Button btnAccountSelect;
 
 	public AccountPageMP(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
-
+	}
+	
+	public void refreshLocators(){
+		super.refreshLocators();
+		
 		fldRefreshStatus = new Field("refresh status", By.xpath("//a[@id='refresh']"), getWebdriver(), getWebdriver().getWebDriver());
+		btnToolsAndTransactions = new Button("tools and transactions", By.name("onh_tools_and_investing"), getWebdriver(), getWebdriver().getWebDriver());
+		btnTransactions = new Button("transactions", By.linkText("Transactions"), getWebdriver(), getWebdriver().getWebDriver());
+		btnAccountSelect = new Button("account select", By.id("dropdown_itemAccountId"), getWebdriver(), getWebdriver().getWebDriver());
 	}
 
 	public DataRetrievalStatus login() {
@@ -166,23 +177,24 @@ public class AccountPageMP extends AccountPage {
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) throws PageElementNotFoundException {
 
 		List<Transaction> result = new ArrayList<Transaction>();
+		getWebdriver().getWebDriver().switchTo().defaultContent();
 
 			if (!webDriver.getWebDriver().getTitle().contains("Transaction")) {
-				Actions action = new Actions(webDriver.getWebDriver());
-				WebElement we = webDriver.findElement(By.name("onh_tools_and_investing"));
-				if (we != null)
-					action.moveToElement(we).build().perform();
-				WebElement submit1 = webDriver.findElement(By.linkText("Transactions"));
-				if (submit1 != null)
-					submit1.click();
+				btnToolsAndTransactions.clickAsAction();
+				btnTransactions.click();
 			}
 
 			// select account from dropdown list
-			WebElement accountsLink = webDriver.findElement(By.id("dropdown_itemAccountId"));
-			if (accountsLink != null)
-				accountsLink.click();
+			try{
+			btnAccountSelect.clickIfAvailable();
+			}catch(Exception e){}
 
 			List<WebElement> accounts = webDriver.findElements(By.className(" groupItem"));
+			if(accounts == null){
+				logger.error("Unable to fetch list of accounts");
+				Util.takeScreenshot(getWebdriver().getWebDriver());
+				return result;
+			}
 			WebElement weAccount = accounts.stream()
 					.filter(a -> !a.getText().equals("") && a.getText().contains(account.getMyPortfolioId()))
 					.findFirst().orElse(null);
