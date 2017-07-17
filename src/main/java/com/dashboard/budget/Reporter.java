@@ -14,7 +14,8 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,11 @@ import com.dashboard.budget.DAO.Category;
 import com.dashboard.budget.DAO.Credential;
 import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
+import com.dashboard.budget.DAO.PicturesStorage;
 import com.dashboard.budget.DAO.PlanFact;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.sun.mail.smtp.SMTPMessage;
 
 public class Reporter implements Config {
 
@@ -58,7 +61,9 @@ public class Reporter implements Config {
 		});
 
 		try {
-			Message message = new MimeMessage(session);
+			SMTPMessage message = new SMTPMessage(session);
+			MimeMultipart messageContent = new MimeMultipart();
+			MimeBodyPart mainPart = new MimeBodyPart();
 			message.setFrom(new InternetAddress("aianitro@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(summaryReceiver));
 			message.setSubject("Dashboard on " + Util.convertDateToStringType1(new Date()));
@@ -102,15 +107,28 @@ public class Reporter implements Config {
 			// Time spent for retrieving
 			content = content + "<P><font size='1' color='Gainsboro'><b>Time spent: </b>" + spentTime + "</font>";
 
-			message.setContent(content, "text/html");
-			Transport.send(message);
+			mainPart.setText(content, "US-ASCII", "html");
+			messageContent.addBodyPart(mainPart);
 
+			// Attaching pictures
+			if(PicturesStorage.INSTANCE.size()>0){				
+				PicturesStorage.INSTANCE.getAllPictures().stream().forEach(f -> {
+					MimeBodyPart imagePart = new MimeBodyPart();
+					try {
+						imagePart.attachFile(f);
+						messageContent.addBodyPart(imagePart);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+			}
+
+			// Sending
+			message.setContent(messageContent);
+			Transport.send(message);
 			logger.info("Summary sent to {}", summaryReceiver);
 
-		} catch (
-
-		MessagingException e)
-
+		} catch (MessagingException e)
 		{
 			throw new RuntimeException(e);
 		}

@@ -6,7 +6,6 @@
 package com.dashboard.budget;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormatSymbols;
@@ -22,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -33,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Category;
+import com.dashboard.budget.DAO.PicturesStorage;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
@@ -405,11 +404,7 @@ public class Util implements Config {
 
 	public static void takeScreenshot(WebDriver webdriver) {
 		File scrFile = ((TakesScreenshot) webdriver).getScreenshotAs(OutputType.FILE);
-		try {
-			FileUtils.copyFile(scrFile, new File("screenshot.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		PicturesStorage.INSTANCE.addPicture(scrFile);
 	}
 
 }
