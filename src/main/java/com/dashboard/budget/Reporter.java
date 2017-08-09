@@ -511,14 +511,14 @@ public class Reporter implements Config {
 		String content = "<P><b>Whole year: </b>";
 		content = content + "<br><table border='1' cellpadding='1' cellspacing='1' style='width:550px;'><tbody>";
 		// caption
-		content = content + "<tr><td></td>";
+		content = content + "<tr><td></td><td>Total</td>";
 		for (BudgetSummary oneMonthBudget : budgetSummary)
 			content = content + "<td><font size='1'>" + oneMonthBudget.getMonthName() + "</font></td>";
 		content = content + "</tr>";
 
 		// rows
 		// beginning balance
-		content = content + "<tr><td>Begining</td>";
+		content = content + "<tr><td>Begining</td><td></td>";
 		for (BudgetSummary oneMonthBudget : budgetSummary)
 			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountBegin())
 					+ "</font></td>";
@@ -529,6 +529,9 @@ public class Reporter implements Config {
 			if (curCategory.getType() != 1)
 				continue;
 			content = content + "<tr><td><font size='1'>" + curCategory.getName() + "</font></td>";
+			Double amountTotalFact = budgetSummary.stream().mapToDouble(m -> m.getPlanFactList().stream()
+					.filter(pf -> pf.getCategory() == curCategory).mapToDouble(PlanFact::getAmountFact).sum()).sum();
+			content = content + "<td><font size='1'>" + Util.amountToString(amountTotalFact) + "</font></td>";
 			for (BudgetSummary oneMonthBudget : budgetSummary) {
 				Double amountFact = oneMonthBudget.getPlanFactList().stream()
 						.filter(pf -> pf.getCategory() == curCategory).mapToDouble(PlanFact::getAmountFact).sum();
@@ -542,6 +545,9 @@ public class Reporter implements Config {
 			if (curCategory.getType() != 2 || !curCategory.getIsActive())
 				continue;
 			content = content + "<tr><td><font size='1'>" + curCategory.getName() + "</font></td>";
+			Double amountTotalFact = budgetSummary.stream().mapToDouble(m -> m.getPlanFactList().stream()
+					.filter(pf -> pf.getCategory() == curCategory).mapToDouble(PlanFact::getAmountFact).sum()).sum();
+			content = content + "<td><font size='1'>" + Util.amountToString(amountTotalFact) + "</font></td>";			
 			for (BudgetSummary oneMonthBudget : budgetSummary) {
 				Double amountFact = oneMonthBudget.getPlanFactList().stream()
 						.filter(pf -> pf.getCategory() == curCategory).mapToDouble(PlanFact::getAmountFact).sum();
