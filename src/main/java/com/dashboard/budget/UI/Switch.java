@@ -2,6 +2,7 @@ package com.dashboard.budget.UI;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
@@ -26,10 +27,22 @@ public class Switch extends PageElement {
 			throw new PageElementNotFoundException("Switch '" + name + "' (" + locator + ") not found ");
 		}
 		
-		if ("click".equals(action))
-			webElement.click();
-		else
-			new Select(webElement).selectByIndex(1);
+		try {
+			if ("click".equals(action))
+				webElement.click();
+			else
+				new Select(webElement).selectByIndex(1);
+		} catch (StaleElementReferenceException ex) {
+			webElement = searchContext.findElement(locator);
+			if (webElement == null) {
+				Util.takeScreenshot(webdriver);
+				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
+			}
+			if ("click".equals(action))
+				webElement.click();
+			else
+				new Select(webElement).selectByIndex(1);
+		}			
 	}
 
 	@Override

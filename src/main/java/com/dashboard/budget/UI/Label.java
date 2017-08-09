@@ -2,6 +2,7 @@ package com.dashboard.budget.UI;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 
 import com.dashboard.budget.Util;
@@ -21,7 +22,17 @@ public class Label extends PageElement {
 			Util.takeScreenshot(webdriver);
 			throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
 		}
-		return webElement.getText().trim();
+		
+		try {
+			return webElement.getText().trim();
+		} catch (StaleElementReferenceException ex) {
+			webElement = searchContext.findElement(locator);
+			if (webElement == null) {
+				Util.takeScreenshot(webdriver);
+				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
+			}
+			return webElement.getText().trim();
+		}				
 	}
 
 	@Override

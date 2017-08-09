@@ -2,6 +2,7 @@ package com.dashboard.budget.UI;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 
@@ -33,7 +34,17 @@ public class Button extends PageElement {
 			Util.takeScreenshot(webdriver);
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
 		}
-		webElement.click();
+		
+		try {
+			webElement.click();
+		} catch (StaleElementReferenceException ex) {
+			webElement = searchContext.findElement(locator);
+			if (webElement == null) {
+				Util.takeScreenshot(webdriver);
+				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
+			}
+			webElement.click();
+		}		
 	}
 	
 	public void clickAsAction() throws PageElementNotFoundException{
@@ -43,8 +54,19 @@ public class Button extends PageElement {
 			Util.takeScreenshot(webdriver);
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
 		}
-		Actions action = new Actions(webdriver);
-		action.moveToElement(webElement).build().perform();
+		
+		try {
+			Actions action = new Actions(webdriver);
+			action.moveToElement(webElement).build().perform();
+		} catch (StaleElementReferenceException ex) {
+			webElement = searchContext.findElement(locator);
+			if (webElement == null) {
+				Util.takeScreenshot(webdriver);
+				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
+			}
+			Actions action = new Actions(webdriver);
+			action.moveToElement(webElement).build().perform();
+		}	
 	}
 	
 	public void clickIfAvailable() throws PageElementNotFoundException{
@@ -54,7 +76,17 @@ public class Button extends PageElement {
 			webElement = searchContext.findElement(locator);
 		if (webElement == null)
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
-		webElement.click();
+		
+		try {
+			webElement.click();
+		} catch (StaleElementReferenceException ex) {
+			webElement = searchContext.findElement(locator);
+			if (webElement == null) {
+				Util.takeScreenshot(webdriver);
+				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
+			}
+			webElement.click();
+		}		
 	}
 
 	@Override
