@@ -95,8 +95,14 @@ public class Reporter implements Config {
 			content = content + getTransactionsContent();
 
 			content = content + getUncategorizedContent();
+			
+			content = content + getQuestionableContent();
+			
+			content = content + getReimbursableContent();
 
 			content = content + getTransfersContent();
+			
+			content = content + getOutOfBalanceContent();
 
 			content = content + getYearPictureContent();
 
@@ -486,6 +492,44 @@ public class Reporter implements Config {
 			return content + "</tbody></table>";
 		}
 	}
+	
+	private String getQuestionableContent() {
+		List<Transaction> transfers = new ArrayList<Transaction>();
+		allTransactions.stream().filter(t -> t.getCategory() != null && t.getCategory().getName().equals("Questions")
+				&& !t.getIsTransferComplete()).forEach(t -> transfers.add(t));
+		if (transfers.isEmpty())
+			return "";
+		else {
+			String content = "<P><b>Questionable transactions: </b> (" + transfers.size() + ")";
+			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
+			for (Transaction transfer : transfers) {
+				content = content + "<tr><td><font size='1'>" + transfer.getAccount().getName()
+						+ "</font></td><td><font size='1'>" + Util.convertDateToStringType2(transfer.getDate())
+						+ "</font></td><td><font size='1'>" + transfer.getDecription()
+						+ "</font></td><td width='10'><font size='1'>" + transfer.getAmount() + "</font></td></tr>";
+			}
+			return content + "</tbody></table>";
+		}
+	}
+	
+	private String getReimbursableContent() {
+		List<Transaction> transfers = new ArrayList<Transaction>();
+		allTransactions.stream().filter(t -> t.getCategory() != null && t.getCategory().getName().equals("To reimburse")
+				&& !t.getIsTransferComplete()).forEach(t -> transfers.add(t));
+		if (transfers.isEmpty())
+			return "";
+		else {
+			String content = "<P><b>Transactions to reimburse: </b> (" + transfers.size() + ")";
+			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
+			for (Transaction transfer : transfers) {
+				content = content + "<tr><td><font size='1'>" + transfer.getAccount().getName()
+						+ "</font></td><td><font size='1'>" + Util.convertDateToStringType2(transfer.getDate())
+						+ "</font></td><td><font size='1'>" + transfer.getDecription()
+						+ "</font></td><td width='10'><font size='1'>" + transfer.getAmount() + "</font></td></tr>";
+			}
+			return content + "</tbody></table>";
+		}
+	}
 
 	private String getTransfersContent() {
 		List<Transaction> transfers = new ArrayList<Transaction>();
@@ -495,6 +539,25 @@ public class Reporter implements Config {
 			return "<P><b>There is no transferring transactions</b>";
 		else {
 			String content = "<P><b>Transactions in transfer: </b> (" + transfers.size() + ")";
+			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
+			for (Transaction transfer : transfers) {
+				content = content + "<tr><td><font size='1'>" + transfer.getAccount().getName()
+						+ "</font></td><td><font size='1'>" + Util.convertDateToStringType2(transfer.getDate())
+						+ "</font></td><td><font size='1'>" + transfer.getDecription()
+						+ "</font></td><td width='10'><font size='1'>" + transfer.getAmount() + "</font></td></tr>";
+			}
+			return content + "</tbody></table>";
+		}
+	}
+	
+	private String getOutOfBalanceContent() {
+		List<Transaction> transfers = new ArrayList<Transaction>();
+		allTransactions.stream().filter(t -> t.getCategory() != null && t.getCategory().getName().equals("Out balance")
+				&& !t.getIsTransferComplete()).forEach(t -> transfers.add(t));
+		if (transfers.isEmpty())
+			return "";
+		else {
+			String content = "<P><b>Out of balance transactions: </b> (" + transfers.size() + ")";
 			content = content + "<br><table border='0' cellpadding='1' cellspacing='1' style='width:500px;'><tbody>";
 			for (Transaction transfer : transfers) {
 				content = content + "<tr><td><font size='1'>" + transfer.getAccount().getName()
@@ -556,7 +619,7 @@ public class Reporter implements Config {
 			content = content + "</tr>";
 		}
 		// ending balance
-		content = content + "<tr><td>Ending</td>";
+		content = content + "<tr><td>Ending</td><td></td>";
 		for (BudgetSummary oneMonthBudget : budgetSummary)
 			content = content + "<td><font size='1'>" + Util.amountToString(oneMonthBudget.getAmountEnd())
 					+ "</font></td>";
