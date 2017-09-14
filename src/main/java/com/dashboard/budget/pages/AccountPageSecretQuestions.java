@@ -66,6 +66,7 @@ public class AccountPageSecretQuestions implements Page {
 			btnSecretPreSubmit.clickIfAvailable();
 			btnSecretSubmit.click();
 		} catch (PageElementNotFoundException e) {
+			logger.error(e.getLocalizedMessage());
 			return false;
 		}
 
