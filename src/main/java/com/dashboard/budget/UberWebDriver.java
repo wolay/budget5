@@ -1,19 +1,26 @@
 package com.dashboard.budget;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.dashboard.budget.DAO.PicturesStorage;
 
 public class UberWebDriver implements Config, SearchContext {
 
@@ -141,5 +148,15 @@ public class UberWebDriver implements Config, SearchContext {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
+	}
+		
+	public void scrollTo(By by){
+		WebElement element = webDriver.findElement(by);
+		((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", element);		
+	}
+	
+	public void takeScreenshot() {
+		File scrFile = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.FILE);
+		PicturesStorage.INSTANCE.addPicture(scrFile);
 	}
 }

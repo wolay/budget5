@@ -33,12 +33,12 @@ public class AccountPageSecretQuestions implements Page {
 		this.dataHandler = dataHandler;
 
 		if(accountDetailsNavigation!=null){
-			fldSecretQuestion = new Field("secret question", accountDetailsNavigation.getSecretQuestionLocator(), getWebdriver(), getWebdriver().getWebDriver());
-			fldSecretAnswer = new Field("secret answer", accountDetailsNavigation.getSecretAnswerLocator(), getWebdriver(), getWebdriver().getWebDriver());
+			fldSecretQuestion = new Field("secret question", accountDetailsNavigation.getSecretQuestionLocator(), getWebdriver(), getWebdriver());
+			fldSecretAnswer = new Field("secret answer", accountDetailsNavigation.getSecretAnswerLocator(), getWebdriver(), getWebdriver());
 			btnSecretSubmit = new Button("submit secret answer", accountDetailsNavigation.getSecretSubmitLocator(),
-					getWebdriver(), getWebdriver().getWebDriver());
+					getWebdriver(), getWebdriver());
 			btnSecretPreSubmit = new Button("pre submit secret answer",
-					accountDetailsNavigation.getSecretSubmitSupLocator(), getWebdriver(), getWebdriver().getWebDriver());
+					accountDetailsNavigation.getSecretSubmitSupLocator(), getWebdriver(), getWebdriver());
 		}
 	}
 

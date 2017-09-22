@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
 
+import com.dashboard.budget.UberWebDriver;
 import com.dashboard.budget.Util;
 
 public class TableRow extends PageElement {
@@ -17,7 +17,7 @@ public class TableRow extends PageElement {
 	private Label lblTransactionCategory;
 
 	public TableRow(String name, By locDate, Integer dateFormat, By locAmount, By locDescription, By locCategory,
-			SearchContext searchContext, WebDriver webdriver) {
+			SearchContext searchContext, UberWebDriver webdriver) {
 		super(name, null, searchContext, webdriver);
 
 		lblTransactionDate = new Label("transaction date", locDate, searchContext, webdriver);

@@ -91,25 +91,25 @@ public abstract class AccountPage implements Config, Page {
 	
 	public void refreshLocators(){		
 		// Login
-		fldUsername = new Field("username", accountLoginDetails.getUsernameLocator(), getWebdriver(), getWebdriver().getWebDriver());
+		fldUsername = new Field("username", accountLoginDetails.getUsernameLocator(), getWebdriver(), getWebdriver());
 		valUsername = accountLoginDetails.getUsernameValue();
-		fldPassword = new Field("password", accountLoginDetails.getPasswordLocator(), getWebdriver(), getWebdriver().getWebDriver());
+		fldPassword = new Field("password", accountLoginDetails.getPasswordLocator(), getWebdriver(), getWebdriver());
 		valPassword = accountLoginDetails.getPasswordValue();
-		btnLogin = new Button("login", accountLoginDetails.getLoginLocator(), getWebdriver(), getWebdriver().getWebDriver());
-		btnLogout = new Button("logout", accountLoginDetails.getLogoutLocator(), getWebdriver(), getWebdriver().getWebDriver());
-		btnPostLogout = new Button("post logout", accountLoginDetails.getLogoutPostLocator(), getWebdriver(), getWebdriver().getWebDriver());
+		btnLogin = new Button("login", accountLoginDetails.getLoginLocator(), getWebdriver(), getWebdriver());
+		btnLogout = new Button("logout", accountLoginDetails.getLogoutLocator(), getWebdriver(), getWebdriver());
+		btnPostLogout = new Button("post logout", accountLoginDetails.getLogoutPostLocator(), getWebdriver(), getWebdriver());
 
 		// Total
 		if (accountTotalDetails != null) {
-			fldBalance = new Field("balance", accountTotalDetails.getBalanceLocator(), getWebdriver(), getWebdriver().getWebDriver());
+			fldBalance = new Field("balance", accountTotalDetails.getBalanceLocator(), getWebdriver(), getWebdriver());
 		}
 
 		// Transactions
 		if (accountNavigationDetails != null) {
 			btnTransactionsPage = new Button("transactions page link", accountNavigationDetails.getDetailsLinkLocator(),
-					getWebdriver(), getWebdriver().getWebDriver());
+					getWebdriver(), getWebdriver());
 			swtPeriod = new Switch("period switch", accountNavigationDetails.getPeriodSwitchLocator(),
-					accountNavigationDetails.getActionToSwitchPeriod(), getWebdriver(), getWebdriver().getWebDriver());
+					accountNavigationDetails.getActionToSwitchPeriod(), getWebdriver(), getWebdriver());
 		}		
 	}
 

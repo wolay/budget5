@@ -4,13 +4,19 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.interactions.Actions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.dashboard.budget.UberWebDriver;
 import com.dashboard.budget.Util;
 
 public class Button extends PageElement {
 	
-	public Button(String name, By locator, SearchContext searchContext, WebDriver webdriver) {
+	private static Logger logger = LoggerFactory.getLogger(Button.class);
+	
+	public Button(String name, By locator, SearchContext searchContext, UberWebDriver webdriver) {
 		super(name, locator, searchContext, webdriver);
 	}
 	
@@ -31,18 +37,19 @@ public class Button extends PageElement {
 		if (webElement == null)
 			webElement = searchContext.findElement(locator);
 		if (webElement == null){
-			Util.takeScreenshot(webdriver);
+			webdriver.takeScreenshot();
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
 		}
 		
 		try {
 			webElement.click();
-		} catch (StaleElementReferenceException ex) {
+		} catch (WebDriverException ex) {
 			webElement = searchContext.findElement(locator);
 			if (webElement == null) {
-				Util.takeScreenshot(webdriver);
+				webdriver.takeScreenshot();
 				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
 			}
+			webdriver.scrollTo(locator);
 			webElement.click();
 		}		
 	}
@@ -51,20 +58,20 @@ public class Button extends PageElement {
 		if (webElement == null)
 			webElement = searchContext.findElement(locator);
 		if (webElement == null){
-			Util.takeScreenshot(webdriver);
+			webdriver.takeScreenshot();
 			throw new PageElementNotFoundException("Button '" + name + "' (" + locator + ") not found ");
 		}
 		
 		try {
-			Actions action = new Actions(webdriver);
+			Actions action = new Actions(webdriver.getWebDriver());
 			action.moveToElement(webElement).build().perform();
 		} catch (StaleElementReferenceException ex) {
 			webElement = searchContext.findElement(locator);
 			if (webElement == null) {
-				Util.takeScreenshot(webdriver);
+				webdriver.takeScreenshot();
 				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
 			}
-			Actions action = new Actions(webdriver);
+			Actions action = new Actions(webdriver.getWebDriver());
 			action.moveToElement(webElement).build().perform();
 		}	
 	}
@@ -82,7 +89,7 @@ public class Button extends PageElement {
 		} catch (StaleElementReferenceException ex) {
 			webElement = searchContext.findElement(locator);
 			if (webElement == null) {
-				Util.takeScreenshot(webdriver);
+				webdriver.takeScreenshot();
 				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
 			}
 			webElement.click();

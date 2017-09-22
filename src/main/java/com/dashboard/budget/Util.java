@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -400,11 +401,6 @@ public class Util implements Config {
 	public static String getLocatorForWebElement(WebElement we) {
 		// assuming locator in xpath
 		return we.toString().substring(we.toString().indexOf("->") + 10);
-	}
-
-	public static void takeScreenshot(WebDriver webdriver) {
-		File scrFile = ((TakesScreenshot) webdriver).getScreenshotAs(OutputType.FILE);
-		PicturesStorage.INSTANCE.addPicture(scrFile);
 	}
 
 }

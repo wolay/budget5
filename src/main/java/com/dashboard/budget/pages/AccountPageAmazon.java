@@ -26,8 +26,8 @@ public class AccountPageAmazon extends AccountPage {
 	public AccountPageAmazon(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
 
-		balanceStrDol = new Field("amount dollars", accountTotalDetails.getBalanceDolLocator(), getWebdriver(), getWebdriver().getWebDriver());
-		balanceStrCen = new Field("amount cents", accountTotalDetails.getBalanceCenLocator(), getWebdriver(), getWebdriver().getWebDriver());
+		balanceStrDol = new Field("amount dollars", accountTotalDetails.getBalanceDolLocator(), getWebdriver(), getWebdriver());
+		balanceStrCen = new Field("amount cents", accountTotalDetails.getBalanceCenLocator(), getWebdriver(), getWebdriver());
 	}
 
 
@@ -81,7 +81,7 @@ public class AccountPageAmazon extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row, getWebdriver().getWebDriver());
+						row, getWebdriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())) {
 
@@ -128,7 +128,7 @@ public class AccountPageAmazon extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row, getWebdriver().getWebDriver());
+						row, getWebdriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())
 						&& !isTransactionExist(result, tr.getDate(), -tr.getAmount())) {

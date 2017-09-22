@@ -35,10 +35,10 @@ public class AccountPageMP extends AccountPage {
 	public void refreshLocators(){
 		super.refreshLocators();
 		
-		fldRefreshStatus = new Field("refresh status", By.xpath("//a[@id='refresh']"), getWebdriver(), getWebdriver().getWebDriver());
-		btnToolsAndTransactions = new Button("tools and transactions", By.name("onh_tools_and_investing"), getWebdriver(), getWebdriver().getWebDriver());
-		btnTransactions = new Button("transactions", By.linkText("Transactions"), getWebdriver(), getWebdriver().getWebDriver());
-		btnAccountSelect = new Button("account select", By.id("dropdown_itemAccountId"), getWebdriver(), getWebdriver().getWebDriver());
+		fldRefreshStatus = new Field("refresh status", By.xpath("//a[@id='refresh']"), getWebdriver(), getWebdriver());
+		btnToolsAndTransactions = new Button("tools and transactions", By.name("onh_tools_and_investing"), getWebdriver(), getWebdriver());
+		btnTransactions = new Button("transactions", By.linkText("Transactions"), getWebdriver(), getWebdriver());
+		btnAccountSelect = new Button("account select", By.id("dropdown_itemAccountId"), getWebdriver(), getWebdriver());
 	}
 
 	public DataRetrievalStatus login() {
@@ -192,7 +192,7 @@ public class AccountPageMP extends AccountPage {
 			List<WebElement> accounts = webDriver.findElements(By.className(" groupItem"));
 			if(accounts == null){
 				logger.error("Unable to fetch list of accounts");
-				Util.takeScreenshot(getWebdriver().getWebDriver());
+				webDriver.takeScreenshot();
 				return result;
 			}
 			WebElement weAccount = accounts.stream()
@@ -232,7 +232,7 @@ public class AccountPageMP extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row, getWebdriver().getWebDriver());
+						row, getWebdriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), tr.getAmount())) {
 					
@@ -282,7 +282,7 @@ public class AccountPageMP extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row, getWebdriver().getWebDriver());
+						row, getWebdriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), tr.getAmount())
 						&& !isTransactionExist(result, tr.getDate(), tr.getAmount())) {

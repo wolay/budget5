@@ -15,7 +15,7 @@ import com.dashboard.budget.UI.PageElementNotFoundException;
 
 public class AccountPageTjMaxx extends AccountPage {
 
-	private Button btnPreBalance = new Button("user check button", accountTotalDetails.getPreBalanceLocator(), getWebdriver(), getWebdriver().getWebDriver());
+	private Button btnPreBalance = new Button("user check button", accountTotalDetails.getPreBalanceLocator(), getWebdriver(), getWebdriver());
 
 	public AccountPageTjMaxx(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);

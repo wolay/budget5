@@ -20,7 +20,7 @@ import com.dashboard.budget.UI.TableRow;
 
 public class AccountPageSaks extends AccountPage {
 	
-	private Button newDesignAnnouncement = new Button("new design announcement", By.name("Continue"), getWebdriver(), getWebdriver().getWebDriver());
+	private Button newDesignAnnouncement = new Button("new design announcement", By.name("Continue"), getWebdriver(), getWebdriver());
 
 	public AccountPageSaks(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
@@ -76,7 +76,7 @@ public class AccountPageSaks extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row, getWebdriver().getWebDriver());
+						row, getWebdriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())) {
 
@@ -123,7 +123,7 @@ public class AccountPageSaks extends AccountPage {
 						By.xpath(accountTransactionDetails.getTransDescriptionLocator()),
 						(accountTransactionDetails.getTransCategoryLocator() == null) ? null
 								: By.xpath(accountTransactionDetails.getTransCategoryLocator()),
-						row, getWebdriver().getWebDriver());
+						row, getWebdriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())
 						&& !isTransactionExist(result, tr.getDate(), -tr.getAmount())) {
