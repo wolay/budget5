@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -169,7 +170,8 @@ public class AccountPageMP extends AccountPage {
 		if (totalRow != null)
 			return totalRow.getAmount();
 		else {
-			logger.error("Unable to find total for {} by locator {}", account.getName(), account.getIsMyProtfolio());
+			logger.error("Unable to find total for {} by id '{}'", account.getName(), account.getMyPortfolioId());
+			webDriver.takeScreenshot();
 			return null;
 		}
 	}
@@ -221,7 +223,7 @@ public class AccountPageMP extends AccountPage {
 		else {
 			logger.info("Rows in the current period table: {}", currentPeriodRows.size());
 			for (WebElement row : currentPeriodRows) {
-				logger.info("Row in the current period table: {}", row.getText());
+				logger.info("Row in the current period table: {}", row.getText().replaceAll("\\n", "").replaceAll("\\r", ""));
 				if (Util.isPending(row.getText()))
 					continue;
 
@@ -364,7 +366,7 @@ public class AccountPageMP extends AccountPage {
 		try {
 			btnLogout.click();
 			logger.info("Account page {} was closed", account.getName());
-		} catch (PageElementNotFoundException e) {
+		} catch (PageElementNotFoundException | WebDriverException e) {
 			logger.error("Account page {} was not closed properly", account.getName());
 		}
 
