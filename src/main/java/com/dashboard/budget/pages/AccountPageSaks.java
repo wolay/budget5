@@ -14,17 +14,23 @@ import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
-import com.dashboard.budget.UI.Button;
+import com.dashboard.budget.UI.Field;
 import com.dashboard.budget.UI.PageElementNotFoundException;
 import com.dashboard.budget.UI.TableRow;
 
 public class AccountPageSaks extends AccountPage {
 
-	private Button newDesignAnnouncement = new Button("new design announcement", By.name("Continue"), getWebdriver(),
-			getWebdriver());
+	// Total
+	protected Field fldBalanceDollars;
+	protected Field fldBalanceCents;
 
 	public AccountPageSaks(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
+
+		fldBalanceDollars = new Field("dollars amount", accountTotalDetails.getBalanceDolLocator(), getWebdriver(),
+				getWebdriver());
+		fldBalanceCents = new Field("cents amount", accountTotalDetails.getBalanceCenLocator(), getWebdriver(),
+				getWebdriver());
 	}
 
 	public DataRetrievalStatus login() {
@@ -34,7 +40,6 @@ public class AccountPageSaks extends AccountPage {
 			fldUsername.setText(valUsername);
 			fldPassword.setText(valPassword);
 			btnLogin.click();
-			newDesignAnnouncement.click();
 			return DataRetrievalStatus.SUCCESS;
 		} catch (PageElementNotFoundException e) {
 			return DataRetrievalStatus.NAVIGATION_BROKEN;
@@ -42,7 +47,9 @@ public class AccountPageSaks extends AccountPage {
 	}
 
 	public Double getTotal() throws PageElementNotFoundException {
-		return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
+		StringBuilder amount = new StringBuilder().append(fldBalanceDollars.getText()).append(".")
+				.append(fldBalanceCents.getText());
+		return Util.wrapAmount(-convertStringAmountToDouble(amount.toString()));
 	}
 
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
