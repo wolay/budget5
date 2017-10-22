@@ -5,7 +5,6 @@
  */
 package com.dashboard.budget;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormatSymbols;
@@ -22,17 +21,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dashboard.budget.DAO.Account;
 import com.dashboard.budget.DAO.Category;
-import com.dashboard.budget.DAO.PicturesStorage;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
 
@@ -126,7 +120,12 @@ public class Util implements Config {
 	}
 
 	public static boolean isSecretQuestionShown(UberWebDriver webDriver) {
-		WebElement secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Secret')]"));
+		// Kohls
+		WebElement secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Security Question')]"));
+		if (secretQuestion != null && secretQuestion.isDisplayed())
+			return true;
+		
+		secretQuestion = webDriver.lookupElement(By.xpath("//*[contains(text(),'Secret')]"));
 		if (secretQuestion != null && secretQuestion.isDisplayed())
 			return true;
 
