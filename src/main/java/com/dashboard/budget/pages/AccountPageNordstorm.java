@@ -36,19 +36,15 @@ public class AccountPageNordstorm extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
+	public Double getTotal() throws PageElementNotFoundException {
 		// secret question
 		if (Util.isSecretQuestionShown(webDriver))
 			if (!answerSecretQuestion())
 				return null;
-		
-		try {
-			return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+
+		return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
 	}
-	
+
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
 			throws PageElementNotFoundException {
 
@@ -148,7 +144,7 @@ public class AccountPageNordstorm extends AccountPage {
 		else
 			return new ArrayList<Transaction>();
 	}
-	
+
 	public void quit() {
 		try {
 			btnLogout.click();
@@ -157,7 +153,7 @@ public class AccountPageNordstorm extends AccountPage {
 			logger.error("Account page {} was not closed properly", account.getName());
 		}
 
-		webDriver.quit();		
+		webDriver.quit();
 	}
 
 }

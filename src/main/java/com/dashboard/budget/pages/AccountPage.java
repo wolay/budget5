@@ -119,7 +119,7 @@ public abstract class AccountPage implements Config, Page {
 
 	public abstract DataRetrievalStatus login();
 
-	public abstract Double getTotal();
+	public abstract Double getTotal() throws PageElementNotFoundException;
 
 	public abstract List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions) throws PageElementNotFoundException;
 

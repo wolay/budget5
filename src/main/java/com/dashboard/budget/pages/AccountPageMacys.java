@@ -39,7 +39,7 @@ public class AccountPageMacys extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
+	public Double getTotal() throws PageElementNotFoundException {
 
 		try {
 			btnCreditSummary.click();
@@ -57,12 +57,7 @@ public class AccountPageMacys extends AccountPage {
 			}
 		}
 
-		Double amount;
-		try {
-			amount = Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+		Double amount = Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
 
 		// Switch back to original browser (first window)
 		webDriver.switchTo().window(winHandleBefore);

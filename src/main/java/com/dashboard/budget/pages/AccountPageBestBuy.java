@@ -39,16 +39,12 @@ public class AccountPageBestBuy extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
-		try {
-			Double amount = Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-			btnPostLogout.click();
-			return amount;
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+	public Double getTotal() throws PageElementNotFoundException {
+		Double amount = Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
+		btnPostLogout.click();
+		return amount;
 	}
-	
+
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
 			throws PageElementNotFoundException {
 
@@ -148,7 +144,7 @@ public class AccountPageBestBuy extends AccountPage {
 		else
 			return new ArrayList<Transaction>();
 	}
-	
+
 	public void quit() {
 		try {
 			btnLogout.click();
@@ -158,6 +154,6 @@ public class AccountPageBestBuy extends AccountPage {
 			logger.error("Account page {} was not closed properly", account.getName());
 		}
 
-		webDriver.quit();		
+		webDriver.quit();
 	}
 }

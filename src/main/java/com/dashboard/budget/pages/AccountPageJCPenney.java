@@ -17,7 +17,7 @@ public class AccountPageJCPenney extends AccountPage {
 	public AccountPageJCPenney(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
 	}
-	
+
 	public DataRetrievalStatus login() {
 		if (Util.checkIfSiteDown(webDriver))
 			return DataRetrievalStatus.SERVICE_UNAVAILABLE;
@@ -31,14 +31,10 @@ public class AccountPageJCPenney extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
-		try {
-			return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+	public Double getTotal() throws PageElementNotFoundException {
+		return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
 	}
-	
+
 	public void quit() {
 		try {
 			btnLogout.click();
@@ -47,7 +43,7 @@ public class AccountPageJCPenney extends AccountPage {
 			logger.error("Account page {} was not closed properly", account.getName());
 		}
 
-		webDriver.quit();		
+		webDriver.quit();
 	}
 
 	@Override

@@ -26,10 +26,11 @@ public class AccountPageAmazon extends AccountPage {
 	public AccountPageAmazon(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
 
-		balanceStrDol = new Field("amount dollars", accountTotalDetails.getBalanceDolLocator(), getWebdriver(), getWebdriver());
-		balanceStrCen = new Field("amount cents", accountTotalDetails.getBalanceCenLocator(), getWebdriver(), getWebdriver());
+		balanceStrDol = new Field("amount dollars", accountTotalDetails.getBalanceDolLocator(), getWebdriver(),
+				getWebdriver());
+		balanceStrCen = new Field("amount cents", accountTotalDetails.getBalanceCenLocator(), getWebdriver(),
+				getWebdriver());
 	}
-
 
 	public synchronized DataRetrievalStatus login() {
 		if (Util.checkIfSiteDown(webDriver))
@@ -44,15 +45,11 @@ public class AccountPageAmazon extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
-		try {
-			return Util.wrapAmount(-convertStringAmountToDouble(
-					balanceStrDol.getText() + balanceStrCen.getText().replace("·", ".").replace("*", "")));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+	public Double getTotal() throws PageElementNotFoundException {
+		return Util.wrapAmount(-convertStringAmountToDouble(
+				balanceStrDol.getText() + balanceStrCen.getText().replace("·", ".").replace("*", "")));
 	}
-	
+
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
 			throws PageElementNotFoundException {
 
@@ -152,7 +149,7 @@ public class AccountPageAmazon extends AccountPage {
 		else
 			return new ArrayList<Transaction>();
 	}
-	
+
 	public void quit() {
 		try {
 			btnLogout.click();
@@ -161,6 +158,6 @@ public class AccountPageAmazon extends AccountPage {
 			logger.error("Account page {} was not closed properly", account.getName());
 		}
 
-		webDriver.quit();		
+		webDriver.quit();
 	}
 }

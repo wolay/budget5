@@ -15,7 +15,8 @@ import com.dashboard.budget.UI.PageElementNotFoundException;
 
 public class AccountPageTjMaxx extends AccountPage {
 
-	private Button btnPreBalance = new Button("user check button", accountTotalDetails.getPreBalanceLocator(), getWebdriver(), getWebdriver());
+	private Button btnPreBalance = new Button("user check button", accountTotalDetails.getPreBalanceLocator(),
+			getWebdriver(), getWebdriver());
 
 	public AccountPageTjMaxx(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
@@ -45,13 +46,9 @@ public class AccountPageTjMaxx extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
-		try {
-			btnPreBalance.click();
-			return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+	public Double getTotal() throws PageElementNotFoundException {
+		btnPreBalance.click();
+		return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
 	}
 
 	public void quit() {
@@ -62,7 +59,7 @@ public class AccountPageTjMaxx extends AccountPage {
 			logger.error("Account page {} was not closed properly", account.getName());
 		}
 
-		webDriver.quit();		
+		webDriver.quit();
 	}
 
 	@Override

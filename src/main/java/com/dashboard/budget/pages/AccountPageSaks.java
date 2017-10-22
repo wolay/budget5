@@ -19,8 +19,9 @@ import com.dashboard.budget.UI.PageElementNotFoundException;
 import com.dashboard.budget.UI.TableRow;
 
 public class AccountPageSaks extends AccountPage {
-	
-	private Button newDesignAnnouncement = new Button("new design announcement", By.name("Continue"), getWebdriver(), getWebdriver());
+
+	private Button newDesignAnnouncement = new Button("new design announcement", By.name("Continue"), getWebdriver(),
+			getWebdriver());
 
 	public AccountPageSaks(Account account, DataHandler dataHandler) {
 		super(account, dataHandler);
@@ -40,14 +41,10 @@ public class AccountPageSaks extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {		
-		try {
-			return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+	public Double getTotal() throws PageElementNotFoundException {
+		return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
 	}
-	
+
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
 			throws PageElementNotFoundException {
 
@@ -147,7 +144,7 @@ public class AccountPageSaks extends AccountPage {
 		else
 			return new ArrayList<Transaction>();
 	}
-	
+
 	public void quit() {
 		try {
 			btnLogout.click();
@@ -156,6 +153,6 @@ public class AccountPageSaks extends AccountPage {
 			logger.error("Account page {} was not closed properly", account.getName());
 		}
 
-		webDriver.quit();		
+		webDriver.quit();
 	}
 }

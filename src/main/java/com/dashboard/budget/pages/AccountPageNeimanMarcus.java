@@ -36,12 +36,8 @@ public class AccountPageNeimanMarcus extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
-		try {
-			return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+	public Double getTotal() throws PageElementNotFoundException {
+		return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
 	}
 
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)
@@ -75,7 +71,7 @@ public class AccountPageNeimanMarcus extends AccountPage {
 						row, getWebdriver());
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())) {
-					
+
 					result.add(new Transaction(account, total, tr.getDate(), tr.getDescription(), -tr.getAmount(),
 							tr.getCategory(), null));
 
@@ -104,7 +100,7 @@ public class AccountPageNeimanMarcus extends AccountPage {
 
 			// Wait for previous transactions table to be loaded
 			Util.sleep(5000);
-			
+
 			previousPeriodRows = webDriver.findElements(accountTransactionDetails.getTransTableLocator());
 			logger.info("Rows in the previous period table: {}", previousPeriodRows.size());
 
@@ -123,7 +119,7 @@ public class AccountPageNeimanMarcus extends AccountPage {
 
 				if (!isTransactionExist(prevTransactions, tr.getDate(), -tr.getAmount())
 						&& !isTransactionExist(result, tr.getDate(), -tr.getAmount())) {
-					
+
 					result.add(new Transaction(account, total, tr.getDate(), tr.getDescription(), -tr.getAmount(),
 							tr.getCategory(), null));
 

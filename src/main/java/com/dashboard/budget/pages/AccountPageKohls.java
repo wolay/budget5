@@ -36,7 +36,7 @@ public class AccountPageKohls extends AccountPage {
 		}
 	}
 
-	public Double getTotal() {
+	public Double getTotal() throws PageElementNotFoundException {
 		// secret question
 		if (Util.isSecretQuestionShown(webDriver))
 			if (!answerSecretQuestion())
@@ -47,11 +47,7 @@ public class AccountPageKohls extends AccountPage {
 			if (!answerSecretQuestion())
 				return null;
 
-		try {
-			return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
-		} catch (PageElementNotFoundException e) {
-			return null;
-		}
+		return Util.wrapAmount(-convertStringAmountToDouble(fldBalance.getText()));
 	}
 
 	public List<Transaction> getTransactions(Total total, List<Transaction> prevTransactions)

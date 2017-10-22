@@ -19,6 +19,7 @@ import com.dashboard.budget.DAO.CreditScore;
 import com.dashboard.budget.DAO.DataRetrievalStatus;
 import com.dashboard.budget.DAO.Total;
 import com.dashboard.budget.DAO.Transaction;
+import com.dashboard.budget.UI.PageElementNotFoundException;
 import com.dashboard.budget.pages.*;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -142,8 +143,8 @@ public class WebDriverManager implements Config {
 					int attempt = 0;
 					Double amount = null;
 					Total total = null;
-					Double prevTotal = prevTotals.stream().filter(t -> t.getAccount() == account)
-							.findFirst().get().getAmount();
+					Double prevTotal = prevTotals.stream().filter(t -> t.getAccount() == account).findFirst().get()
+							.getAmount();
 					Double difference = null;
 					boolean isDownloaded = false;
 					while (!isDownloaded && attempt < maxAttemptsToDownloadData) {
@@ -157,26 +158,30 @@ public class WebDriverManager implements Config {
 								logger.error("Unsuccessful login to: {}", account.getName());
 								accountPage.quit();
 								accountPage = null;
-								isDownloaded = true; // no need to try more - smth too wrong
+								isDownloaded = true; // no need to try more -
+														// smth too wrong
 								continue;
 							}
 						} else
 							accountPage.setAccount(account);
 
-						amount = accountPage.getTotal();
-						if (amount != null) {
-							difference = getDifference(account, amount, prevTotals);
-							total = new Total(account, amount, difference, DataRetrievalStatus.SUCCESS);
-							logger.info("{}, total: {}", account.getName(), amount);
-							if (difference != null && difference != 0.00) {
-								logger.info("{}, difference: {}", account.getName(), difference);
-								addTransactionsForDifference(total, accountPage, difference, prevTotal, prevTransactions);
-							}
-						} else {
+						try {
+							amount = accountPage.getTotal();
+						} catch (PageElementNotFoundException ex) {
+							logger.error(ex.getLocalizedMessage());
 							logger.error("Error while getting total for: {}", account.getName());
+							total = new Total(account, prevTotal, 0.0, DataRetrievalStatus.NAVIGATION_BROKEN);
 							accountPage.quit();
 							accountPage = null;
 							continue;
+						}
+
+						difference = getDifference(account, amount, prevTotals);
+						total = new Total(account, amount, difference, DataRetrievalStatus.SUCCESS);
+						logger.info("{}, total: {}", account.getName(), amount);
+						if (difference != null && difference != 0.00) {
+							logger.info("{}, difference: {}", account.getName(), difference);
+							addTransactionsForDifference(total, accountPage, difference, prevTotal, prevTransactions);
 						}
 
 						isDownloaded = true;
@@ -233,11 +238,16 @@ public class WebDriverManager implements Config {
 		logger.info("Network check...");
 		WebDriver webDriver = new HtmlUnitDriver();
 
-		try {
-			webDriver.get("https://www.google.com");
-		} catch (WebDriverException e) {
-			logger.error("Connection failed due to WebDriver exception");
-			return false;
+		int attempts = 0;
+		while (attempts < 3) {
+			try {
+				webDriver.get("https://www.google.com");
+				attempts = 3;
+			} catch (WebDriverException e) {
+				logger.error("Connection failed due to WebDriver exception");
+				logger.error(e.getLocalizedMessage());
+				attempts++;
+			}
 		}
 
 		try {
