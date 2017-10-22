@@ -3,6 +3,7 @@ package com.dashboard.budget.UI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.Select;
 
 import com.dashboard.budget.UberWebDriver;
@@ -32,12 +33,14 @@ public class Switch extends PageElement {
 				webElement.click();
 			else
 				new Select(webElement).selectByIndex(1);
-		} catch (StaleElementReferenceException ex) {
+		} catch (WebDriverException ex) {
 			webElement = searchContext.findElement(locator);
 			if (webElement == null) {
 				webdriver.takeScreenshot();
 				throw new PageElementNotFoundException("Field '" + name + "' (" + locator + ") not found ");
 			}
+			
+			webdriver.scrollTo(locator);
 			if ("click".equals(action))
 				webElement.click();
 			else
